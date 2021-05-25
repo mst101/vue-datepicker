@@ -27,16 +27,9 @@ describe('PickerDay: disabled', () => {
     expect(wrapper.vm.isDisabledDate(new Date(2026, 9, 2))).toEqual(true)
   })
 
-  it('should not select a disabled date', () => {
-    wrapper.vm.select({ isDisabled: true })
-    expect(wrapper.emitted('select')).toBeFalsy()
-  })
-
-  it('cant change to a disabled month', () => {
-    wrapper.vm.previousPage()
-    expect(wrapper.vm.pageDate.getMonth()).toEqual(9)
-    wrapper.vm.nextPage()
-    expect(wrapper.vm.pageDate.getMonth()).toEqual(9)
+  it('should set `isNextDisabled` and `isPreviousDisabled` correctly', () => {
+    expect(wrapper.vm.isNextDisabled).toBeTruthy()
+    expect(wrapper.vm.isPreviousDisabled).toBeTruthy()
   })
 
   it('can change month despite having a disabled month', () => {
@@ -113,11 +106,6 @@ describe('PickerDay: disabled', () => {
     expect(wrapper.vm.isDisabledDate(new Date(2016, 9, 28))).toEqual(true)
     expect(wrapper.vm.isDisabledDate(new Date(2016, 10, 24))).toEqual(true)
     expect(wrapper.vm.isDisabledDate(new Date(2016, 9, 11))).toEqual(false)
-  })
-
-  it('should emit a select-disabled event for a disabled date', () => {
-    wrapper.vm.select({ isDisabled: true })
-    expect(wrapper.emitted('select-disabled')).toBeTruthy()
   })
 
   it('should close without warning when its undefined', () => {

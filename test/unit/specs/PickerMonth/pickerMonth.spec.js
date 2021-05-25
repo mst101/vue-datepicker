@@ -9,6 +9,7 @@ describe('PickerMonth', () => {
       propsData: {
         translation: en,
         pageDate: new Date(2018, 1, 1),
+        view: 'month',
       },
     })
   })
@@ -37,43 +38,29 @@ describe('PickerMonth', () => {
   })
 
   it('can set the next year', () => {
-    wrapper.vm.nextPage()
-    expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2019)
-
-    wrapper.setProps({
-      disabledDates: {
-        from: new Date(2018, 1, 1),
-      },
-    })
-
-    wrapper.vm.nextPage()
-    expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2019)
+    wrapper.vm.changePage({ incrementBy: 1, elementsToFocus: ['next'] })
+    expect(wrapper.emitted('page-change')[0][0].pageDate.getFullYear()).toEqual(
+      2019,
+    )
   })
 
   it('can set the previous year', () => {
-    wrapper.vm.previousPage()
-    expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2017)
-
-    wrapper.setProps({
-      disabledDates: {
-        to: new Date(2018, 1, 1),
-      },
-    })
-
-    wrapper.vm.previousPage()
-    expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2017)
+    wrapper.vm.changePage({ incrementBy: -1, elementsToFocus: ['prev'] })
+    expect(wrapper.emitted('page-change')[0][0].pageDate.getFullYear()).toEqual(
+      2017,
+    )
   })
 
   it('emits date on selection', () => {
     const time = new Date().valueOf()
-    wrapper.vm.select({ timestamp: time })
+    wrapper.vm.handleSelect({ timestamp: time })
     expect(wrapper.emitted('select')).toBeTruthy()
     expect(wrapper.emitted('select')[0][0].timestamp).toEqual(time)
   })
 
   it('emits set-view event with `year` when the up button is clicked', () => {
-    const upButton = wrapper.find('.month__year_btn')
-    upButton.trigger('click')
+    const upButton = wrapper.findComponent({ ref: 'up' })
+    upButton.vm.$emit('select')
     expect(wrapper.emitted()['set-view'][0][0]).toBe('year')
   })
 })
