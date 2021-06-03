@@ -18,7 +18,7 @@ describe('Datepicker mounted', () => {
     wrapper.destroy()
   })
 
-  it('no out of bound', async () => {
+  it('is not out of bounds', async () => {
     const getBoundingClientRect = jest.fn(() => ({
       right: 10,
       bottom: 10,
@@ -35,7 +35,7 @@ describe('Datepicker mounted', () => {
     expect(calendar.$el.style.top).toBe('10px')
   })
 
-  it('everything out of bound', async () => {
+  it('has everything out of bounds', async () => {
     const getBoundingClientRect = jest.fn(() => ({
       right: 2000,
       bottom: 1000,

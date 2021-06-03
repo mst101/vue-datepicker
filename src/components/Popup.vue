@@ -34,11 +34,9 @@ export default {
     visible: {
       immediate: true,
       handler(val) {
-        this.$nextTick(() => {
-          if (val) {
-            this.displayPopup()
-          }
-        })
+        if (val) {
+          this.displayPopup()
+        }
       },
     },
   },
@@ -70,9 +68,7 @@ export default {
       this.setTopStyle()
       const popup = this.$el
       const relativeElement = this.$parent.$el
-      if (!this.popupRect) {
-        this.popupRect = getPopupElementSize(popup)
-      }
+      this.popupRect = getPopupElementSize(popup)
       const { width, height } = this.popupRect
       const { left, top } = getRelativePosition({
         el: popup,

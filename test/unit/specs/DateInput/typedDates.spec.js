@@ -90,18 +90,18 @@ describe('DateInput', () => {
       },
     })
     const input = wrapper.find('input')
-    input.element.value = dateString
+    input.setValue(dateString)
     expect(input.element.value).toEqual(dateString)
     input.trigger('keyup')
     expect(wrapper.vm.formattedValue).toEqual('12.08.2018')
   })
 
-  it('emits the date when typed', () => {
+  it('emits the date when typed', async () => {
     const input = wrapper.find('input')
-    wrapper.vm.input.value = '2018-04-24'
-    input.trigger('keyup')
-    expect(wrapper.emitted()['typed-date']).toBeDefined()
-    expect(wrapper.emitted()['typed-date'][0][0]).toBeInstanceOf(Date)
+    input.setValue('2018-04-24')
+    await input.trigger('keyup')
+    expect(wrapper.emitted('typed-date')).toBeDefined()
+    expect(wrapper.emitted('typed-date')[0][0]).toBeInstanceOf(Date)
   })
 
   it('emits close-calendar when return is pressed', () => {
@@ -171,9 +171,9 @@ describe('Datepicker mount', () => {
 
   it('formats the date on blur', async () => {
     const input = wrapper.find('input')
-    input.element.value = '2018-04-24'
-    input.trigger('blur')
-    await wrapper.vm.$nextTick()
+    input.setValue('2018-04-24')
+    await input.trigger('keyup')
+    await input.trigger('blur')
     expect(input.element.value).toEqual('24 Apr 2018')
   })
 })

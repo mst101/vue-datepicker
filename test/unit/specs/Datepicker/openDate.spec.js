@@ -16,7 +16,7 @@ describe('Datepicker with open date', () => {
     wrapper.destroy()
   })
 
-  it('should be set to October', () => {
+  it('should accept an instance of a date object', () => {
     expect(wrapper.vm.pageDate.getMonth()).toEqual(9)
     expect(wrapper.vm.pageDate.getFullYear()).toEqual(2016)
   })

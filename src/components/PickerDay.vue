@@ -1,6 +1,7 @@
 <template>
   <div class="picker-view">
     <slot name="beforeCalendarHeaderDay" />
+
     <PickerHeader
       v-if="showHeader"
       :is-next-disabled="isNextDisabled"
@@ -9,6 +10,7 @@
       @next="nextPage"
       @previous="previousPage"
     >
+      <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
       <span
         :class="{ up: !isUpDisabled }"
         class="day__month_btn"
@@ -17,8 +19,8 @@
         {{ pageTitleDay }}
       </span>
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
-      <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
     </PickerHeader>
+
     <div :class="{ 'flex-rtl': isRtl }">
       <span v-for="day in daysOfWeek" :key="day" class="day-header">
         {{ day }}
@@ -37,6 +39,7 @@
         </span>
       </div>
     </div>
+
     <slot name="calendarFooterDay" />
   </div>
 </template>
@@ -54,15 +57,15 @@ export default {
       type: Function,
       default: (day) => day.date,
     },
+    firstDayOfWeek: {
+      type: String,
+      default: 'sun',
+    },
     highlighted: {
       type: Object,
       default() {
         return {}
       },
-    },
-    firstDayOfWeek: {
-      type: String,
-      default: 'sun',
     },
     showFullMonthName: {
       type: Boolean,
@@ -148,6 +151,14 @@ export default {
       return this.utils.getDayFromAbbr(this.firstDayOfWeek)
     },
     /**
+     * The first day of the next page's month.
+     * @return {Date}
+     */
+    firstOfNextMonth() {
+      const d = new Date(this.pageDate)
+      return new Date(this.utils.setMonth(d, this.utils.getMonth(d) + 1))
+    },
+    /**
      * A look-up object created from 'highlighted' prop
      * @return {Object}
      */
@@ -200,14 +211,6 @@ export default {
         ? `${this.currYearName} ${this.currMonthName}`
         : `${this.currMonthName} ${this.currYearName}`
     },
-    /**
-     * The first day of the next page's month.
-     * @return {Date}
-     */
-    firstOfNextMonth() {
-      const d = new Date(this.pageDate)
-      return new Date(this.utils.setMonth(d, this.utils.getMonth(d) + 1))
-    },
   },
   methods: {
     /**
@@ -240,6 +243,27 @@ export default {
         'highlight-start': day.isHighlightStart,
         'highlight-end': day.isHighlightEnd,
       }
+    },
+    /**
+     * Set up a new date object to the first day of the current 'page'
+     * @return Date
+     */
+    firstCellDate() {
+      const d = this.pageDate
+
+      const firstOfMonth = this.useUtc
+        ? new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1))
+        : new Date(
+            d.getFullYear(),
+            d.getMonth(),
+            1,
+            d.getHours(),
+            d.getMinutes(),
+          )
+
+      return new Date(
+        firstOfMonth.setDate(firstOfMonth.getDate() - this.daysFromPrevMonth),
+      )
     },
     /**
      * Whether a day is disabled
@@ -337,27 +361,6 @@ export default {
         isPreviousMonth,
         isNextMonth,
       }
-    },
-    /**
-     * Set up a new date object to the first day of the current 'page'
-     * @return Date
-     */
-    firstCellDate() {
-      const d = this.pageDate
-
-      const firstOfMonth = this.useUtc
-        ? new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1))
-        : new Date(
-            d.getFullYear(),
-            d.getMonth(),
-            1,
-            d.getHours(),
-            d.getMinutes(),
-          )
-
-      return new Date(
-        firstOfMonth.setDate(firstOfMonth.getDate() - this.daysFromPrevMonth),
-      )
     },
   },
 }

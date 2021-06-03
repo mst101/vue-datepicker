@@ -1,6 +1,7 @@
 <template>
   <div class="picker-view">
     <slot name="beforeCalendarHeaderYear" />
+
     <PickerHeader
       v-if="showHeader"
       :is-next-disabled="isNextDisabled"
@@ -9,23 +10,25 @@
       @next="nextPage"
       @previous="previousPage"
     >
+      <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
       <span>
         {{ pageTitleYear }}
       </span>
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
-      <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
     </PickerHeader>
+
     <div ref="cells">
       <span
         v-for="cell in cells"
         :key="cell.timestamp"
-        :class="{ selected: cell.isSelected, disabled: cell.isDisabled }"
         class="cell year"
+        :class="{ selected: cell.isSelected, disabled: cell.isDisabled }"
         @click="select(cell)"
       >
         {{ cell.year }}
       </span>
     </div>
+
     <slot name="calendarFooterYear" />
   </div>
 </template>
@@ -54,7 +57,7 @@ export default {
       const year = this.useUtc
         ? Math.floor(d.getUTCFullYear() / this.yearRange) * this.yearRange
         : Math.floor(d.getFullYear() / this.yearRange) * this.yearRange
-      // set up a new date object to the beginning of the current 'page'7
+      // set up a new date object to the beginning of the current 'page'
       const dObj = this.useUtc
         ? new Date(Date.UTC(year, d.getUTCMonth(), d.getUTCDate()))
         : new Date(

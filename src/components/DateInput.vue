@@ -4,11 +4,11 @@
     <!-- Calendar Button -->
     <span
       v-if="calendarButton"
+      class="vdp-datepicker__calendar-button"
       :class="{
         'input-group-prepend': bootstrapStyling,
         'calendar-btn-disabled': disabled,
       }"
-      class="vdp-datepicker__calendar-button"
       @click="toggle"
     >
       <span :class="{ 'input-group-text': bootstrapStyling }">
@@ -48,8 +48,8 @@
     <!-- Clear Button -->
     <span
       v-if="clearButton && selectedDate"
-      :class="{ 'input-group-append': bootstrapStyling }"
       class="vdp-datepicker__clear-button"
+      :class="{ 'input-group-append': bootstrapStyling }"
       @click="clearDate()"
     >
       <span :class="{ 'input-group-text': bootstrapStyling }">
@@ -139,13 +139,13 @@ export default {
   },
   methods: {
     /**
-     * emit a clearDate event
+     * Emits a `clear-date` event
      */
     clearDate() {
       this.$emit('clear-date')
     },
     /**
-     * submit typedDate and emit a blur event
+     * Submit typedDate and emit a `blur` event
      */
     handleInputBlur() {
       this.isBlurred = this.isOpen
@@ -156,17 +156,25 @@ export default {
       this.$emit('close')
       this.isFocusedUsed = false
     },
+    /**
+     * Toggles the calendar (unless `show-calendar-on-button-click` is true)
+     */
     handleInputClick() {
+      /* istanbul ignore next */
       const isFocusedUsed = this.showCalendarOnFocus && !this.isFocusedUsed
 
       if (!this.showCalendarOnButtonClick && !isFocusedUsed) {
         this.toggle()
       }
 
+      /* istanbul ignore next */
       if (this.showCalendarOnFocus) {
         this.isFocusedUsed = true
       }
     },
+    /**
+     * Opens the calendar when `show-calendar-on-focus` is true
+     */
     handleInputFocus() {
       if (this.showCalendarOnFocus) {
         this.$emit('open')
@@ -175,6 +183,7 @@ export default {
       this.isBlurred = false
       this.$emit('focus')
     },
+    /* istanbul ignore next */
     handleKeydownEnter() {
       if (this.typeable) {
         this.submitTypedDate()
@@ -217,6 +226,9 @@ export default {
         this.$emit('typed-date', parsedDate)
       }
     },
+    /**
+     * Opens or closes the calendar
+     */
     toggle() {
       if (!this.isOpen && this.isBlurred) {
         this.isBlurred = false
