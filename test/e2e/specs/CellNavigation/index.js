@@ -1,6 +1,6 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps'
 
-const { createCalendar, focusThe, the, theFirst } = cy
+const { createCalendar, clickThe, the, theFirst } = cy
 
 describe('Focusable Cell', () => {
   describe('@id-1: Arrow {string} (isRtl: {string})', () => {
@@ -10,10 +10,11 @@ describe('Focusable Cell', () => {
         const language = isRtl === 'true' ? 'ar' : 'en'
 
         createCalendar({
-          initialView: 'day',
           language,
           openDate,
         })
+
+        clickThe('input')
 
         the('calendar').should('be.visible')
         the('picker-cells').should('have.length', 1)
@@ -21,7 +22,7 @@ describe('Focusable Cell', () => {
     )
 
     When('the user presses the {string} arrow', (direction) => {
-      focusThe('tabbable-cell').type(`{${direction}arrow}`)
+      the('tabbable-cell').type(`{${direction}arrow}`)
     })
 
     Then('the {string} has focus', (newDate) => {

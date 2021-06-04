@@ -5,15 +5,13 @@ const { clickThe, createCalendar, focusThe, the } = cy
 describe('Calendar button', () => {
   describe('@id-1: Click on calendar button: {string}', () => {
     Given('the calendar is {string}', (openOrClosed) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
-      const isNot = openOrClosed === 'closed' ? 'not.' : ''
-
       createCalendar({
         calendarButton: true,
-        initialView: view,
       })
 
-      the('calendar').should(`${isNot}be.visible`)
+      if (openOrClosed === 'open') {
+        clickThe('calendar-button')
+      }
     })
 
     When('the user clicks the calendar button', () => {
@@ -35,21 +33,22 @@ describe('Calendar button', () => {
     Given(
       'the typeable calendar is {string} and a {string} date is typed',
       (openOrClosed, validity) => {
-        const view = openOrClosed === 'closed' ? '' : 'day'
         const date = validity === 'valid' ? '1 March 2021' : 'invalid date'
         const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
         createCalendar({
           calendarButton: true,
-          initialView: view,
           typeable: true,
         })
 
+        if (openOrClosed === 'open') {
+          clickThe('calendar-button')
+        }
+
         focusThe('input').type(date)
 
+        the('picker-cells').should('have.length', 1)
         the('calendar').should(`${isNot}be.visible`)
-        the('input').should('be.focused')
-        the('input').blur()
       },
     )
 
@@ -71,7 +70,6 @@ describe('Calendar button', () => {
       createCalendar({
         calendarButton: true,
       })
-      the('calendar').should('not.be.visible')
     })
 
     When('the user presses the enter key', () => {

@@ -47,14 +47,16 @@ describe('Show calendar on focus', () => {
 
   describe('@id-3: Focus input field when the typeable calendar is {string}', () => {
     Given('the typeable calendar is {string}', (openOrClosed) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
-        initialView: view,
         showCalendarOnFocus: true,
         typeable: true,
       })
+
+      if (openOrClosed === 'open') {
+        clickThe('input')
+      }
 
       the('calendar').should(`${isNot}be.visible`)
     })
@@ -76,16 +78,19 @@ describe('Show calendar on focus', () => {
 
   describe('@id-4: Click on the input field when {string}', () => {
     Given('the calendar is {string}', (openOrClosed) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
-      const isNot = openOrClosed === 'closed' ? 'not.' : ''
+      const isNot = openOrClosed === 'closed' ? 'not.' :
+        ''
 
       createCalendar({
-        initialView: view,
         showCalendarOnFocus: true,
       })
 
+      if (openOrClosed === 'open') {
+        clickThe('input')
+      }
+
       the('calendar').should(`${isNot}be.visible`)
-      the('picker-cells').should('have.length', view === 'closed' ? 0 : 1)
+      the('picker-cells').should('have.length', 1)
     })
 
     When('the user focuses the input field')

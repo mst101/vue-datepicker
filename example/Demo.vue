@@ -3,7 +3,11 @@
     <h1>Datepicker Examples</h1>
     <div class="example">
       <h3>Default datepicker...</h3>
-      <Datepicker placeholder="Select Date" :calendar-button="true" :clear-button="true" :show-edge-dates="false" />
+      <Datepicker
+        placeholder="Select Date"
+        :typeable="true"
+        :open-date="new Date(2020, 0, 15)"
+      />
       <code>
         &lt;datepicker placeholder="Select Date"&gt;&lt;/datepicker&gt;
       </code>

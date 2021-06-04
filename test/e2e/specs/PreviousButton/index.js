@@ -6,9 +6,11 @@ describe('Previous Button', () => {
   describe('@id-1: Select by {string}', () => {
     Given('the calendar is open on `Jan 2021`', () => {
       createCalendar({
-        initialView: 'day',
         openDate: new Date(2021, 0, 1),
       })
+
+      clickThe('input')
+
       the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
     })
@@ -48,7 +50,7 @@ describe('Previous Button', () => {
       'the calendar is open with isRtl: {string}, isMaximumView: {string}, isNextDisabled: {string}',
       (isRtl, isMaximumView, isNextDisabled) => {
         const language = isRtl === 'true' ? 'ar' : 'en'
-        const view = isMaximumView === 'true' ? 'year' : 'day'
+        const initialView = isMaximumView === 'true' ? 'year' : 'day'
         const disabledDates = {
           from: isNextDisabled === 'true' ? new Date(2021, 0, 31) : null,
         }
@@ -56,10 +58,13 @@ describe('Previous Button', () => {
         createCalendar({
           calendarButton: true,
           disabledDates,
-          initialView: view,
+          initialView,
           language,
           openDate: new Date(2021, 0, 1),
         })
+
+        clickThe('input')
+
         the('calendar').should('be.visible')
         the('picker-cells').should('have.length', 1)
       },
@@ -77,9 +82,11 @@ describe('Previous Button', () => {
   describe('@id-4: Typeable: arrow up to input', () => {
     Given('the typeable calendar is open', () => {
       createCalendar({
-        initialView: 'day',
         typeable: true,
       })
+
+      clickThe('input')
+
       the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
     })

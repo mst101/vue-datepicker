@@ -5,14 +5,18 @@ const { clickThe, createCalendar, focusThe, getStore, the } = cy
 describe('Show calendar on button click', () => {
   describe('@id-1: Click on the calendar button when {string}}', () => {
     Given('the calendar is {string}', (openOrClosed) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
         calendarButton: true,
-        initialView: view,
         showCalendarOnButtonClick: true,
       })
+
+      the('calendar-button').should('be.visible')
+
+      if (openOrClosed === 'open') {
+        clickThe('calendar-button')
+      }
 
       the('calendar').should(`${isNot}be.visible`)
     })
@@ -68,15 +72,17 @@ describe('Show calendar on button click', () => {
 
   describe('@id-4: Focus the typeable input field when {string} and `show-calendar-on-focus` is true', () => {
     Given('the typeable calendar is {string}', (openOrClosed) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
         calendarButton: true,
-        initialView: view,
         showCalendarOnButtonClick: true,
         typeable: true,
       })
+
+      if (openOrClosed === 'open') {
+        clickThe('calendar-button')
+      }
 
       the('calendar').should(`${isNot}be.visible`)
     })

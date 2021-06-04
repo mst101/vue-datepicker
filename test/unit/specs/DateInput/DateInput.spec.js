@@ -203,7 +203,6 @@ describe('DateInput', () => {
     const input = wrapper.find('input')
     const spy = jest.spyOn(wrapper.vm, 'validateTypedDate')
 
-    await input.element.focus()
     await input.trigger('keydown.tab')
 
     expect(spy).not.toHaveBeenCalled()

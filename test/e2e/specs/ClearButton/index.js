@@ -5,16 +5,14 @@ const { clickThe, createCalendar, focusThe, the } = cy
 describe('Clear button', () => {
   describe('@id-1: Click on clear button', () => {
     Given('the calendar is {string} and a date is selected', (openOrClosed) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
-      const isNot = openOrClosed === 'closed' ? 'not.' : ''
-
       createCalendar({
         clearButton: true,
-        initialView: view,
         value: new Date(2021, 2, 1),
       })
 
-      the('calendar').should(`${isNot}be.visible`)
+      if (openOrClosed === 'open') {
+        clickThe('input')
+      }
     })
 
     When('the user clicks on the clear button', () => {
@@ -38,15 +36,17 @@ describe('Clear button', () => {
     Given(
       'the typeable calendar is {string} and a date is selected',
       (openOrClosed) => {
-        const view = openOrClosed === 'closed' ? '' : 'day'
         const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
         createCalendar({
           clearButton: true,
-          initialView: view,
           typeable: true,
           value: new Date(2021, 2, 1),
         })
+
+        if (openOrClosed === 'open') {
+          clickThe('input')
+        }
 
         the('calendar').should(`${isNot}be.visible`)
       },

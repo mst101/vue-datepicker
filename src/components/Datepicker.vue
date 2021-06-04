@@ -375,7 +375,9 @@ export default {
   },
   watch: {
     initialView() {
-      this.setInitialView()
+      if (this.view) {
+        this.setInitialView()
+      }
     },
     openDate() {
       this.setPageDate()
@@ -447,10 +449,10 @@ export default {
           this.resetToggleOnClick = this.utils.getNewDateObject()
           document.body.focus()
         } else {
-          // Use a macrotask (zero delayed timeout) to ensure the input field is focused after selecting a date
-          setTimeout(() => {
-            this.focusFirstElementIn([elementToFocus, 'input'])
-          }, 0)
+          const elementsToFocus = [elementToFocus, 'input'].filter(
+            (item) => !!item,
+          )
+          this.reviewFocus({ elementsToFocus })
         }
       })
 
@@ -516,8 +518,18 @@ export default {
      * @param {Date} date
      */
     handleTypedDate(date) {
+      let delay = 0
+
+      if (this.selectedDate) {
+        this.setTransitionName(date.valueOf() - this.selectedDate.valueOf())
+
+        delay = this.isSamePage(this.selectedDate, date)
+          ? this.slideDuration
+          : 0
+      }
+
       this.selectDate(date ? date.valueOf() : null)
-      this.reviewFocus()
+      this.reviewFocus({ delay })
     },
     /**
      * Focus the relevant element when the view changes
@@ -530,12 +542,7 @@ export default {
       }
       const elementsToFocus = this.getElementsToFocus(newView, oldView)
 
-      this.setNavElements()
-
-      // Use a macrotask (zero delayed timeout)
-      setTimeout(() => {
-        this.reviewFocus({ elementsToFocus, delay: 0 })
-      }, 0)
+      this.reviewFocus({ elementsToFocus })
     },
     /**
      * Returns true if element has the given className

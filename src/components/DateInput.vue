@@ -267,7 +267,6 @@ export default {
       if (!this.typeable) {
         return
       }
-
       this.validateTypedDate()
       this.$emit('set-focus', ['prev', 'up', 'next', 'tabbable-cell'])
     },

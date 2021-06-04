@@ -86,8 +86,9 @@ describe('Datepicker mounted', () => {
     expect(wrapper.vm.selectedDate).toStrictEqual(new Date(2020, 1, 1))
   })
 
-  it('watches initialView', async () => {
+  it('watches initialView when open', async () => {
     const spy = jest.spyOn(wrapper.vm, 'setInitialView')
+    await wrapper.vm.open()
 
     await wrapper.setProps({ initialView: 'month' })
 
@@ -282,21 +283,17 @@ describe('Datepicker mounted to body', () => {
   })
 
   it("focuses today's date by default", async () => {
-    const input = wrapper.find('input')
-    await input.trigger('focusin')
-    await input.trigger('click')
+    wrapper.vm.open()
 
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     const todayCell = wrapper.find('button.today')
 
     expect(todayCell.text()).toBe(new Date().getDate().toString())
-    expect(document.activeElement).toStrictEqual(todayCell.element)
+    expect(document.activeElement).toBe(todayCell.element)
   })
 
   it('closes when the calendar loses focus', async () => {
-    const input = wrapper.find('input')
-    await input.trigger('focusin')
-    await input.trigger('click')
+    wrapper.vm.open()
 
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
@@ -722,7 +719,6 @@ describe('Datepicker mounted to body with openDate', () => {
     })
 
     const input = wrapper.find('input')
-    await input.element.focus()
     await input.trigger('click')
 
     expect(document.activeElement).toBe(input.element)
@@ -740,7 +736,6 @@ describe('Datepicker mounted to body with openDate', () => {
     })
 
     const input = wrapper.find('input')
-    await input.element.focus()
     await input.trigger('click')
 
     expect(document.activeElement).toBe(input.element)
@@ -753,8 +748,6 @@ describe('Datepicker mounted to body with openDate', () => {
 
   it('opens the calendar on pressing the `down` arrow when the input is focused', async () => {
     const input = wrapper.find('input')
-
-    await input.trigger('focusin')
     await input.trigger('keydown.down')
 
     const openDateCell = wrapper.find('button.open')
@@ -763,8 +756,6 @@ describe('Datepicker mounted to body with openDate', () => {
 
   it('reverts focus to the `open-date` when another date on the same page has focus and the `escape` key is pressed', async () => {
     const input = wrapper.find('input')
-
-    await input.trigger('focusin')
     await input.trigger('click')
 
     const openDateCell = wrapper.find('button.open')
@@ -805,8 +796,6 @@ describe('Datepicker mounted to body with openDate', () => {
 
   it('reverts focus to the `open-date` when a month has focus and the `escape` key is pressed', async () => {
     const input = wrapper.find('input')
-
-    await input.trigger('focusin')
     await input.trigger('click')
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     expect(wrapper.vm.view).toBe('day')
@@ -828,8 +817,6 @@ describe('Datepicker mounted to body with openDate', () => {
 
   it('reverts focus to the `open-date` when a year has focus and the `escape` key is pressed', async () => {
     const input = wrapper.find('input')
-
-    await input.trigger('focusin')
     await input.trigger('click')
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     expect(wrapper.vm.view).toBe('day')
@@ -857,8 +844,6 @@ describe('Datepicker mounted to body with openDate', () => {
 
   it('clears the date and closes the calendar on pressing the `escape` key, if the `open-date` is focused', async () => {
     const input = wrapper.find('input')
-
-    await input.trigger('focusin')
     await input.trigger('click')
 
     expect(wrapper.vm.isOpen).toBeTruthy()

@@ -1,12 +1,13 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps'
 
-const { createCalendar, focusThe, the } = cy
+const { createCalendar, clickThe, focusThe, the } = cy
 
 describe('Focus Trap', () => {
   Given('the calendar is open', () => {
-    createCalendar({
-      initialView: 'day',
-    })
+    createCalendar()
+
+    clickThe('input')
+
     the('calendar').should('be.visible')
     the('picker-cells').should('have.length', 1)
   })

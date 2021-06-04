@@ -5,13 +5,15 @@ const { clickThe, createCalendar, focusThe, the } = cy
 describe('Close on losing focus', () => {
   describe('@id-1: Click outside', () => {
     Given('the calendar is {string}', (openOrClosed) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
         calendarButton: true,
-        initialView: view,
       })
+
+      if (openOrClosed === 'open') {
+        clickThe('input')
+      }
 
       the('calendar').should(`${isNot}be.visible`)
     })
@@ -39,18 +41,21 @@ describe('Close on losing focus', () => {
     Given(
       'the typeable calendar is {string} and a {string} date is typed',
       (openOrClosed, validity) => {
-        const view = openOrClosed === 'closed' ? '' : 'day'
         const date = validity === 'valid' ? '1 March 2021' : 'invalid date'
         const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
         createCalendar({
           calendarButton: true,
-          initialView: view,
           typeable: true,
         })
 
+        if (openOrClosed === 'open') {
+          clickThe('input')
+        }
+
         focusThe('input').type(date)
 
+        the('picker-cells').should('have.length', 1)
         the('calendar').should(`${isNot}be.visible`)
       },
     )

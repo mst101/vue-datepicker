@@ -1,20 +1,22 @@
 import { Given, When, Then, And } from 'cypress-cucumber-preprocessor/steps'
 
-const { createCalendar, focusThe, the } = cy
+const { createCalendar, clickThe, focusThe, the } = cy
 
 describe('@id-1: Press the enter key', () => {
   Given(
     'the typeable calendar is {string} and a {string} date is typed',
     (openOrClosed, validity) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
       const date = validity === 'valid' ? '1 March 2021' : 'invalid date'
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
         calendarButton: true,
-        initialView: view,
         typeable: true,
       })
+
+      if (openOrClosed === 'open') {
+        clickThe('input')
+      }
 
       focusThe('input').type(date)
 
@@ -47,15 +49,17 @@ describe('@id-2: Press the down arrow', () => {
   Given(
     'the typeable calendar is {string} and a {string} date is typed',
     (openOrClosed, validity) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
       const date = validity === 'valid' ? '1 March 2021' : 'invalid date'
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
         calendarButton: true,
-        initialView: view,
         typeable: true,
       })
+
+      if (openOrClosed === 'open') {
+        clickThe('input')
+      }
 
       focusThe('input').type(date)
 

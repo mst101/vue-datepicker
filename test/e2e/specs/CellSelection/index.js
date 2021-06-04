@@ -9,8 +9,10 @@ describe('Focusable Cell', () => {
         initialView: view,
         openDate: new Date(2020, 2, 15),
       })
-      the('calendar').should('be.visible')
+
+      clickThe('input')
       the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
     })
 
     When('the user performs a {string} action', (action) => {

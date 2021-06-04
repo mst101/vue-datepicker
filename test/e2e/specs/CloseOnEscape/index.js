@@ -30,17 +30,20 @@ describe('Close on escape', () => {
     Given(
       'the typeable calendar is {string} and a {string} date is typed',
       (openOrClosed, validity) => {
-        const view = openOrClosed === 'closed' ? '' : 'day'
         const date = validity === 'valid' ? '1 March 2021' : 'invalid date'
         const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
         createCalendar({
-          initialView: view,
           typeable: true,
         })
 
+        if (openOrClosed === 'open') {
+          clickThe('input')
+        }
+
         focusThe('input').type(date)
 
+        the('picker-cells').should('have.length', 1)
         the('calendar').should(`${isNot}be.visible`)
       },
     )
@@ -63,11 +66,13 @@ describe('Close on escape', () => {
   describe('@id-3: Close by pressing escape on the {string}', () => {
     Given('the calendar is open', () => {
       createCalendar({
-        initialView: 'day',
         openDate: new Date(2020, 2, 15),
       })
-      the('calendar').should('be.visible')
+
+      clickThe('input')
+
       the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
     })
 
     When('the user focuses the {string} and presses escape', (element) => {

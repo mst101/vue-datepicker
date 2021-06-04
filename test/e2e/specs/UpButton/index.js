@@ -6,9 +6,11 @@ describe('Up Button', () => {
   describe('@id-1: Select up button by {string}', () => {
     Given('the calendar is open on `Jan 2021`', () => {
       createCalendar({
-        initialView: 'day',
         openDate: new Date(2021, 0, 1),
       })
+
+      clickThe('input')
+
       the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
     })
@@ -55,10 +57,12 @@ describe('Up Button', () => {
 
         createCalendar({
           disabledDates,
-          initialView: 'day',
           language,
           openDate: new Date(2021, 0, 1),
         })
+
+        clickThe('input')
+
         the('calendar').should('be.visible')
         the('picker-cells').should('have.length', 1)
       },
@@ -85,11 +89,13 @@ describe('Up Button', () => {
 
         createCalendar({
           disabledDates,
-          initialView: 'day',
           language,
           openDate: new Date(2021, 0, 1),
           typeable: true,
         })
+
+        clickThe('input')
+
         the('calendar').should('be.visible')
         the('picker-cells').should('have.length', 1)
       },

@@ -69,6 +69,7 @@ export default {
     // eslint-disable-next-line complexity,max-statements
     getElementByRef(ref) {
       if (ref === 'tabbable-cell') {
+        this.updateTabbableCell()
         return this.tabbableCell
       }
       if (ref === 'input') {
@@ -82,7 +83,7 @@ export default {
       }
       if (this.showHeader) {
         if (ref === 'up') {
-          return this.$refs.picker.$refs.up.$el
+          return this.$refs.picker && this.$refs.picker.$refs.up.$el
         }
         return (
           this.$refs.picker &&
@@ -202,17 +203,15 @@ export default {
     },
     /**
      * Determines whether to use a delay when reverting to the open date after pressing the escape key
+     * @param {Date} anchorDate The date from which to measure the test date
+     * @param {Date} testDate   Is this on the same page?
      * @return {Boolean}
      */
-    hasPageChanged() {
-      const openDateTimestamp = this.computedOpenDate.valueOf()
-      const openDatePage = this.utils.setDate(new Date(openDateTimestamp), 1)
-      const focusedDatePage = this.utils.setDate(
-        new Date(this.focusedDateTimestamp),
-        1,
-      )
+    isSamePage(anchorDate, testDate) {
+      const anchorPageDate = this.utils.setDate(new Date(anchorDate), 1)
+      const testPageDate = this.utils.setDate(new Date(testDate), 1)
 
-      return openDatePage !== focusedDatePage
+      return anchorPageDate !== testPageDate
     },
     /**
      * Returns true if the calendar has been passed the given slot
@@ -229,7 +228,12 @@ export default {
     resetFocusToOpenDate(isMinimumView) {
       const openDateTimestamp = this.computedOpenDate.valueOf()
       const elementsToFocus = ['open-date']
-      const delay = this.hasPageChanged() ? this.slideDuration : 0
+      const delay = this.isSamePage(
+        this.computedOpenDate,
+        this.focusedDateTimestamp,
+      )
+        ? this.slideDuration
+        : 0
 
       if (!isMinimumView) {
         this.view = this.minimumView
@@ -246,7 +250,8 @@ export default {
      * @param  {Object} data Optionally specify an array of `elementsToFocus` and/or a `delay`
      */
     reviewFocus(data) {
-      const { elementsToFocus, delay } = data || {}
+      const elementsToFocus = data.elementsToFocus || []
+      const delay = data.delay || 0
       const hasArrowedToNewPage =
         elementsToFocus &&
         elementsToFocus.length === 1 &&
@@ -260,11 +265,10 @@ export default {
       this.resetTabbableCell = true
 
       this.$nextTick(() => {
-        const elements = elementsToFocus || []
         this.setNavElements()
 
         setTimeout(() => {
-          this.focusFirstElementIn(elements)
+          this.focusFirstElementIn(elementsToFocus)
         }, delay)
 
         this.resetTabbableCell = false
@@ -314,7 +318,7 @@ export default {
      */
     // eslint-disable-next-line complexity
     setTabbableCell() {
-      if (!this.$refs.picker.$refs.cells) {
+      if (!this.$refs.picker || !this.$refs.picker.$refs.cells) {
         return
       }
 

@@ -5,13 +5,15 @@ const { clickThe, createCalendar, focusThe, the } = cy
 describe('Open and close the calendar via the input field', () => {
   describe('@id-1: Click on input field', () => {
     Given('the calendar is {string}', (openOrClosed) => {
-      const view = openOrClosed === 'closed' ? '' : 'day'
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
         calendarButton: true,
-        initialView: view,
       })
+
+      if (openOrClosed === 'open') {
+        clickThe('input')
+      }
 
       the('calendar').should(`${isNot}be.visible`)
     })

@@ -375,6 +375,9 @@ describe('Datepicker mounted to document body', () => {
   })
 
   it('submits a valid input when the input field is blurred', async () => {
+    await wrapper.setProps({
+      value: new Date(2019, 2, 25),
+    })
     const input = wrapper.find('input')
 
     input.setValue('13jan2020')
