@@ -197,16 +197,16 @@ export default {
      * @param  {Boolean} isMinimumView The name of the slot
      */
     resetFocusToOpenDate(isMinimumView) {
-      const { computedOpenDate, focusedDateTimestamp } = this
-
       this.refsToFocus = ['open-date']
       this.reviewTransitionAndDelay(
-        focusedDateTimestamp,
-        computedOpenDate,
+        this.focusedDateTimestamp,
+        this.computedOpenDate,
         isMinimumView,
       )
 
-      if (!isMinimumView) {
+      if (isMinimumView) {
+        this.reviewFocus()
+      } else {
         this.isRevertingToOpenDate = true
         this.view = this.minimumView
       }
@@ -214,7 +214,6 @@ export default {
       this.setTabbableCell()
       this.selectedDate = null
       this.setPageDate()
-      this.reviewFocus()
     },
     /**
      * Sets the correct focus on next tick
@@ -229,6 +228,7 @@ export default {
       if (hasArrowedToNewPage) {
         return
       }
+
       this.tabbableCell = null
       this.resetTabbableCell = true
 
@@ -277,21 +277,6 @@ export default {
     setFocus(refs) {
       this.refsToFocus = refs
       this.applyFocus()
-    },
-    /**
-     * Sets the array of `refs` that might be focused following a view change (in order of preference)
-     * @param {String} newView The view being changed to
-     * @param {String} oldView The previous view
-     */
-    setRefsToFocus(newView, oldView) {
-      if (oldView === '') {
-        this.refsToFocus = []
-        return
-      }
-
-      this.refsToFocus = this.isViewChangeUp(newView, oldView)
-        ? ['up', 'tabbable-cell']
-        : ['tabbable-cell', 'up']
     },
     /**
      * Determines which elements in datepicker should be focus-trapped

@@ -428,30 +428,28 @@ export default {
       }
 
       this.selectedDate = null
+      this.refsToFocus = ['input']
       this.close()
       this.$emit('selected', null)
       this.$emit('input', null)
       this.$emit('cleared')
     },
     /**
-     * Close the calendar views
+     * Close the calendar
      */
-    close(refToFocus) {
+    close() {
       if (this.isInline) {
         return
       }
 
-      this.$nextTick(() => {
-        this.view = ''
+      this.view = ''
 
-        if (refToFocus === 'blur' || this.showCalendarOnFocus) {
-          this.resetToggleOnClick = this.utils.getNewDateObject()
-          document.body.focus()
-        } else {
-          this.refsToFocus = [refToFocus || 'input']
-          this.reviewFocus()
-        }
-      })
+      if (this.showCalendarOnFocus || !this.refsToFocus.length) {
+        this.resetToggleOnClick = this.utils.getNewDateObject()
+        document.body.focus()
+      } else {
+        this.reviewFocus()
+      }
 
       this.resetDefaultPageDate()
       this.$emit('closed')
@@ -467,7 +465,8 @@ export default {
       const isFocused = this.allElements.includes(document.activeElement)
 
       if (!isFocused && this.isOpen) {
-        this.close('blur')
+        this.refsToFocus = []
+        this.close()
       }
     },
     /**
@@ -499,10 +498,11 @@ export default {
         this.showNextViewDown(cell)
         return
       }
-      this.focusDelay = cell.isNextMonth ? this.slideDuration : 0
 
+      this.focusDelay = cell.isNextMonth ? this.slideDuration : 0
       this.resetTypedDate = this.utils.getNewDateObject()
       this.selectDate(cell.timestamp)
+      this.refsToFocus = ['input']
       this.close()
 
       if (this.showCalendarOnFocus && !this.inline) {
@@ -581,18 +581,25 @@ export default {
       )
     },
     /**
-     * Returns true if the view increases e.g. from `day` to `month`
-     * @param {String} newView
-     * @param {String} oldView
-     * @return {Boolean}
+     * Sets the array of `refs` that might be focused following a view change (in order of preference)
+     * @param {String} newView The view being changed to
+     * @param {String} oldView The previous view
      */
-    isViewChangeUp(newView, oldView) {
+    setRefsToFocus(newView, oldView) {
+      if (oldView === '') {
+        this.refsToFocus = []
+        return
+      }
+
       const isNewView = (view) => view === newView
       const isOldView = (view) => view === oldView
       const newViewIndex = this.allowedViews.findIndex(isNewView)
       const oldViewIndex = this.allowedViews.findIndex(isOldView)
+      const isViewChangeUp = newViewIndex - oldViewIndex > 0
 
-      return newViewIndex - oldViewIndex > 0
+      this.refsToFocus = isViewChangeUp
+        ? ['up', 'tabbable-cell']
+        : ['tabbable-cell', 'up']
     },
     /**
      * Opens the calendar with the relevant view: 'day', 'month', or 'year'

@@ -349,8 +349,11 @@ export default {
     /**
      * Opens or closes the calendar
      */
-    toggle(source) {
-      this.$emit(this.isOpen ? 'close' : 'open', source)
+    toggle(refToFocus) {
+      if (this.isOpen) {
+        this.$emit('set-focus', [refToFocus || 'input'])
+      }
+      this.$emit(this.isOpen ? 'close' : 'open')
     },
     /**
      * Formats a typed date, or clears it if invalid
