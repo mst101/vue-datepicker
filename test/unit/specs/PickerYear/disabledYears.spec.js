@@ -23,10 +23,10 @@ describe('PickerYear', () => {
   })
 
   it("can't navigate to a disabled year", () => {
-    wrapper.vm.changePage({ delta: -1, elementsToFocus: ['prev'] })
+    wrapper.vm.changePage({ delta: -1, refsToFocus: ['prev'] })
     expect(wrapper.emitted()['changed-decade']).toBeFalsy()
 
-    wrapper.vm.changePage({ delta: 1, elementsToFocus: ['next'] })
+    wrapper.vm.changePage({ delta: 1, refsToFocus: ['next'] })
     expect(wrapper.emitted()['changed-decade']).toBeFalsy()
   })
 

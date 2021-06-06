@@ -36,8 +36,8 @@ describe('Show calendar on focus', () => {
     When('the user focuses the input field')
 
     Then('the calendar opens', () => {
-      the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
     })
 
     And("today's cell has focus", () => {
@@ -89,8 +89,8 @@ describe('Show calendar on focus', () => {
         clickThe('input')
       }
 
-      the('calendar').should(`${isNot}be.visible`)
       the('picker-cells').should('have.length', 1)
+      the('calendar').should(`${isNot}be.visible`)
     })
 
     When('the user focuses the input field')

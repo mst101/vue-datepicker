@@ -42,7 +42,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: -1,
-      elementsToFocus: ['prev'],
+      refsToFocus: ['prev'],
     })
   })
 
@@ -52,7 +52,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: -1,
-      elementsToFocus: ['prev'],
+      refsToFocus: ['prev'],
     })
   })
 
@@ -66,7 +66,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: -1,
-      elementsToFocus: ['prev'],
+      refsToFocus: ['prev'],
     })
   })
 
@@ -76,7 +76,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: 1,
-      elementsToFocus: ['next'],
+      refsToFocus: ['next'],
     })
   })
 
@@ -86,7 +86,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: 1,
-      elementsToFocus: ['next'],
+      refsToFocus: ['next'],
     })
   })
 
@@ -100,7 +100,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: 1,
-      elementsToFocus: ['next'],
+      refsToFocus: ['next'],
     })
   })
 

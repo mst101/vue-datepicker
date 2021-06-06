@@ -78,8 +78,8 @@ describe('Calendar button', () => {
     })
 
     Then('the calendar opens', () => {
-      the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
     })
 
     And("today's cell has focus", () => {

@@ -316,7 +316,7 @@ describe('Datepicker mounted to document body', () => {
     expect(wrapper.vm.isOpen).toBeTruthy()
   })
 
-  it('focuses the previous button on keydown when open', async () => {
+  it('focuses the previous button on arrowing down from the input field when open', async () => {
     const input = wrapper.find('input')
     const prevButton = wrapper.find('.prev')
 

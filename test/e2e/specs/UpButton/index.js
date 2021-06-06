@@ -11,8 +11,8 @@ describe('Up Button', () => {
 
       clickThe('input')
 
-      the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
     })
 
     When('the user performs a {string} action', (action) => {
@@ -25,6 +25,7 @@ describe('Up Button', () => {
     })
 
     Then('the page is `2021`', () => {
+      the('picker-cells').should('have.length', 1)
       the('up-button').should('contain', '2021')
     })
 
@@ -63,8 +64,8 @@ describe('Up Button', () => {
 
         clickThe('input')
 
-        the('calendar').should('be.visible')
         the('picker-cells').should('have.length', 1)
+        the('calendar').should('be.visible')
       },
     )
 
@@ -96,8 +97,8 @@ describe('Up Button', () => {
 
         clickThe('input')
 
-        the('calendar').should('be.visible')
         the('picker-cells').should('have.length', 1)
+        the('calendar').should('be.visible')
       },
     )
 

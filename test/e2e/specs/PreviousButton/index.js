@@ -11,8 +11,8 @@ describe('Previous Button', () => {
 
       clickThe('input')
 
-      the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
     })
 
     When('the user performs a {string} action', (action) => {
@@ -65,8 +65,8 @@ describe('Previous Button', () => {
 
         clickThe('input')
 
-        the('calendar').should('be.visible')
         the('picker-cells').should('have.length', 1)
+        the('calendar').should('be.visible')
       },
     )
 
@@ -87,8 +87,8 @@ describe('Previous Button', () => {
 
       clickThe('input')
 
-      the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
     })
 
     When('the user presses the `up` arrow', () => {

@@ -6,27 +6,27 @@ Feature: Cell Selection
 
   @id-1
   Scenario Outline: Select by <action>: minimum view
-    Given the calendar is open with a "<view>" view
+    Given the calendar is open on the minimum view
     When the user performs a "<action>" action
     Then the date is submitted
     And the input field has focus
 
     Examples:
-      | # | view | action |
-      | 1 | day  | click  |
-      | 2 | day  | enter  |
-      | 3 | day  | space  |
+      | # | action |
+      | 1 | click  |
+      | 2 | enter  |
+      | 3 | space  |
 
 
   @id-2
   Scenario Outline: Select by <action>: NOT minimum view
-    Given the calendar is open with a "<view>" view
+    Given the calendar is open on a higher than minimum view
     When the user performs a "<action>" action
     Then the `day` view is shown
     And the tabbable cell has focus
 
     Examples:
-      | # | view  | action |
-      | 1 | month | click  |
-      | 2 | month | enter  |
-      | 3 | month | space  |
+      | # | action |
+      | 1 | click  |
+      | 2 | enter  |
+      | 3 | space  |

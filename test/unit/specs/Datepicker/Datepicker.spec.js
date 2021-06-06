@@ -800,13 +800,15 @@ describe('Datepicker mounted to body with openDate', () => {
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     expect(wrapper.vm.view).toBe('day')
 
-    const upButton = wrapper.find('button.up')
+    let upButton = wrapper.find('button.up')
     await upButton.trigger('click')
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     expect(wrapper.vm.view).toBe('month')
 
+    upButton = wrapper.find('button.up')
+    await upButton.trigger('keydown.down')
+
     const firstCell = wrapper.find('button.cell:not(.muted)')
-    await firstCell.trigger('focusin')
     await firstCell.trigger('keydown.esc')
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     expect(wrapper.vm.view).toBe('day')
@@ -833,7 +835,9 @@ describe('Datepicker mounted to body with openDate', () => {
     expect(wrapper.vm.view).toBe('year')
 
     const firstCell = wrapper.find('button.cell:not(.muted)')
-    await firstCell.trigger('focusin')
+    upButton = wrapper.find('button.up')
+    await upButton.trigger('keydown.down')
+
     await firstCell.trigger('keydown.esc')
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     expect(wrapper.vm.view).toBe('day')

@@ -58,7 +58,7 @@ Feature: Close on escape
     Then the open date has focus
 
 
-  @id-6
+  @id-6 @focus
   Scenario: Revert to open date when the focused cell is on a different view
     Given the calendar is open
     And the user visits the next view up

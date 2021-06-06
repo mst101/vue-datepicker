@@ -16,8 +16,8 @@ describe('Focusable Cell', () => {
 
         clickThe('input')
 
-        the('calendar').should('be.visible')
         the('picker-cells').should('have.length', 1)
+        the('calendar').should('be.visible')
       },
     )
 

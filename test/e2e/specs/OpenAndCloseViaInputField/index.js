@@ -44,8 +44,8 @@ describe('Open and close the calendar via the input field', () => {
     })
 
     Then('the calendar opens', () => {
-      the('calendar').should('be.visible')
       the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
     })
 
     And("today's cell has focus", () => {

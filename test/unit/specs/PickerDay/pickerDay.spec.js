@@ -28,12 +28,12 @@ describe('PickerDay: shallowMount', () => {
   })
 
   it('can set the next month', () => {
-    wrapper.vm.changePage({ incrementBy: 1, elementsToFocus: ['next'] })
+    wrapper.vm.changePage({ incrementBy: 1, refsToFocus: ['next'] })
     expect(wrapper.emitted('page-change')[0][0].pageDate.getMonth()).toEqual(2)
   })
 
   it('can set the previous month', () => {
-    wrapper.vm.changePage({ incrementBy: -1, elementsToFocus: ['prev'] })
+    wrapper.vm.changePage({ incrementBy: -1, refsToFocus: ['prev'] })
     expect(wrapper.emitted('page-change')[0][0].pageDate.getMonth()).toEqual(0)
   })
 

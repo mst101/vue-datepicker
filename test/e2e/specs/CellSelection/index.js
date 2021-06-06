@@ -4,9 +4,8 @@ const { clickThe, createCalendar, focusThe, the } = cy
 
 describe('Focusable Cell', () => {
   describe('@id-1: Select by {string}: minimum view', () => {
-    Given('the calendar is open with a {string} view', (view) => {
+    Given('the calendar is open on the minimum view', () => {
       createCalendar({
-        initialView: view,
         openDate: new Date(2020, 2, 15),
       })
 
@@ -34,11 +33,24 @@ describe('Focusable Cell', () => {
   })
 
   describe('@id-2: Select by {string}: NOT minimum view', () => {
-    Given('the calendar is open with a {string} view')
+    Given('the calendar is open on a higher than minimum view', () => {
+      createCalendar({
+        openDate: new Date(2020, 2, 15),
+      })
+
+      clickThe('input')
+      the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
+
+      clickThe('up-button')
+      the('picker-cells').should('have.length', 1)
+      the('calendar').should('be.visible')
+    })
 
     When('the user performs a {string} action')
 
     Then('the `day` view is shown', () => {
+      the('picker-cells').should('have.length', 1)
       the('up-button').should('contain', 'Jan 2020')
     })
 
