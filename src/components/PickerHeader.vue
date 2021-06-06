@@ -65,8 +65,8 @@ export default {
   },
   data() {
     return {
-      previousPage: { incrementBy: -1, elementsToFocus: ['prev'] },
-      nextPage: { incrementBy: 1, elementsToFocus: ['next'] },
+      previousPage: { incrementBy: -1, refsToFocus: ['prev'] },
+      nextPage: { incrementBy: 1, refsToFocus: ['next'] },
     }
   },
   methods: {

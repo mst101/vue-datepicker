@@ -43,7 +43,7 @@
       @close="close"
       @focus="handleInputFocus"
       @open="open"
-      @set-focus="focusFirstElementIn($event)"
+      @set-focus="setFocus($event)"
       @typed-date="handleTypedDate"
     >
       <slot slot="beforeDateInput" name="beforeDateInput" />
@@ -102,7 +102,7 @@
               @clear-date="clearDate"
               @page-change="handlePageChange"
               @select="handleSelect"
-              @set-focus="focusFirstElementIn($event)"
+              @set-focus="setFocus($event)"
               @set-transition-name="setTransitionName($event)"
               @set-view="setView"
             >
@@ -265,7 +265,6 @@ export default {
        * {Date}
        */
       selectedDate: null,
-      transitionName: '',
       utils,
       view: '',
     }
@@ -437,7 +436,7 @@ export default {
     /**
      * Close the calendar views
      */
-    close(elementToFocus) {
+    close(refToFocus) {
       if (this.isInline) {
         return
       }
@@ -445,14 +444,12 @@ export default {
       this.$nextTick(() => {
         this.view = ''
 
-        if (elementToFocus === 'blur' || this.showCalendarOnFocus) {
+        if (refToFocus === 'blur' || this.showCalendarOnFocus) {
           this.resetToggleOnClick = this.utils.getNewDateObject()
           document.body.focus()
         } else {
-          const elementsToFocus = [elementToFocus, 'input'].filter(
-            (item) => !!item,
-          )
-          this.reviewFocus({ elementsToFocus })
+          this.refsToFocus = [refToFocus || 'input']
+          this.reviewFocus()
         }
       })
 
@@ -488,9 +485,10 @@ export default {
     /**
      * Set the new pageDate, focus the relevant element and emit a `changed-<view>` event
      */
-    handlePageChange({ elementsToFocus, pageDate }) {
+    handlePageChange({ refsToFocus, pageDate }) {
       this.setPageDate(pageDate)
-      this.reviewFocus({ elementsToFocus })
+      this.refsToFocus = refsToFocus
+      this.reviewFocus()
       this.$emit(`changed-${this.nextView.up}`, pageDate)
     },
     /**
@@ -501,7 +499,7 @@ export default {
         this.showNextViewDown(cell)
         return
       }
-      const delay = cell.isNextMonth ? this.slideDuration : 0
+      this.focusDelay = cell.isNextMonth ? this.slideDuration : 0
 
       this.resetTypedDate = this.utils.getNewDateObject()
       this.selectDate(cell.timestamp)
@@ -510,7 +508,7 @@ export default {
       if (this.showCalendarOnFocus && !this.inline) {
         this.resetToggleOnClick = this.utils.getNewDateObject()
       } else {
-        this.reviewFocus({ delay })
+        this.reviewFocus()
       }
     },
     /**
@@ -518,18 +516,12 @@ export default {
      * @param {Date} date
      */
     handleTypedDate(date) {
-      let delay = 0
-
       if (this.selectedDate) {
-        this.setTransitionName(date.valueOf() - this.selectedDate.valueOf())
-
-        delay = this.isSamePage(this.selectedDate, date)
-          ? this.slideDuration
-          : 0
+        this.reviewTransitionAndDelay(this.selectedDate, date)
       }
 
       this.selectDate(date ? date.valueOf() : null)
-      this.reviewFocus({ delay })
+      this.reviewFocus()
     },
     /**
      * Focus the relevant element when the view changes
@@ -537,15 +529,25 @@ export default {
      * @param {String} oldView
      */
     handleViewChange(newView, oldView) {
-      if (newView === '' || (oldView === '' && this.isInline)) {
+      const isClosing = newView === ''
+      const isOpeningInline = oldView === '' && this.isInline
+
+      if (isClosing || isOpeningInline) {
         return
       }
-      const elementsToFocus = this.getElementsToFocus(newView, oldView)
 
-      this.reviewFocus({ elementsToFocus })
+      if (!this.isRevertingToOpenDate) {
+        this.setRefsToFocus(newView, oldView)
+        this.reviewFocus()
+      }
+
+      this.isRevertingToOpenDate = false
     },
     /**
      * Returns true if element has the given className
+     * @param   {HTMLElement} element
+     * @param   {String}      className
+     * @returns {Boolean}
      */
     hasClass(element, className) {
       return element && element.className.split(' ').includes(className)
@@ -601,7 +603,7 @@ export default {
       }
 
       this.setInitialView()
-      this.focusFirstElementIn([])
+      this.applyFocus()
 
       this.$emit('opened')
     },
@@ -673,16 +675,6 @@ export default {
         dateTemp = this.utils.resetDateTime(dateTemp)
       }
       this.pageTimestamp = this.utils.setDate(new Date(dateTemp), 1)
-    },
-    /**
-     * Sets the direction of the slide transition
-     */
-    setTransitionName(plusOrMinus) {
-      if (this.isRtl) {
-        this.transitionName = plusOrMinus > 0 ? 'slide-left' : 'slide-right'
-      } else {
-        this.transitionName = plusOrMinus > 0 ? 'slide-right' : 'slide-left'
-      }
     },
     /**
      * Set the datepicker value

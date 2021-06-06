@@ -3,11 +3,15 @@ export default {
   data() {
     return {
       allElements: [],
+      focusDelay: 0,
       isDirty: false,
+      isRevertingToOpenDate: false,
       navElements: [],
       navElementsFocusedIndex: 0,
       resetTabbableCell: false,
+      refsToFocus: [],
       tabbableCell: null,
+      transitionName: '',
     }
   },
   computed: {
@@ -39,14 +43,24 @@ export default {
   },
   methods: {
     /**
-     * Focuses the first element found in an array of `refs`
-     * @param {Array} refs An ordered array of `refs`
+     * Focuses the first non-disabled element found in the `refsToFocus` array
      */
-    focusFirstElementIn(refs) {
-      const element = this.getElementToFocus(refs)
+    applyFocus() {
+      let elementToFocus
+      const refsToFocus = [...this.refsToFocus]
+      refsToFocus.push(this.fallbackElementToFocus)
 
-      if (element) {
-        element.focus()
+      for (let i = 0; i < refsToFocus.length; i += 1) {
+        const element = this.getElementByRef(refsToFocus[i])
+
+        if (element && !element.getAttribute('disabled')) {
+          elementToFocus = element
+          break
+        }
+      }
+
+      if (elementToFocus) {
+        elementToFocus.focus()
       }
     },
     /**
@@ -94,25 +108,6 @@ export default {
       return null
     },
     /**
-     * Returns the first focusable element in an array of `refs`
-     * Defaults to `this.fallbackElementToFocus`
-     * @param   {Array} refs  An array of `refs`
-     * @returns {HTMLElement}
-     */
-    getElementToFocus(refs) {
-      refs.push(this.fallbackElementToFocus)
-
-      for (let i = 0; i < refs.length; i += 1) {
-        const element = this.getElementByRef(refs[i])
-
-        if (element && !element.getAttribute('disabled')) {
-          return element
-        }
-      }
-
-      return null
-    },
-    /**
      * Returns an array of all HTML elements which should be focus-trapped in the specified slot
      * @returns {Array}   An array of HTML elements
      */
@@ -142,18 +137,6 @@ export default {
       const fragment = picker.children[index]
 
       return this.showHeader ? this.getFocusableElements(fragment) : []
-    },
-    /**
-     * Returns an array of elements that might be focused following a view change (in order of preference)
-     * @returns {Array}   An array of HTML elements
-     */
-    getElementsToFocus(newView, oldView) {
-      const isViewChangeUp = this.isViewChangeUp(newView, oldView)
-      const elementsToFocus = isViewChangeUp
-        ? ['up', 'tabbable-cell']
-        : ['tabbable-cell', 'up']
-
-      return oldView === '' ? [] : elementsToFocus
     },
     /**
      * Returns the input element (when typeable)
@@ -202,18 +185,6 @@ export default {
       }
     },
     /**
-     * Determines whether to use a delay when reverting to the open date after pressing the escape key
-     * @param {Date} anchorDate The date from which to measure the test date
-     * @param {Date} testDate   Is this on the same page?
-     * @return {Boolean}
-     */
-    isSamePage(anchorDate, testDate) {
-      const anchorPageDate = this.utils.setDate(new Date(anchorDate), 1)
-      const testPageDate = this.utils.setDate(new Date(testDate), 1)
-
-      return anchorPageDate !== testPageDate
-    },
-    /**
      * Returns true if the calendar has been passed the given slot
      * @param  {String} slotName The name of the slot
      * @return {Boolean}
@@ -226,41 +197,38 @@ export default {
      * @param  {Boolean} isMinimumView The name of the slot
      */
     resetFocusToOpenDate(isMinimumView) {
-      const openDateTimestamp = this.computedOpenDate.valueOf()
-      const elementsToFocus = ['open-date']
-      const delay = this.isSamePage(
-        this.computedOpenDate,
-        this.focusedDateTimestamp,
+      const { computedOpenDate, focusedDateTimestamp } = this
+
+      this.refsToFocus = ['open-date']
+      this.reviewTransitionAndDelay(
+        focusedDateTimestamp,
+        computedOpenDate,
+        isMinimumView,
       )
-        ? this.slideDuration
-        : 0
 
       if (!isMinimumView) {
+        this.isRevertingToOpenDate = true
         this.view = this.minimumView
       }
 
       this.setTabbableCell()
-      this.setTransitionName(openDateTimestamp - this.focusedDateTimestamp)
       this.selectedDate = null
       this.setPageDate()
-      this.reviewFocus({ elementsToFocus, delay })
+      this.reviewFocus()
     },
     /**
      * Sets the correct focus on next tick
-     * @param  {Object} data Optionally specify an array of `elementsToFocus` and/or a `delay`
      */
-    reviewFocus(data) {
-      const elementsToFocus = data.elementsToFocus || []
-      const delay = data.delay || 0
+    reviewFocus() {
+      const { refsToFocus } = this
       const hasArrowedToNewPage =
-        elementsToFocus &&
-        elementsToFocus.length === 1 &&
-        elementsToFocus[0] === 'tabbable-cell'
+        refsToFocus &&
+        refsToFocus.length === 1 &&
+        refsToFocus[0] === 'tabbable-cell'
 
       if (hasArrowedToNewPage) {
         return
       }
-
       this.tabbableCell = null
       this.resetTabbableCell = true
 
@@ -268,11 +236,31 @@ export default {
         this.setNavElements()
 
         setTimeout(() => {
-          this.focusFirstElementIn(elementsToFocus)
-        }, delay)
+          this.applyFocus()
+        }, this.focusDelay)
 
         this.resetTabbableCell = false
       })
+    },
+    /**
+     * Sets the direction of the slide transition and whether or not to delay application of the focus
+     * @param {Date|Number} startDate     The date from which to measure
+     * @param {Date|Number} endDate       Is this before or after the startDate? And is it on the same page?
+     * @param {Boolean}     isMinimumView Used to determine whether we are changing down from a higher view
+     *                                    when reverting focus to the open date (on escape)
+     */
+    reviewTransitionAndDelay(startDate, endDate, isMinimumView = true) {
+      const startPageDate = this.utils.setDate(new Date(startDate), 1)
+      const endPageDate = this.utils.setDate(new Date(endDate), 1)
+      const isSamePage = startPageDate === endPageDate
+
+      if (isMinimumView) {
+        this.delayFocus = isSamePage ? 0 : this.slideDuration
+      } else {
+        this.delayFocus = this.fadeDuration
+      }
+
+      this.setTransitionName(endDate - startDate)
     },
     /**
      * Records all focusable elements (so that we know whether any element in the datepicker is focused)
@@ -281,6 +269,29 @@ export default {
       const vdpDatepicker = this.$refs['vdp-datepicker']
 
       this.allElements = this.getFocusableElements(vdpDatepicker)
+    },
+    /**
+     * Sets the array of `refs` that might be focused following a view change (in order of preference)
+     * @param {Array} refs The view being changed to
+     */
+    setFocus(refs) {
+      this.refsToFocus = refs
+      this.applyFocus()
+    },
+    /**
+     * Sets the array of `refs` that might be focused following a view change (in order of preference)
+     * @param {String} newView The view being changed to
+     * @param {String} oldView The previous view
+     */
+    setRefsToFocus(newView, oldView) {
+      if (oldView === '') {
+        this.refsToFocus = []
+        return
+      }
+
+      this.refsToFocus = this.isViewChangeUp(newView, oldView)
+        ? ['up', 'tabbable-cell']
+        : ['tabbable-cell', 'up']
     },
     /**
      * Determines which elements in datepicker should be focus-trapped
@@ -330,6 +341,19 @@ export default {
         pickerCells.querySelector('button.open:not(.muted):enabled') ||
         pickerCells.querySelector('button.today:not(.muted):enabled') ||
         pickerCells.querySelector('button.cell:not(.muted):enabled')
+    },
+    /**
+     * Sets the direction of the slide transition
+     * @param {Number} plusOrMinus Positive for the future; negative for the past
+     */
+    setTransitionName(plusOrMinus) {
+      const isInTheFuture = plusOrMinus > 0
+
+      if (this.isRtl) {
+        this.transitionName = isInTheFuture ? 'slide-left' : 'slide-right'
+      } else {
+        this.transitionName = isInTheFuture ? 'slide-right' : 'slide-left'
+      }
     },
     /**
      * Tab backwards through the focus-trapped elements
