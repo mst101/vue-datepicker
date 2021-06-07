@@ -484,6 +484,7 @@ export default {
     /**
      * Set the date, or go to the next view down
      */
+    // eslint-disable-next-line max-statements
     handleSelect(cell) {
       if (this.allowedToShowView(this.nextView.down)) {
         this.showNextViewDown(cell)
