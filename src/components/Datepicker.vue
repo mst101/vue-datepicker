@@ -29,7 +29,6 @@
       :placeholder="placeholder"
       :ref-name="refName"
       :required="required"
-      :reset-typed-date="resetTypedDate"
       :reset-toggle-on-click="resetToggleOnClick"
       :selected-date="selectedDate"
       :show-calendar-on-button-click="showCalendarOnButtonClick"
@@ -259,11 +258,6 @@ export default {
       pageTimestamp,
       pickerHeight: 0,
       resetToggleOnClick: utils.getNewDateObject(),
-      resetTypedDate: utils.getNewDateObject(),
-      /*
-       * Selected Date
-       * {Date}
-       */
       selectedDate: null,
       utils,
       view: '',
@@ -500,7 +494,7 @@ export default {
       }
 
       this.focusDelay = cell.isNextMonth ? this.slideDuration : 0
-      this.resetTypedDate = this.utils.getNewDateObject()
+      this.$refs.DateInput.typedDate = ''
       this.selectDate(cell.timestamp)
       this.refsToFocus = ['input']
       this.close()

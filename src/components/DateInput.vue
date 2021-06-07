@@ -92,10 +92,6 @@ export default {
       type: [Date],
       default: null,
     },
-    resetTypedDate: {
-      type: [Date],
-      default: null,
-    },
     selectedDate: {
       type: Date,
       default: null,
@@ -175,9 +171,6 @@ export default {
     },
     resetToggleOnClick() {
       this.shouldToggleOnClick = true
-    },
-    resetTypedDate() {
-      this.typedDate = ''
     },
     selectedDate() {
       if (this.typeable) {
