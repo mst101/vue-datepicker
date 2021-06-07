@@ -11,9 +11,9 @@
       @previous="previousPage"
     >
       <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
-      <span>
+      <UpButton ref="up" :is-disabled="true">
         {{ pageTitleYear }}
-      </span>
+      </UpButton>
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
     </PickerHeader>
 
@@ -36,9 +36,11 @@
 <script>
 import pickerMixin from '~/mixins/pickerMixin.vue'
 import DisabledDate from '~/utils/DisabledDate'
+import UpButton from './UpButton.vue'
 
 export default {
   name: 'PickerYear',
+  components: { UpButton },
   mixins: [pickerMixin],
   props: {
     yearRange: {

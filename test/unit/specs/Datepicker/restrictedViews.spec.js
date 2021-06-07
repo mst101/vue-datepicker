@@ -65,7 +65,7 @@ describe('Datepicker with restricted views', () => {
     expect(wrapper.vm.picker).toBe('PickerMonth')
 
     upButton = wrapper.find('.month__year_btn')
-    expect(upButton.element.tabIndex).toBe(-1)
+    expect(upButton.element.disabled).toBe(true)
 
     wrapper = mount(Datepicker, {
       propsData: {

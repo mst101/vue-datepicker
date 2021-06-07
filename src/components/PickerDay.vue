@@ -11,13 +11,14 @@
       @previous="previousPage"
     >
       <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
-      <span
-        :class="{ up: !isUpDisabled }"
+      <UpButton
+        ref="up"
         class="day__month_btn"
-        @click="$emit('set-view', 'month')"
+        :is-disabled="isUpDisabled"
+        @select="$emit('set-view', 'month')"
       >
         {{ pageTitleDay }}
-      </span>
+      </UpButton>
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
     </PickerHeader>
 
@@ -48,9 +49,11 @@
 import pickerMixin from '~/mixins/pickerMixin.vue'
 import DisabledDate from '~/utils/DisabledDate'
 import HighlightedDate from '~/utils/HighlightedDate'
+import UpButton from './UpButton.vue'
 
 export default {
   name: 'PickerDay',
+  components: { UpButton },
   mixins: [pickerMixin],
   props: {
     dayCellContent: {

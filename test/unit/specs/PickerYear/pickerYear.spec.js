@@ -51,15 +51,16 @@ describe('PickerYear', () => {
   })
 
   it('formats the decade range', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       pageDate: new Date(2021, 1, 1),
     })
-    await wrapper.vm.$nextTick()
+
     expect(wrapper.vm.pageTitleYear).toEqual('2020 - 2029')
-    wrapper.setProps({
+
+    await wrapper.setProps({
       pageDate: new Date(2001, 1, 1),
     })
-    await wrapper.vm.$nextTick()
+
     expect(wrapper.vm.pageTitleYear).toEqual('2000 - 2009')
   })
 
@@ -75,6 +76,6 @@ describe('PickerYear', () => {
     })
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.pageTitleYear).toEqual('2016 - 2027')
-    expect(wrapper.vm.$el.querySelectorAll('.cell.year').length).toEqual(12)
+    expect(wrapper.vm.cells.length).toEqual(12)
   })
 })
