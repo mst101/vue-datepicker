@@ -9,6 +9,7 @@ describe('PickerYear', () => {
       propsData: {
         translation: en,
         pageDate: new Date(2018, 1, 1),
+        view: 'year',
       },
     })
   })

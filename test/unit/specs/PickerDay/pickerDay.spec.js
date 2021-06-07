@@ -1,14 +1,15 @@
-import { shallowMount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import PickerDay from '~/components/PickerDay.vue'
 import { en, mn } from '~/locale'
 
-describe('PickerDay: DOM', () => {
+describe('PickerDay: shallowMount', () => {
   let wrapper
   beforeEach(() => {
     wrapper = shallowMount(PickerDay, {
       propsData: {
         translation: en,
         pageDate: new Date(2018, 1, 1),
+        view: 'day',
       },
     })
   })
@@ -66,10 +67,28 @@ describe('PickerDay: DOM', () => {
     upButton.vm.$emit('select')
     expect(wrapper.emitted()['set-view'][0][0]).toBe('month')
   })
+})
+
+describe('PickerDay: mount', () => {
+  let wrapper
+  beforeEach(() => {
+    wrapper = mount(PickerDay, {
+      propsData: {
+        translation: en,
+        pageDate: new Date(2018, 1, 1),
+        view: 'day',
+      },
+    })
+  })
+
+  afterEach(() => {
+    wrapper.destroy()
+  })
 
   it('displays edge dates by default', () => {
-    const firstCell = wrapper.findAll('.day').at(0)
-    const lastCell = wrapper.findAll('.day').at(34)
+    const cells = wrapper.findAll('button.cell')
+    const firstCell = cells.at(0)
+    const lastCell = cells.at(34)
 
     expect(firstCell.text()).toBe('28')
     expect(lastCell.text()).toBe('3')
@@ -80,15 +99,17 @@ describe('PickerDay: DOM', () => {
       showEdgeDates: false,
     })
 
-    const firstCell = wrapper.findAll('.day').at(0)
-    const lastCell = wrapper.findAll('.day').at(34)
+    const cells = wrapper.findAll('button.cell')
+    const firstCell = cells.at(0)
+    const lastCell = cells.at(34)
 
     expect(firstCell.text()).toBe('')
     expect(lastCell.text()).toBe('')
   })
 
   it('should select an edge date from the previous month', async () => {
-    const firstCell = wrapper.findAll('.day').at(0)
+    const cells = wrapper.findAll('button.cell')
+    const firstCell = cells.at(0)
 
     await firstCell.trigger('click')
 
@@ -96,7 +117,8 @@ describe('PickerDay: DOM', () => {
   })
 
   it('should select an edge date from the next month', async () => {
-    const lastCell = wrapper.findAll('.day').at(34)
+    const cells = wrapper.findAll('button.cell')
+    const lastCell = cells.at(34)
 
     await lastCell.trigger('click')
 

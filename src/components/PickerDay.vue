@@ -26,19 +26,17 @@
       <span v-for="day in daysOfWeek" :key="day" class="day-header">
         {{ day }}
       </span>
-      <div ref="cells">
-        <span
-          v-for="cell in cells"
-          :key="cell.timestamp"
-          class="cell day"
-          :class="dayClasses(cell)"
-          @click="select(cell)"
-        >
-          <slot name="dayCellContent" :cell="cell">
-            {{ dayCellContent(cell) }}
-          </slot>
-        </span>
-      </div>
+
+      <PickerCells
+        ref="cells"
+        :key="pageTitleDay"
+        v-slot="{ cell }"
+        :cells="cells"
+        view="day"
+        @select="select($event)"
+      >
+        {{ dayCellContent(cell) }}
+      </PickerCells>
     </div>
 
     <slot name="calendarFooterDay" />
@@ -49,11 +47,12 @@
 import pickerMixin from '~/mixins/pickerMixin.vue'
 import DisabledDate from '~/utils/DisabledDate'
 import HighlightedDate from '~/utils/HighlightedDate'
+import PickerCells from './PickerCells.vue'
 import UpButton from './UpButton.vue'
 
 export default {
   name: 'PickerDay',
-  components: { UpButton },
+  components: { PickerCells, UpButton },
   mixins: [pickerMixin],
   props: {
     dayCellContent: {

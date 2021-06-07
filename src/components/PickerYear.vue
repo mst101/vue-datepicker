@@ -17,17 +17,16 @@
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
     </PickerHeader>
 
-    <div ref="cells">
-      <span
-        v-for="cell in cells"
-        :key="cell.timestamp"
-        class="cell year"
-        :class="{ selected: cell.isSelected, disabled: cell.isDisabled }"
-        @click="select(cell)"
-      >
-        {{ cell.year }}
-      </span>
-    </div>
+    <PickerCells
+      ref="cells"
+      :key="pageTitleYear"
+      v-slot="{ cell }"
+      :cells="cells"
+      view="year"
+      @select="select($event)"
+    >
+      {{ cell.year }}
+    </PickerCells>
 
     <slot name="calendarFooterYear" />
   </div>
@@ -36,11 +35,12 @@
 <script>
 import pickerMixin from '~/mixins/pickerMixin.vue'
 import DisabledDate from '~/utils/DisabledDate'
+import PickerCells from './PickerCells.vue'
 import UpButton from './UpButton.vue'
 
 export default {
   name: 'PickerYear',
-  components: { UpButton },
+  components: { PickerCells, UpButton },
   mixins: [pickerMixin],
   props: {
     yearRange: {

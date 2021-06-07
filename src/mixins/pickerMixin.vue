@@ -43,6 +43,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    view: {
+      type: String,
+      default: 'day',
+    },
   },
   data() {
     return {
