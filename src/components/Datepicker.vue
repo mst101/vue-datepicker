@@ -29,7 +29,6 @@
       :placeholder="placeholder"
       :ref-name="refName"
       :required="required"
-      :reset-toggle-on-click="resetToggleOnClick"
       :selected-date="selectedDate"
       :show-calendar-on-button-click="showCalendarOnButtonClick"
       :show-calendar-on-focus="showCalendarOnFocus"
@@ -257,7 +256,6 @@ export default {
        */
       pageTimestamp,
       pickerHeight: 0,
-      resetToggleOnClick: utils.getNewDateObject(),
       selectedDate: null,
       utils,
       view: '',
@@ -436,7 +434,7 @@ export default {
       this.view = ''
 
       if (this.showCalendarOnFocus || !this.refsToFocus.length) {
-        this.resetToggleOnClick = this.utils.getNewDateObject()
+        this.$refs.DateInput.shouldToggleOnClick = true
         document.body.focus()
       } else {
         this.reviewFocus()
@@ -498,7 +496,7 @@ export default {
       this.close()
 
       if (this.showCalendarOnFocus && !this.inline) {
-        this.resetToggleOnClick = this.utils.getNewDateObject()
+        this.$refs.DateInput.shouldToggleOnClick = true
       } else {
         this.reviewFocus()
       }
