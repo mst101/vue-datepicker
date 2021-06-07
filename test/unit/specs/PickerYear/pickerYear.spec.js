@@ -65,14 +65,14 @@ describe('PickerYear', () => {
     })
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
-    expect(wrapper.vm.pageTitle).toEqual('2020 - 2029')
+    expect(wrapper.vm.pageTitleYear).toEqual('2020 - 2029')
 
     await wrapper.setProps({
       pageDate: new Date(2001, 1, 1),
     })
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
-    expect(wrapper.vm.pageTitle).toEqual('2000 - 2009')
+    expect(wrapper.vm.pageTitleYear).toEqual('2000 - 2009')
   })
 
   it('emits an event when selected', () => {
@@ -86,7 +86,7 @@ describe('PickerYear', () => {
       yearRange: 12,
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.pageTitle).toEqual('2016 - 2027')
+    expect(wrapper.vm.pageTitleYear).toEqual('2016 - 2027')
     expect(wrapper.vm.cells.length).toEqual(12)
   })
 })

@@ -13,7 +13,7 @@
     @keydown.right.prevent="$emit('set-focus', [isRtl ? 'prev' : 'next'])"
     @keyup.space.prevent="$emit('select')"
   >
-    {{ title }}
+    <slot />
   </button>
 </template>
 
@@ -21,10 +21,6 @@
 export default {
   name: 'UpButton',
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
     isDisabled: {
       type: Boolean,
       default: false,

@@ -20,11 +20,12 @@
         :is-disabled="isUpDisabled"
         :is-rtl="isRtl"
         :is-typeable="isTypeable"
-        :title="pageTitle"
         @clear-date="$emit('clear-date')"
         @select="$emit('set-view', 'month')"
         @set-focus="$emit('set-focus', $event)"
-      />
+      >
+        {{ pageTitleDay }}
+      </UpButton>
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
     </PickerHeader>
 
@@ -43,7 +44,7 @@
         <Transition :name="transitionName">
           <PickerCells
             ref="cells"
-            :key="pageTitle"
+            :key="pageTitleDay"
             :cells="cells"
             :day-cell-content="dayCellContent"
             :is-rtl="isRtl"
@@ -228,7 +229,7 @@ export default {
      * Display the current page's month & year as the title.
      * @return {String}
      */
-    pageTitle() {
+    pageTitleDay() {
       return this.translation.ymd
         ? `${this.currYearName} ${this.currMonthName}`
         : `${this.currMonthName} ${this.currYearName}`

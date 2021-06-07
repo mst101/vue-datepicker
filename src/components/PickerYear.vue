@@ -18,8 +18,9 @@
         :is-disabled="true"
         :is-rtl="isRtl"
         :is-typeable="isTypeable"
-        :title="pageTitle"
-      />
+      >
+        {{ pageTitleYear }}
+      </UpButton>
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
     </PickerHeader>
 
@@ -30,7 +31,7 @@
       <Transition :name="transitionName">
         <PickerCells
           ref="cells"
-          :key="pageTitle"
+          :key="pageTitleYear"
           :is-rtl="isRtl"
           :cells="cells"
           :style="`transition-duration: ${slideDuration}ms`"
@@ -153,7 +154,7 @@ export default {
      * Display the current page's decade (or year range) as the title.
      * @return {String}
      */
-    pageTitle() {
+    pageTitleYear() {
       const { yearSuffix } = this.translation
       return `${this.pageDecadeStart} - ${this.pageDecadeEnd}${yearSuffix}`
     },

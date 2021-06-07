@@ -53,13 +53,13 @@ describe('PickerDay: shallowMount', () => {
   })
 
   it('displays page title correctly', () => {
-    expect(wrapper.vm.pageTitle).toEqual('Feb 2018')
+    expect(wrapper.vm.pageTitleDay).toEqual('Feb 2018')
 
     wrapper.setProps({
       translation: mn, // Mongolian has dates in ymd format
     })
 
-    expect(wrapper.vm.pageTitle).toEqual('2018 2-р сар')
+    expect(wrapper.vm.pageTitleDay).toEqual('2018 2-р сар')
   })
 
   it('emits set-view event with `month` when the up button is clicked', () => {
