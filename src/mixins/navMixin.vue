@@ -68,8 +68,9 @@ export default {
      */
     getActiveCell() {
       const isActiveElementACell = this.hasClass(document.activeElement, 'cell')
+      const isOnSameView = this.hasClass(document.activeElement, this.view)
 
-      if (isActiveElementACell && !this.resetTabbableCell) {
+      if (isActiveElementACell && isOnSameView && !this.resetTabbableCell) {
         return document.activeElement
       }
 
@@ -185,6 +186,18 @@ export default {
       }
     },
     /**
+     * Returns true if the user has arrowed to a new page
+     */
+    hasArrowedToNewPage() {
+      const { refsToFocus } = this
+
+      return (
+        refsToFocus &&
+        refsToFocus.length === 1 &&
+        refsToFocus[0] === 'tabbable-cell'
+      )
+    },
+    /**
      * Returns true if the calendar has been passed the given slot
      * @param  {String} slotName The name of the slot
      * @return {Boolean}
@@ -204,14 +217,13 @@ export default {
         isMinimumView,
       )
 
-      if (isMinimumView) {
-        this.reviewFocus()
-      } else {
+      if (!isMinimumView) {
         this.isRevertingToOpenDate = true
         this.view = this.minimumView
       }
 
       this.setTabbableCell()
+      this.reviewFocus()
       this.selectedDate = null
       this.setPageDate()
     },
@@ -219,13 +231,7 @@ export default {
      * Sets the correct focus on next tick
      */
     reviewFocus() {
-      const { refsToFocus } = this
-      const hasArrowedToNewPage =
-        refsToFocus &&
-        refsToFocus.length === 1 &&
-        refsToFocus[0] === 'tabbable-cell'
-
-      if (hasArrowedToNewPage) {
+      if (this.hasArrowedToNewPage()) {
         return
       }
 
@@ -252,12 +258,12 @@ export default {
     reviewTransitionAndDelay(startDate, endDate, isMinimumView = true) {
       const startPageDate = this.utils.setDate(new Date(startDate), 1)
       const endPageDate = this.utils.setDate(new Date(endDate), 1)
-      const isSamePage = startPageDate === endPageDate
+      const isInTheFuture = startPageDate < endPageDate
 
       if (isMinimumView) {
-        this.delayFocus = isSamePage ? 0 : this.slideDuration
+        this.focusDelay = isInTheFuture ? this.slideDuration : 0
       } else {
-        this.delayFocus = this.fadeDuration
+        this.focusDelay = 0
       }
 
       this.setTransitionName(endDate - startDate)

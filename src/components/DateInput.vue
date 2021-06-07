@@ -267,6 +267,7 @@ export default {
       if (!this.typeable) {
         return
       }
+
       this.validateTypedDate()
       this.$emit('set-focus', ['prev', 'up', 'next', 'tabbable-cell'])
     },
@@ -290,11 +291,11 @@ export default {
      * Parses a typed date and submits it, if valid
      */
     handleKeyup(event) {
-      if (!this.typeable) {
+      if (!this.typeable || ['Tab', 'Shift'].includes(event.key)) {
         return
       }
 
-      if (this.input.value === '' && !['Tab', 'Shift'].includes(event.key)) {
+      if (this.input.value === '') {
         this.$emit('typed-date', null)
         return
       }

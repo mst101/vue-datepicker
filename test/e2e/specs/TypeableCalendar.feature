@@ -32,3 +32,17 @@ Feature: Typeable calendar
       | # | openOrClosed | validity | opensOrCloses | formattedOrCleared |
       | 1 | open         | valid    | opens         | formatted          |
       | 2 | open         | invalid  | opens         | cleared            |
+
+
+  @id-3
+  Scenario Outline: Press the down arrow (no header): <openOrClosed> & <validity> date
+    Given the typeable calendar with no header is "<openOrClosed>" and a "<validity>" date is typed
+    When the user presses the `down` arrow
+    Then the calendar "<opensOrCloses>"
+    And the date is "<formattedOrCleared>"
+    And the tabbable cell has focus
+
+    Examples:
+      | # | openOrClosed | validity | opensOrCloses | formattedOrCleared |
+      | 1 | open         | valid    | opens         | formatted          |
+      | 2 | open         | invalid  | opens         | cleared            |

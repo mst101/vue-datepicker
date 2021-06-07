@@ -10,7 +10,6 @@ describe('@id-1: Press the enter key', () => {
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
-        calendarButton: true,
         typeable: true,
       })
 
@@ -53,7 +52,6 @@ describe('@id-2: Press the down arrow', () => {
       const isNot = openOrClosed === 'closed' ? 'not.' : ''
 
       createCalendar({
-        calendarButton: true,
         typeable: true,
       })
 
@@ -85,5 +83,38 @@ describe('@id-2: Press the down arrow', () => {
 
   And('the previous button has focus', () => {
     the('previous-button').should('have.focus')
+  })
+})
+
+describe('@id-3: Press the down arrow (no header)', () => {
+  Given(
+    'the typeable calendar with no header is {string} and a {string} date is typed',
+    (openOrClosed, validity) => {
+      const date = validity === 'valid' ? '1 March 2021' : 'invalid date'
+      const isNot = openOrClosed === 'closed' ? 'not.' : ''
+
+      createCalendar({
+        showHeader: false,
+        typeable: true,
+      })
+
+      if (openOrClosed === 'open') {
+        clickThe('input')
+      }
+
+      focusThe('input').type(date)
+
+      the('calendar').should(`${isNot}be.visible`)
+    },
+  )
+
+  When('the user presses the `down` arrow')
+
+  Then('the calendar {string}')
+
+  And('the date is {string}')
+
+  And('the tabbable cell has focus', () => {
+    the('tabbable-cell').should('have.focus')
   })
 })

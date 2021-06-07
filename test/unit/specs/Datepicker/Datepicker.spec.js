@@ -36,43 +36,6 @@ describe('Datepicker mounted', () => {
     wrapper.destroy()
   })
 
-  it('can select a day', () => {
-    const dateTemp = new Date(2016, 9, 1)
-    wrapper.vm.setView('day')
-    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
-    expect(wrapper.vm.pageTimestamp).toEqual(dateTemp.valueOf())
-    expect(wrapper.vm.selectedDate.getMonth()).toEqual(9)
-    expect(wrapper.emitted().selected).toBeTruthy()
-  })
-
-  it('can select a month', () => {
-    const dateTemp = new Date(2016, 9, 9)
-    wrapper.vm.setView('month')
-    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
-    expect(wrapper.emitted('changed-month')).toBeTruthy()
-    expect(wrapper.emitted('changed-month')[0][0].timestamp).toEqual(
-      dateTemp.valueOf(),
-    )
-    expect(new Date(wrapper.vm.pageTimestamp).getMonth()).toEqual(
-      dateTemp.getMonth(),
-    )
-    expect(wrapper.vm.picker).toEqual('PickerDay')
-  })
-
-  it('can select a year', () => {
-    const dateTemp = new Date(2018, 9, 9)
-    wrapper.vm.setView('year')
-    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
-    expect(wrapper.emitted('changed-year')).toBeTruthy()
-    expect(wrapper.emitted('changed-year')[0][0].timestamp).toEqual(
-      dateTemp.valueOf(),
-    )
-    expect(new Date(wrapper.vm.pageTimestamp).getFullYear()).toEqual(
-      dateTemp.getFullYear(),
-    )
-    expect(wrapper.vm.picker).toEqual('PickerMonth')
-  })
-
   it('selects an edge date from the next month', async () => {
     await wrapper.setProps({
       value: new Date(2020, 0, 1),
@@ -164,7 +127,7 @@ describe('Datepicker mounted', () => {
     await input.trigger('focus')
     await input.trigger('click')
     expect(wrapper.vm.isOpen).toBeTruthy()
-    jest.advanceTimersByTime(300)
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
     await input.trigger('focus')
     await input.trigger('click')
@@ -181,7 +144,7 @@ describe('Datepicker mounted', () => {
     await input.trigger('focus')
     await input.trigger('click')
     expect(wrapper.vm.isOpen).toBeTruthy()
-    jest.advanceTimersByTime(300)
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
     await input.trigger('focus')
     await input.trigger('click')
@@ -290,6 +253,36 @@ describe('Datepicker mounted to body', () => {
 
     expect(todayCell.text()).toBe(new Date().getDate().toString())
     expect(document.activeElement).toBe(todayCell.element)
+  })
+
+  it('focuses the up button on increasing the view', async () => {
+    await wrapper.vm.open()
+
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
+    let upButton = wrapper.find('button.up')
+
+    await upButton.trigger('click')
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
+    upButton = wrapper.find('button.up')
+
+    expect(document.activeElement).toBe(upButton.element)
+  })
+
+  it('focuses the tabbable-cell on decreasing the view', async () => {
+    await wrapper.vm.open()
+
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
+    const upButton = wrapper.find('button.up')
+
+    await upButton.trigger('click')
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
+    const firstCell = wrapper.find('button.cell')
+
+    await firstCell.trigger('click')
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
+
+    const tabbableCell = wrapper.find('button.cell[data-test-tabbable-cell]')
+    expect(document.activeElement).toBe(tabbableCell.element)
   })
 
   it('closes when the calendar loses focus', async () => {
@@ -875,11 +868,10 @@ describe('Datepicker mounted to body with openDate', () => {
     expect(document.activeElement).toBe(firstCell.element)
 
     await firstCell.trigger('keydown.esc')
-    jest.advanceTimersByTime(wrapper.vm.slideDuration)
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
     const openDate = wrapper.find('button.open')
     expect(wrapper.vm.view).toBe('day')
-    expect(wrapper.vm.isOpen).toBeTruthy()
     expect(wrapper.vm.selectedDate).toEqual(null)
     expect(document.activeElement).toBe(openDate.element)
   })
@@ -1052,6 +1044,43 @@ describe('Datepicker shallowMounted', () => {
 
     await wrapper.vm.setView('invalid date')
     expect(wrapper.vm.isOpen).toEqual(false)
+  })
+
+  it('can select a day', () => {
+    const dateTemp = new Date(2016, 9, 1)
+    wrapper.vm.setView('day')
+    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
+    expect(wrapper.vm.pageTimestamp).toEqual(dateTemp.valueOf())
+    expect(wrapper.vm.selectedDate.getMonth()).toEqual(9)
+    expect(wrapper.emitted().selected).toBeTruthy()
+  })
+
+  it('can select a month', () => {
+    const dateTemp = new Date(2016, 9, 9)
+    wrapper.vm.setView('month')
+    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
+    expect(wrapper.emitted('changed-month')).toBeTruthy()
+    expect(wrapper.emitted('changed-month')[0][0].timestamp).toEqual(
+      dateTemp.valueOf(),
+    )
+    expect(new Date(wrapper.vm.pageTimestamp).getMonth()).toEqual(
+      dateTemp.getMonth(),
+    )
+    expect(wrapper.vm.picker).toEqual('PickerDay')
+  })
+
+  it('can select a year', () => {
+    const dateTemp = new Date(2018, 9, 9)
+    wrapper.vm.setView('year')
+    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
+    expect(wrapper.emitted('changed-year')).toBeTruthy()
+    expect(wrapper.emitted('changed-year')[0][0].timestamp).toEqual(
+      dateTemp.valueOf(),
+    )
+    expect(new Date(wrapper.vm.pageTimestamp).getFullYear()).toEqual(
+      dateTemp.getFullYear(),
+    )
+    expect(wrapper.vm.picker).toEqual('PickerMonth')
   })
 
   it('resets the default page date', () => {

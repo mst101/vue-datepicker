@@ -6,7 +6,9 @@
       <Datepicker
         placeholder="Select Date"
         :typeable="true"
-        :open-date="new Date(2020, 0, 15)"
+        :show-header="true"
+        :open-date="new Date(2020, 2, 21)"
+        :slide-duration="1000"
       />
       <code>
         &lt;datepicker placeholder="Select Date"&gt;&lt;/datepicker&gt;
