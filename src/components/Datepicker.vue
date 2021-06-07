@@ -413,14 +413,8 @@ export default {
      * Clear the selected date
      */
     clearDate() {
-      const isMinimumView = this.view === this.minimumView
-      const isResetFocus =
-        this.isOpen &&
-        this.hasClass(document.activeElement, 'cell') &&
-        (!isMinimumView || !this.hasClass(document.activeElement, 'open'))
-
-      if (isResetFocus) {
-        this.resetFocusToOpenDate(isMinimumView)
+      if (this.isResetFocus()) {
+        this.resetFocusToOpenDate()
         return
       }
 
@@ -575,6 +569,17 @@ export default {
     isDateDisabled(date) {
       return new DisabledDate(this.utils, this.disabledDates).isDateDisabled(
         date,
+      )
+    },
+    /**
+     * Returns true if we should reset the focus to the open date
+     * @returns {Boolean}
+     */
+    isResetFocus() {
+      return (
+        this.isOpen &&
+        this.hasClass(document.activeElement, 'cell') &&
+        (!this.isMinimumView || !this.hasClass(document.activeElement, 'open'))
       )
     },
     /**
