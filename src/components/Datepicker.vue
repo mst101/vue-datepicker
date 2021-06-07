@@ -331,6 +331,7 @@ export default {
     close() {
       if (!this.isInline) {
         this.view = ''
+        this.resetDefaultPageDate()
         this.$emit('closed')
       }
     },
