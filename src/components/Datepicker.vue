@@ -82,7 +82,7 @@
               :is-rtl="isRtl"
               :is-typeable="typeable"
               :is-up-disabled="isUpDisabled"
-              :minimum-view="minimumView"
+              :is-minimum-view="isMinimumView"
               :open-date="computedOpenDate"
               :page-date="pageDate"
               :selected-date="selectedDate"
@@ -315,6 +315,9 @@ export default {
     },
     isOpen() {
       return this.view !== ''
+    },
+    isMinimumView() {
+      return this.view === this.minimumView
     },
     isRtl() {
       return this.translation.rtl

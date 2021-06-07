@@ -25,9 +25,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    minimumView: {
-      type: String,
-      default: 'day',
+    isMinimumView: {
+      type: Boolean,
+      default: true,
     },
     openDate: {
       type: [String, Date, Number],
@@ -106,9 +106,6 @@ export default {
         header: this.showHeader,
         footerSlot: this.hasSlot(`calendarFooter${view}`),
       }
-    },
-    isMinimumView() {
-      return this.view === this.minimumView
     },
     /**
      * Returns the current page's full year as an integer.
