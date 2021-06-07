@@ -44,7 +44,7 @@
           view="month"
           @arrow="handleArrow($event)"
           @clear-date="$emit('clear-date')"
-          @select="handleSelect($event)"
+          @select="select($event)"
         />
       </Transition>
     </div>

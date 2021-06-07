@@ -99,7 +99,7 @@
               @change-picker-height="pickerHeight = $event"
               @clear-date="clearDate"
               @page-change="handlePageChange"
-              @select="handleSelect"
+              @select="select"
               @set-focus="setFocus($event)"
               @set-transition-name="setTransitionName($event)"
               @set-view="setView"
@@ -483,7 +483,7 @@ export default {
      * Set the date, or go to the next view down
      */
     // eslint-disable-next-line max-statements
-    handleSelect(cell) {
+    select(cell) {
       if (this.allowedToShowView(this.nextView.down)) {
         this.showNextViewDown(cell)
         return

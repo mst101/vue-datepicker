@@ -273,7 +273,7 @@ export default {
      * Determines which transition to use (for edge dates) and emits a 'select' event
      * @param {Object} cell
      */
-    handleSelect(cell) {
+    select(cell) {
       if (cell.isPreviousMonth) {
         this.$emit('set-transition-name', -1)
       }

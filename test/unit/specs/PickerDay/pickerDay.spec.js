@@ -38,7 +38,7 @@ describe('PickerDay: shallowMount', () => {
   })
 
   it('emits an event when selected', () => {
-    wrapper.vm.handleSelect({ isDisabled: false })
+    wrapper.vm.select({ isDisabled: false })
     expect(wrapper.emitted('select')).toBeTruthy()
   })
 

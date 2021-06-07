@@ -1049,7 +1049,7 @@ describe('Datepicker shallowMounted', () => {
   it('can select a day', () => {
     const dateTemp = new Date(2016, 9, 1)
     wrapper.vm.setView('day')
-    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
+    wrapper.vm.select({ timestamp: dateTemp.valueOf() })
     expect(wrapper.vm.pageTimestamp).toEqual(dateTemp.valueOf())
     expect(wrapper.vm.selectedDate.getMonth()).toEqual(9)
     expect(wrapper.emitted().selected).toBeTruthy()
@@ -1058,7 +1058,7 @@ describe('Datepicker shallowMounted', () => {
   it('can select a month', () => {
     const dateTemp = new Date(2016, 9, 9)
     wrapper.vm.setView('month')
-    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
+    wrapper.vm.select({ timestamp: dateTemp.valueOf() })
     expect(wrapper.emitted('changed-month')).toBeTruthy()
     expect(wrapper.emitted('changed-month')[0][0].timestamp).toEqual(
       dateTemp.valueOf(),
@@ -1072,7 +1072,7 @@ describe('Datepicker shallowMounted', () => {
   it('can select a year', () => {
     const dateTemp = new Date(2018, 9, 9)
     wrapper.vm.setView('year')
-    wrapper.vm.handleSelect({ timestamp: dateTemp.valueOf() })
+    wrapper.vm.select({ timestamp: dateTemp.valueOf() })
     expect(wrapper.emitted('changed-year')).toBeTruthy()
     expect(wrapper.emitted('changed-year')[0][0].timestamp).toEqual(
       dateTemp.valueOf(),
@@ -1284,7 +1284,7 @@ describe('Datepicker.vue inline', () => {
 
   it('does not close the calendar when date is selected', () => {
     const date = new Date()
-    wrapper.vm.handleSelect({ timestamp: date.valueOf() })
+    wrapper.vm.select({ timestamp: date.valueOf() })
     expect(wrapper.vm.isOpen).toEqual(true)
     document.body.click()
     expect(wrapper.vm.isOpen).toEqual(true)

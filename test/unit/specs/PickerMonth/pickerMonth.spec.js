@@ -53,7 +53,7 @@ describe('PickerMonth', () => {
 
   it('emits date on selection', () => {
     const time = new Date().valueOf()
-    wrapper.vm.handleSelect({ timestamp: time })
+    wrapper.vm.select({ timestamp: time })
     expect(wrapper.emitted('select')).toBeTruthy()
     expect(wrapper.emitted('select')[0][0].timestamp).toEqual(time)
   })

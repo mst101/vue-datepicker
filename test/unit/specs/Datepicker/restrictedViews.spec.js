@@ -24,7 +24,7 @@ describe('Datepicker with restricted views', () => {
     await wrapper.vm.setView('month')
     expect(wrapper.vm.isOpen).toEqual(true)
 
-    await wrapper.vm.handleSelect({ timestamp: date.valueOf() })
+    await wrapper.vm.select({ timestamp: date.valueOf() })
     expect(date.getFullYear()).toEqual(wrapper.vm.selectedDate.getFullYear())
     expect(date.getMonth()).toEqual(wrapper.vm.selectedDate.getMonth())
     expect(wrapper.vm.isOpen).toEqual(false)
@@ -41,7 +41,7 @@ describe('Datepicker with restricted views', () => {
     await wrapper.vm.setView('year')
     expect(wrapper.vm.isOpen).toEqual(true)
 
-    await wrapper.vm.handleSelect({ timestamp: date.valueOf() })
+    await wrapper.vm.select({ timestamp: date.valueOf() })
     expect(wrapper.vm.isOpen).toEqual(false)
     expect(date.getFullYear()).toEqual(wrapper.vm.selectedDate.getFullYear())
   })

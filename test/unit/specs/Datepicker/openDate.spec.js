@@ -59,7 +59,7 @@ describe('Datepicker with open date', () => {
 
   it('should open with selected date if one is set', () => {
     const newDate = new Date(2018, 10, 9)
-    wrapper.vm.handleSelect({ timestamp: newDate.valueOf() })
+    wrapper.vm.select({ timestamp: newDate.valueOf() })
     expect(wrapper.vm.pageDate.getMonth()).toEqual(10)
     expect(wrapper.vm.pageDate.getFullYear()).toEqual(2018)
   })
