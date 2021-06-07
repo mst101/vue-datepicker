@@ -508,7 +508,7 @@ export default {
      */
     handleTypedDate(date) {
       if (this.selectedDate) {
-        this.reviewTransitionAndDelay(this.selectedDate, date)
+        this.setTransitionAndFocusDelay(this.selectedDate, date)
       }
 
       this.selectDate(date ? date.valueOf() : null)

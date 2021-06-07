@@ -211,7 +211,7 @@ export default {
      */
     resetFocusToOpenDate(isMinimumView) {
       this.refsToFocus = ['open-date']
-      this.reviewTransitionAndDelay(
+      this.setTransitionAndFocusDelay(
         this.focusedDateTimestamp,
         this.computedOpenDate,
         isMinimumView,
@@ -255,7 +255,7 @@ export default {
      * @param {Boolean}     isMinimumView Used to determine whether we are changing down from a higher view
      *                                    when reverting focus to the open date (on escape)
      */
-    reviewTransitionAndDelay(startDate, endDate, isMinimumView = true) {
+    setTransitionAndFocusDelay(startDate, endDate, isMinimumView = true) {
       const startPageDate = this.utils.setDate(new Date(startDate), 1)
       const endPageDate = this.utils.setDate(new Date(endDate), 1)
       const isInTheFuture = startPageDate < endPageDate
