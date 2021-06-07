@@ -207,17 +207,15 @@ export default {
     },
     /**
      * Resets the focus to the open date
-     * @param  {Boolean} isMinimumView The name of the slot
      */
-    resetFocusToOpenDate(isMinimumView) {
+    resetFocusToOpenDate() {
       this.refsToFocus = ['open-date']
       this.setTransitionAndFocusDelay(
         this.focusedDateTimestamp,
         this.computedOpenDate,
-        isMinimumView,
       )
 
-      if (!isMinimumView) {
+      if (!this.isMinimumView) {
         this.isRevertingToOpenDate = true
         this.view = this.minimumView
       }
@@ -252,15 +250,13 @@ export default {
      * Sets the direction of the slide transition and whether or not to delay application of the focus
      * @param {Date|Number} startDate     The date from which to measure
      * @param {Date|Number} endDate       Is this before or after the startDate? And is it on the same page?
-     * @param {Boolean}     isMinimumView Used to determine whether we are changing down from a higher view
-     *                                    when reverting focus to the open date (on escape)
      */
-    setTransitionAndFocusDelay(startDate, endDate, isMinimumView = true) {
+    setTransitionAndFocusDelay(startDate, endDate) {
       const startPageDate = this.utils.setDate(new Date(startDate), 1)
       const endPageDate = this.utils.setDate(new Date(endDate), 1)
       const isInTheFuture = startPageDate < endPageDate
 
-      if (isMinimumView) {
+      if (this.isMinimumView) {
         this.focusDelay = isInTheFuture ? this.slideDuration : 0
       } else {
         this.focusDelay = 0
