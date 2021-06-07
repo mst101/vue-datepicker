@@ -1,24 +1,28 @@
 <template>
   <header>
-    <span
+    <button
       class="prev"
-      :class="{ disabled: isLeftNavDisabled }"
+      :class="{ disabled: isPreviousDisabled, rtl: isRtl }"
+      :disabled="isPreviousDisabled"
+      type="button"
       @click="$emit(isRtl ? 'next' : 'previous')"
     >
       <slot name="prevIntervalBtn">
-        <span class="default">&lt;</span>
+        <span class="default">{{ isRtl ? '&gt;' : '&lt;' }}</span>
       </slot>
-    </span>
+    </button>
     <slot />
-    <span
+    <button
       class="next"
-      :class="{ disabled: isRightNavDisabled }"
+      :class="{ disabled: isNextDisabled, rtl: isRtl }"
+      :disabled="isNextDisabled"
+      type="button"
       @click="$emit(isRtl ? 'previous' : 'next')"
     >
       <slot name="nextIntervalBtn">
-        <span class="default">&gt;</span>
+        <span class="default">{{ isRtl ? '&lt;' : '&gt;' }}</span>
       </slot>
-    </span>
+    </button>
   </header>
 </template>
 
@@ -37,24 +41,6 @@ export default {
     isRtl: {
       type: Boolean,
       required: true,
-    },
-  },
-  computed: {
-    /**
-     * Is the left hand navigation button disabled?
-     * @return {Boolean}
-     */
-    /* istanbul ignore next */
-    isLeftNavDisabled() {
-      return this.isRtl ? this.isNextDisabled : this.isPreviousDisabled
-    },
-    /**
-     * Is the right hand navigation button disabled?
-     * @return {Boolean}
-     */
-    /* istanbul ignore next */
-    isRightNavDisabled() {
-      return this.isRtl ? this.isPreviousDisabled : this.isNextDisabled
     },
   },
 }
