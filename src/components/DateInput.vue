@@ -10,7 +10,7 @@
       data-test-calendar-button
       :disabled="disabled"
       type="button"
-      @click="toggle"
+      @click="toggle('calendar-button')"
       @focus="handleButtonFocus"
     >
       <span :class="{ 'input-group-text': bootstrapStyling }">
@@ -286,7 +286,11 @@ export default {
     /**
      * Opens or closes the calendar
      */
-    toggle() {
+    toggle(calendarButton) {
+      if (this.isOpen) {
+        this.$emit('set-focus', [calendarButton || 'input'])
+      }
+
       this.$emit(this.isOpen ? 'close' : 'open')
     },
     /**
