@@ -4,6 +4,7 @@
       class="prev"
       :class="{ disabled: isPreviousDisabled, rtl: isRtl }"
       :disabled="isPreviousDisabled"
+      data-test-previous-button
       type="button"
       @click="$emit('page-change', -1)"
     >
@@ -16,6 +17,7 @@
       class="next"
       :class="{ disabled: isNextDisabled, rtl: isRtl }"
       :disabled="isNextDisabled"
+      data-test-next-button
       type="button"
       @click="$emit('page-change', 1)"
     >
