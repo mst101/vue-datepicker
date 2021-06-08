@@ -60,7 +60,7 @@ export default {
      * Sets an array with all years to show this decade (or yearRange)
      * @return {Array}
      */
-    // eslint-disable-next-line complexity
+    // eslint-disable-next-line complexity,max-statements
     cells() {
       const d = this.pageDate
       const years = []
@@ -77,6 +77,10 @@ export default {
             d.getHours(),
             d.getMinutes(),
           )
+      const todayYear = new Date(
+        this.utils.setDate(this.utils.getNewDateObject(), 1),
+      )
+
       for (let i = 0; i < this.yearRange; i += 1) {
         years.push({
           year: this.utils.getFullYear(dObj),
@@ -87,6 +91,7 @@ export default {
             this.openDate &&
             this.utils.compareDates(dObj, this.openDate),
           isSelected: this.isSelectedYear(dObj),
+          isToday: this.utils.compareDates(dObj, todayYear),
         })
         this.utils.setFullYear(dObj, this.utils.getFullYear(dObj) + 1)
       }
