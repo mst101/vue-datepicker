@@ -387,11 +387,19 @@ export default {
      * Close the calendar
      */
     close() {
-      if (!this.isInline) {
-        this.view = ''
-        this.resetDefaultPageDate()
-        this.$emit('closed')
+      if (this.isInline) {
+        return
       }
+
+      this.view = ''
+
+      if (this.showCalendarOnFocus) {
+        this.$refs.DateInput.shouldToggleOnClick = true
+        document.body.focus()
+      }
+
+      this.resetDefaultPageDate()
+      this.$emit('closed')
     },
     /**
      * Emits a 'blur' event
@@ -426,6 +434,10 @@ export default {
       this.$refs.dateInput.typedDate = ''
       this.selectDate(cell.timestamp)
       this.close()
+
+      if (this.showCalendarOnFocus && !this.inline) {
+        this.$refs.DateInput.shouldToggleOnClick = true
+      }
     },
     /**
      * Set the date from a 'typed-date' event
