@@ -5,8 +5,9 @@
       <h3>Default datepicker...</h3>
       <Datepicker
         placeholder="Select Date"
-        :typeable="true"
+        :typeable="false"
         :show-header="true"
+        :calendar-button="true"
         :open-date="new Date(2020, 2, 21)"
         :slide-duration="1000"
       />

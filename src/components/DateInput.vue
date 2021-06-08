@@ -166,11 +166,6 @@ export default {
         }
       })
     },
-    selectedDate() {
-      if (this.typeable) {
-        this.typedDate = this.formattedValue
-      }
-    },
   },
   mounted() {
     this.input = this.$el.querySelector('input')
