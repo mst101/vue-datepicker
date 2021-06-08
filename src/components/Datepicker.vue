@@ -99,7 +99,7 @@
               @change-picker-height="pickerHeight = $event"
               @clear-date="clearDate"
               @page-change="handlePageChange"
-              @select="select"
+              @select="handleSelect"
               @set-focus="setFocus($event)"
               @set-transition-name="setTransitionName($event)"
               @set-view="setView"
@@ -483,7 +483,7 @@ export default {
      * Set the date, or go to the next view down
      */
     // eslint-disable-next-line max-statements
-    select(cell) {
+    handleSelect(cell) {
       if (this.allowedToShowView(this.nextView.down)) {
         this.showNextViewDown(cell)
         return
@@ -582,27 +582,6 @@ export default {
       )
     },
     /**
-     * Sets the array of `refs` that might be focused following a view change (in order of preference)
-     * @param {String} newView The view being changed to
-     * @param {String} oldView The previous view
-     */
-    setRefsToFocus(newView, oldView) {
-      if (oldView === '') {
-        this.refsToFocus = []
-        return
-      }
-
-      const isNewView = (view) => view === newView
-      const isOldView = (view) => view === oldView
-      const newViewIndex = this.allowedViews.findIndex(isNewView)
-      const oldViewIndex = this.allowedViews.findIndex(isOldView)
-      const isViewChangeUp = newViewIndex - oldViewIndex > 0
-
-      this.refsToFocus = isViewChangeUp
-        ? ['up', 'tabbable-cell']
-        : ['tabbable-cell', 'up']
-    },
-    /**
      * Opens the calendar with the relevant view: 'day', 'month', or 'year'
      */
     open() {
@@ -683,6 +662,27 @@ export default {
         dateTemp = this.utils.resetDateTime(dateTemp)
       }
       this.pageTimestamp = this.utils.setDate(new Date(dateTemp), 1)
+    },
+    /**
+     * Sets the array of `refs` that might be focused following a view change (in order of preference)
+     * @param {String} newView The view being changed to
+     * @param {String} oldView The previous view
+     */
+    setRefsToFocus(newView, oldView) {
+      if (oldView === '') {
+        this.refsToFocus = []
+        return
+      }
+
+      const isNewView = (view) => view === newView
+      const isOldView = (view) => view === oldView
+      const newViewIndex = this.allowedViews.findIndex(isNewView)
+      const oldViewIndex = this.allowedViews.findIndex(isOldView)
+      const isViewChangeUp = newViewIndex - oldViewIndex > 0
+
+      this.refsToFocus = isViewChangeUp
+        ? ['up', 'tabbable-cell']
+        : ['tabbable-cell', 'up']
     },
     /**
      * Set the datepicker value
