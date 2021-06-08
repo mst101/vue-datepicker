@@ -3,6 +3,7 @@
     <button
       v-for="cell in cells"
       :key="cell.timestamp"
+      :ref="cell.isOpenDate ? 'openDate' : null"
       :class="cellClasses(cell)"
       :data-test-open-date="cell.isOpenDate"
       :data-test-today-cell="cell.isToday"

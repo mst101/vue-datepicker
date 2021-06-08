@@ -1,5 +1,9 @@
 <template>
-  <div class="vdp-datepicker" :class="[wrapperClass, { rtl: isRtl }]">
+  <div
+    ref="datepicker"
+    class="vdp-datepicker"
+    :class="[wrapperClass, { rtl: isRtl }]"
+  >
     <DateInput
       :id="id"
       ref="dateInput"
@@ -53,7 +57,7 @@
       <Transition name="fade">
         <div
           v-show="isOpen"
-          ref="datepicker"
+          ref="calendar"
           class="vdp-datepicker__calendar"
           :class="pickerClasses"
           data-test-calendar
@@ -64,6 +68,7 @@
             <slot name="beforeCalendarHeader" />
             <Component
               :is="picker"
+              ref="picker"
               :key="view"
               :day-cell-content="dayCellContent"
               :disabled-dates="disabledDates"

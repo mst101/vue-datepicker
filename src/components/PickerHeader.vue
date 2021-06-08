@@ -1,6 +1,7 @@
 <template>
   <header>
     <button
+      ref="prev"
       class="prev"
       :class="{ disabled: isPreviousDisabled, rtl: isRtl }"
       :disabled="isPreviousDisabled"
@@ -14,6 +15,7 @@
     </button>
     <slot />
     <button
+      ref="next"
       class="next"
       :class="{ disabled: isNextDisabled, rtl: isRtl }"
       :disabled="isNextDisabled"

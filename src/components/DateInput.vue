@@ -4,6 +4,7 @@
     <!-- Calendar Button -->
     <button
       v-if="calendarButton"
+      ref="calendarButton"
       class="vdp-datepicker__calendar-button"
       :class="{ 'input-group-prepend': bootstrapStyling }"
       data-test-calendar-button
