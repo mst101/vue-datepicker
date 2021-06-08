@@ -107,11 +107,6 @@ describe('PickerDay: disabled', () => {
     expect(wrapper.vm.isDisabledDate(new Date(2016, 9, 11))).toEqual(false)
   })
 
-  it('should emit a select-disabled event for a disabled date', () => {
-    wrapper.vm.select({ isDisabled: true })
-    expect(wrapper.emitted('select-disabled')).toBeTruthy()
-  })
-
   it('should close without warning when its undefined', () => {
     wrapper.setProps({
       disabledDates: undefined,

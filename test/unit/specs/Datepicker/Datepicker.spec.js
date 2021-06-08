@@ -218,11 +218,6 @@ describe('Datepicker shallowMounted', () => {
     expect(wrapper.vm.isOpen).toEqual(false)
   })
 
-  it('should emit `selected-disabled` on selecting a disabled cell', () => {
-    wrapper.vm.handleSelectDisabled({ isDisabled: true })
-    expect(wrapper.emitted('selected-disabled')).toBeTruthy()
-  })
-
   it('can select a day', () => {
     const dateTemp = new Date(2016, 9, 1)
     wrapper.vm.setView('day')
