@@ -74,6 +74,8 @@ export default {
      * Sets the correct focus on next tick
      */
     reviewFocus() {
+      this.setTabbableCell()
+
       this.$nextTick(() => {
         setTimeout(() => {
           this.applyFocus()
@@ -104,6 +106,17 @@ export default {
         pickerCells.querySelector('button.open:not(.muted):enabled') ||
         pickerCells.querySelector('button.today:not(.muted):enabled') ||
         pickerCells.querySelector('button.cell:not(.muted):enabled')
+    },
+    /**
+     * Update which cell in the picker should be focus-trapped
+     */
+    updateTabbableCell() {
+      const isActiveElementACell = this.hasClass(document.activeElement, 'cell')
+      const needToUpdate = !this.tabbableCell || isActiveElementACell
+
+      if (needToUpdate) {
+        this.setTabbableCell()
+      }
     },
   },
 }

@@ -121,7 +121,8 @@ describe('Datepicker mounted', () => {
 
     const input = wrapper.find('input')
     await input.trigger('click')
-    await input.setValue('1 Jan 2000')
+
+    input.setValue('1 Jan 2000')
     await input.trigger('keyup')
     expect(wrapper.vm.selectedDate).toEqual(new Date(2000, 0, 1))
 

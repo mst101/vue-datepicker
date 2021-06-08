@@ -355,6 +355,11 @@ export default {
       const parsedValue = this.parseValue(value)
       this.setValue(parsedValue)
     },
+    view(newView, oldView) {
+      this.$nextTick(() => {
+        this.handleViewChange(newView, oldView)
+      })
+    },
   },
   mounted() {
     this.init()
@@ -447,6 +452,26 @@ export default {
       this.selectDate(date.valueOf())
     },
     /**
+     * Focus the relevant element when the view changes
+     * @param {String} newView
+     * @param {String} oldView
+     */
+    handleViewChange(newView, oldView) {
+      const isClosing = newView === ''
+      const isOpeningInline = oldView === '' && this.isInline
+
+      if (isClosing || isOpeningInline) {
+        return
+      }
+
+      if (!this.isRevertingToOpenDate) {
+        this.setViewChangeFocusRefs(newView, oldView)
+        this.reviewFocus()
+      }
+
+      this.isRevertingToOpenDate = false
+    },
+    /**
      * Returns true if element has the given className
      * @param   {HTMLElement} element
      * @param   {String}      className
@@ -492,6 +517,8 @@ export default {
       }
 
       this.setInitialView()
+      this.applyFocus()
+
       this.$emit('opened')
     },
     /**
@@ -524,6 +551,11 @@ export default {
      * @param {Number} timestamp
      */
     selectDate(timestamp) {
+      if (!timestamp) {
+        this.selectedDate = null
+        return
+      }
+
       const date = new Date(timestamp)
       this.selectedDate = date
       this.setPageDate(date)
@@ -595,6 +627,27 @@ export default {
       }
     },
     /**
+     * Sets the array of `refs` that might be focused following a view change
+     * @param {String} newView The view being changed to
+     * @param {String} oldView The previous view
+     */
+    setViewChangeFocusRefs(newView, oldView) {
+      if (oldView === '') {
+        this.focus.refs = []
+        return
+      }
+
+      const isNewView = (view) => view === newView
+      const isOldView = (view) => view === oldView
+      const newViewIndex = this.allowedViews.findIndex(isNewView)
+      const oldViewIndex = this.allowedViews.findIndex(isOldView)
+      const isViewChangeUp = newViewIndex - oldViewIndex > 0
+
+      this.focus.refs = isViewChangeUp
+        ? ['up', 'tabbable-cell']
+        : ['tabbable-cell', 'up']
+    },
+    /**
      * Set the view to the next view down e.g. from `month` to `day`
      * @param {Object} cell The currently focused cell
      */
@@ -602,6 +655,8 @@ export default {
       this.setPageDate(new Date(cell.timestamp))
       this.$emit(`changed-${this.view}`, cell)
       this.setView(this.nextView.down)
+      this.setTabbableCell()
+      this.reviewFocus()
     },
     /**
      * Capitalizes the first letter
