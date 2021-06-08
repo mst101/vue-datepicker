@@ -1,4 +1,4 @@
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import PickerYear from '~/components/PickerYear.vue'
 import { en } from '~/locale'
 
@@ -7,7 +7,7 @@ describe('PickerYear', () => {
   beforeEach(() => {
     jest.useFakeTimers()
 
-    wrapper = shallowMount(PickerYear, {
+    wrapper = mount(PickerYear, {
       propsData: {
         translation: en,
         pageDate: new Date(2018, 1, 1),

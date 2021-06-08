@@ -45,6 +45,7 @@
           <PickerCells
             ref="cells"
             :key="pageTitleDay"
+            v-slot="{ cell }"
             :cells="cells"
             :day-cell-content="dayCellContent"
             :is-rtl="isRtl"
@@ -55,7 +56,9 @@
             @arrow="handleArrow($event)"
             @clear-date="$emit('clear-date')"
             @select="select($event)"
-          />
+          >
+            {{ dayCellContent(cell) }}
+          </PickerCells>
         </Transition>
       </div>
     </div>

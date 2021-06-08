@@ -32,15 +32,18 @@
         <PickerCells
           ref="cells"
           :key="pageTitleYear"
-          :is-rtl="isRtl"
+          v-slot="{ cell }"
           :cells="cells"
+          :is-rtl="isRtl"
           :style="`transition-duration: ${slideDuration}ms`"
           :tabbable-cell-id="tabbableCellId"
           view="year"
           @arrow="handleArrow($event)"
           @clear-date="$emit('clear-date')"
           @select="select($event)"
-        />
+        >
+          {{ cell.year }}
+        </PickerCells>
       </Transition>
     </div>
 

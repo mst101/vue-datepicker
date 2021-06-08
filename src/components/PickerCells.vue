@@ -20,9 +20,7 @@
       @keydown.right.prevent="handleArrow(id, isRtl ? -1 : 1)"
       @keyup.space.prevent="$emit('select', cell)"
     >
-      <slot name="dayCellContent" :cell="cell">
-        {{ cellContent(cell) }}
-      </slot>
+      <slot :cell="cell" />
     </button>
   </div>
 </template>
@@ -34,10 +32,6 @@ export default {
     cells: {
       type: Array,
       required: true,
-    },
-    dayCellContent: {
-      type: Function,
-      default: (day) => day.date,
     },
     isRtl: {
       type: Boolean,
@@ -91,20 +85,6 @@ export default {
           'weekend': cell.isWeekend,
         },
       ]
-    },
-    /**
-     * Returns the cell content that should be displayed
-     * @param   {Object} cell The cell object
-     * @returns {String}
-     */
-    cellContent(cell) {
-      if (this.view === 'day') {
-        return this.dayCellContent(cell)
-      }
-      if (this.view === 'month') {
-        return cell.month
-      }
-      return cell.year
     },
     /**
      * Emits an `arrow` event

@@ -1,10 +1,10 @@
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import PickerCells from '~/components/PickerCells.vue'
 
 describe('PickerCells', () => {
   let wrapper
   beforeEach(() => {
-    wrapper = shallowMount(PickerCells, {
+    wrapper = mount(PickerCells, {
       propsData: {
         cells: [],
         view: 'day',
@@ -22,13 +22,6 @@ describe('PickerCells', () => {
     wrapper.setProps({ view: 'month' })
 
     expect(wrapper.vm.columns).toEqual(3)
-  })
-
-  it('displays the date correctly', async () => {
-    await wrapper.setProps({ cells: [{ date: 1 }] })
-
-    const firstCell = wrapper.find('button.cell').element
-    expect(firstCell.innerHTML.replace(/\s/g, '')).toBe('1')
   })
 
   it('emits an `arrow` event when an arrow key is pressed', () => {

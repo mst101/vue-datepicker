@@ -43,7 +43,7 @@
       :tabindex="tabindex"
       :type="inline ? 'hidden' : null"
       :value="formattedValue"
-      @blur="handleInputBlur($event)"
+      @blur="handleInputBlur"
       @click="handleInputClick"
       @focus="handleInputFocus"
       @keydown.down.prevent="handleKeydownDown"
@@ -141,6 +141,7 @@ export default {
       if (this.typedDate && this.typedDate.length) {
         return this.typedDate
       }
+
       return this.formattedDate
     },
   },
