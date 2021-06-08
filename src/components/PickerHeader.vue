@@ -7,7 +7,7 @@
       :disabled="isPreviousDisabled"
       data-test-previous-button
       type="button"
-      @click="$emit('page-change', -1)"
+      @click="$emit('page-change', previousPage)"
     >
       <slot name="prevIntervalBtn">
         <span class="default">{{ isRtl ? '&gt;' : '&lt;' }}</span>
@@ -21,7 +21,7 @@
       :disabled="isNextDisabled"
       data-test-next-button
       type="button"
-      @click="$emit('page-change', 1)"
+      @click="$emit('page-change', nextPage)"
     >
       <slot name="nextIntervalBtn">
         <span class="default">{{ isRtl ? '&lt;' : '&gt;' }}</span>
@@ -46,6 +46,12 @@ export default {
       type: Boolean,
       required: true,
     },
+  },
+  data() {
+    return {
+      previousPage: { incrementBy: -1, focusRefs: ['prev'] },
+      nextPage: { incrementBy: 1, focusRefs: ['next'] },
+    }
   },
 }
 </script>

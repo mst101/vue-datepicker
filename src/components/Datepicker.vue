@@ -38,6 +38,7 @@
       @close="close"
       @focus="handleInputFocus"
       @open="open"
+      @set-focus="setFocus($event)"
       @typed-date="handleTypedDate"
     >
       <slot slot="beforeDateInput" name="beforeDateInput" />
@@ -93,6 +94,7 @@
               @change-picker-height="pickerHeight = $event"
               @page-change="handlePageChange"
               @select="handleSelect"
+              @set-focus="setFocus($event)"
               @set-transition-name="setTransitionName($event)"
               @set-view="setView"
             >
@@ -118,6 +120,7 @@ import DateInput from '~/components/DateInput.vue'
 import DisabledDate from '~/utils/DisabledDate'
 import inputProps from '~/mixins/inputProps.vue'
 import makeDateUtils from '~/utils/DateUtils'
+import navMixin from '~/mixins/navMixin.vue'
 import PickerDay from '~/components/PickerDay.vue'
 import PickerMonth from '~/components/PickerMonth.vue'
 import PickerYear from '~/components/PickerYear.vue'
@@ -132,7 +135,7 @@ export default {
     PickerYear,
     Popup,
   },
-  mixins: [inputProps],
+  mixins: [inputProps, navMixin],
   props: {
     appendToBody: {
       type: Boolean,
@@ -402,10 +405,12 @@ export default {
       this.$emit('focus')
     },
     /**
-     * Set the new pageDate and emit `changed-<view>` event
+     * Set the new pageDate, focus the relevant element and emit a `changed-<view>` event
      */
-    handlePageChange(pageDate) {
+    handlePageChange({ focusRefs, pageDate }) {
       this.setPageDate(pageDate)
+      this.focus.refs = focusRefs
+      this.reviewFocus()
       this.$emit(`changed-${this.nextView.up}`, pageDate)
     },
     /**
@@ -427,6 +432,15 @@ export default {
      */
     handleTypedDate(date) {
       this.selectDate(date.valueOf())
+    },
+    /**
+     * Returns true if element has the given className
+     * @param   {HTMLElement} element
+     * @param   {String}      className
+     * @returns {Boolean}
+     */
+    hasClass(element, className) {
+      return element && element.className.split(' ').includes(className)
     },
     /**
      * Initiate the component

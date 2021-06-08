@@ -18,27 +18,23 @@ describe('PickerHeader', () => {
     wrapper.destroy()
   })
 
-  it('should set `isLeftNavDisabled` correctly', () => {
-    expect(wrapper.vm.isLeftNavDisabled).toBeFalsy()
-    wrapper.setProps({
-      config: {
-        isRtl: true,
-        isNextDisabled: false,
-        isPreviousDisabled: false,
-      },
+  it('should decrement the page when the `previous` button is clicked', async () => {
+    const prevButton = wrapper.find('button.prev')
+    await prevButton.trigger('click')
+
+    expect(wrapper.emitted('page-change')[0][0]).toEqual({
+      incrementBy: -1,
+      focusRefs: ['prev'],
     })
-    expect(wrapper.vm.isLeftNavDisabled).toBeFalsy()
   })
 
-  it('should set `isRightNavDisabled` correctly', () => {
-    expect(wrapper.vm.isRightNavDisabled).toBeFalsy()
-    wrapper.setProps({
-      config: {
-        isRtl: true,
-        isNextDisabled: false,
-        isPreviousDisabled: false,
-      },
+  it('should increment the page when the `next` button is clicked', async () => {
+    const nextButton = wrapper.find('button.next')
+    await nextButton.trigger('click')
+
+    expect(wrapper.emitted('page-change')[0][0]).toEqual({
+      incrementBy: 1,
+      focusRefs: ['next'],
     })
-    expect(wrapper.vm.isRightNavDisabled).toBeFalsy()
   })
 })

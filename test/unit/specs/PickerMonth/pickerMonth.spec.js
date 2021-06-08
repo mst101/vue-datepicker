@@ -38,13 +38,17 @@ describe('PickerMonth', () => {
   })
 
   it('can set the next year', () => {
-    wrapper.vm.changePage(1)
-    expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2019)
+    wrapper.vm.changePage({ incrementBy: 1, focusRefs: ['next'] })
+    expect(wrapper.emitted('page-change')[0][0].pageDate.getFullYear()).toEqual(
+      2019,
+    )
   })
 
   it('can set the previous year', () => {
-    wrapper.vm.changePage(-1)
-    expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2017)
+    wrapper.vm.changePage({ incrementBy: -1, focusRefs: ['prev'] })
+    expect(wrapper.emitted('page-change')[0][0].pageDate.getFullYear()).toEqual(
+      2017,
+    )
   })
 
   it('emits date on selection', () => {

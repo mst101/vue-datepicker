@@ -9,6 +9,7 @@
       :is-previous-disabled="isPreviousDisabled"
       :is-rtl="isRtl"
       @page-change="changePage($event)"
+      @set-focus="$emit('set-focus', $event)"
     >
       <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
       <UpButton ref="up" :is-disabled="true">

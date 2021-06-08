@@ -9,6 +9,7 @@
       :is-previous-disabled="isPreviousDisabled"
       :is-rtl="isRtl"
       @page-change="changePage($event)"
+      @set-focus="$emit('set-focus', $event)"
     >
       <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
       <UpButton
@@ -16,6 +17,7 @@
         class="month__year_btn"
         :is-disabled="isUpDisabled"
         @select="$emit('set-view', 'year')"
+        @set-focus="$emit('set-focus', $event)"
       >
         {{ pageTitleMonth }}
       </UpButton>
