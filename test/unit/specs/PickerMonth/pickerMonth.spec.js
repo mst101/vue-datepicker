@@ -38,30 +38,12 @@ describe('PickerMonth', () => {
   })
 
   it('can set the next year', () => {
-    wrapper.vm.nextPage()
-    expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2019)
-
-    wrapper.setProps({
-      disabledDates: {
-        from: new Date(2018, 1, 1),
-      },
-    })
-
-    wrapper.vm.nextPage()
+    wrapper.vm.changePage(1)
     expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2019)
   })
 
   it('can set the previous year', () => {
-    wrapper.vm.previousPage()
-    expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2017)
-
-    wrapper.setProps({
-      disabledDates: {
-        to: new Date(2018, 1, 1),
-      },
-    })
-
-    wrapper.vm.previousPage()
+    wrapper.vm.changePage(-1)
     expect(wrapper.emitted('page-change')[0][0].getFullYear()).toEqual(2017)
   })
 

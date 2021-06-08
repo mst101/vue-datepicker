@@ -5,7 +5,7 @@
       :class="{ disabled: isPreviousDisabled, rtl: isRtl }"
       :disabled="isPreviousDisabled"
       type="button"
-      @click="$emit(isRtl ? 'next' : 'previous')"
+      @click="$emit('page-change', -1)"
     >
       <slot name="prevIntervalBtn">
         <span class="default">{{ isRtl ? '&gt;' : '&lt;' }}</span>
@@ -17,7 +17,7 @@
       :class="{ disabled: isNextDisabled, rtl: isRtl }"
       :disabled="isNextDisabled"
       type="button"
-      @click="$emit(isRtl ? 'previous' : 'next')"
+      @click="$emit('page-change', 1)"
     >
       <slot name="nextIntervalBtn">
         <span class="default">{{ isRtl ? '&lt;' : '&gt;' }}</span>
