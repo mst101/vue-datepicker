@@ -2,7 +2,8 @@
   <header>
     <button
       ref="prev"
-      :class="[{ disabled: isPreviousDisabled, rtl: isRtl }, 'prev']"
+      class="prev"
+      :class="{ disabled: isPreviousDisabled, rtl: isRtl }"
       :disabled="isPreviousDisabled"
       data-test-previous-button
       type="button"
@@ -22,7 +23,8 @@
     <slot />
     <button
       ref="next"
-      :class="[{ disabled: isNextDisabled, rtl: isRtl }, 'next']"
+      class="next"
+      :class="{ disabled: isNextDisabled, rtl: isRtl }"
       :disabled="isNextDisabled"
       data-test-next-button
       type="button"
