@@ -78,6 +78,10 @@ export default {
           month: this.utils.getMonthName(i, this.translation.months),
           timestamp: dObj.valueOf(),
           isDisabled: this.isDisabledMonth(dObj),
+          isOpenDate:
+            this.isMinimumView &&
+            this.openDate &&
+            this.utils.compareDates(dObj, this.openDate),
           isSelected: this.isSelectedMonth(dObj),
         })
         this.utils.setMonth(dObj, this.utils.getMonth(dObj) + 1)

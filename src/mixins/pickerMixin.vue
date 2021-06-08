@@ -21,6 +21,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    isMinimumView: {
+      type: Boolean,
+      default: true,
+    },
+    openDate: {
+      type: [String, Date, Number],
+      default: null,
+      validator: (val) =>
+        /* istanbul ignore next */
+        val === null ||
+        val instanceof Date ||
+        typeof val === 'string' ||
+        typeof val === 'number',
+    },
     pageDate: {
       type: Date,
       default: null,
