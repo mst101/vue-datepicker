@@ -201,6 +201,9 @@
   }
 
   .picker-view {
+    background: white;
+    border: 1px solid #ccc;
+    position: absolute;
     width: inherit;
 
     .cells-wrapper {
@@ -232,6 +235,11 @@
       transform: translate(100%, 0);
     }
   }
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .vdp-datepicker__clear-button,

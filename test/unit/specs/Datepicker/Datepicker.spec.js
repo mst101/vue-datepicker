@@ -27,10 +27,12 @@ describe('Datepicker mounted', () => {
   let wrapper
 
   beforeEach(() => {
+    jest.useFakeTimers()
     wrapper = mount(Datepicker)
   })
 
   afterEach(() => {
+    jest.clearAllTimers()
     wrapper.destroy()
   })
 
@@ -128,6 +130,19 @@ describe('Datepicker mounted', () => {
     })
 
     expect(wrapper.vm.selectedDate).toEqual(new Date(2016, 1, 15))
+  })
+
+  it('sets the pickerHeight correctly', async () => {
+    await wrapper.setProps({
+      openDate: new Date(2020, 0, 1),
+    })
+
+    const input = wrapper.find('input')
+    await input.trigger('click')
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.pickerHeight).toBe(240)
   })
 })
 

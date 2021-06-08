@@ -50,47 +50,55 @@
       :rtl="isRtl"
       :visible="isOpen"
     >
-      <div
-        v-show="isOpen"
-        ref="datepicker"
-        class="vdp-datepicker__calendar"
-        :class="pickerClasses"
-        @mousedown.prevent
-      >
-        <slot name="beforeCalendarHeader" />
-        <Component
-          :is="picker"
-          :day-cell-content="dayCellContent"
-          :disabled-dates="disabledDates"
-          :first-day-of-week="firstDayOfWeek"
-          :highlighted="highlighted"
-          :is-rtl="isRtl"
-          :is-up-disabled="isUpDisabled"
-          :page-date="pageDate"
-          :selected-date="selectedDate"
-          :show-edge-dates="showEdgeDates"
-          :show-full-month-name="fullMonthName"
-          :show-header="showHeader"
-          :slide-duration="slideDuration"
-          :transition-name="transitionName"
-          :translation="translation"
-          :use-utc="useUtc"
-          :view="view || computedInitialView"
-          :year-range="yearPickerRange"
-          @page-change="handlePageChange"
-          @select="handleSelect"
-          @set-transition-name="setTransitionName($event)"
-          @set-view="setView"
+      <Transition name="fade">
+        <div
+          v-show="isOpen"
+          ref="datepicker"
+          class="vdp-datepicker__calendar"
+          :class="pickerClasses"
+          :style="calendarStyle"
+          @mousedown.prevent
         >
-          <template v-for="slotKey of calendarSlots">
-            <slot :slot="slotKey" :name="slotKey" />
-          </template>
-          <template #dayCellContent="{ cell }">
-            <slot v-if="cell" name="dayCellContent" :cell="cell" />
-          </template>
-        </Component>
-        <slot name="calendarFooter" />
-      </div>
+          <Transition name="fade">
+            <slot name="beforeCalendarHeader" />
+            <Component
+              :is="picker"
+              :key="view"
+              :day-cell-content="dayCellContent"
+              :disabled-dates="disabledDates"
+              :first-day-of-week="firstDayOfWeek"
+              :highlighted="highlighted"
+              :is-rtl="isRtl"
+              :is-up-disabled="isUpDisabled"
+              :page-date="pageDate"
+              :selected-date="selectedDate"
+              :show-edge-dates="showEdgeDates"
+              :show-full-month-name="fullMonthName"
+              :show-header="showHeader"
+              :slide-duration="slideDuration"
+              :style="`transition-duration: ${fadeDuration}ms`"
+              :transition-name="transitionName"
+              :translation="translation"
+              :use-utc="useUtc"
+              :view="view || computedInitialView"
+              :year-range="yearPickerRange"
+              @change-picker-height="pickerHeight = $event"
+              @page-change="handlePageChange"
+              @select="handleSelect"
+              @set-transition-name="setTransitionName($event)"
+              @set-view="setView"
+            >
+              <template v-for="slotKey of calendarSlots">
+                <slot :slot="slotKey" :name="slotKey" />
+              </template>
+              <template #dayCellContent="{ cell }">
+                <slot v-if="cell" name="dayCellContent" :cell="cell" />
+              </template>
+            </Component>
+            <slot name="calendarFooter" />
+          </Transition>
+        </div>
+      </Transition>
     </Popup>
   </div>
 </template>
@@ -135,6 +143,10 @@ export default {
       default() {
         return {}
       },
+    },
+    fadeDuration: {
+      type: Number,
+      default: 300,
     },
     firstDayOfWeek: {
       type: String,
@@ -226,6 +238,7 @@ export default {
        * {Number}
        */
       pageTimestamp,
+      pickerHeight: 0,
       selectedDate: null,
       transitionName: '',
       utils,
@@ -237,6 +250,17 @@ export default {
       const views = ['day', 'month', 'year']
 
       return views.filter((view) => this.allowedToShowView(view))
+    },
+    calendarStyle() {
+      if (this.isInline) {
+        return {
+          height: `${this.pickerHeight}px`,
+        }
+      }
+
+      return {
+        'transition-duration': `${this.fadeDuration}ms`,
+      }
     },
     computedInitialView() {
       return this.initialView || this.minimumView
