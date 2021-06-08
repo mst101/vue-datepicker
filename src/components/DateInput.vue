@@ -45,7 +45,7 @@
       @focus="handleInputFocus"
       @keydown.enter.prevent="handleKeydownEnter"
       @keydown.escape.prevent="$emit('close')"
-      @keyup="parseTypedDate"
+      @keyup="handleKeyup($event)"
     />
     <!-- Clear Button -->
     <button
@@ -97,6 +97,7 @@ export default {
       input: null,
       isFocusedUsed: false,
       isBlurred: false,
+      parsedDate: null,
       typedDate: '',
       utils: makeDateUtils(this.useUtc),
     }
@@ -112,6 +113,10 @@ export default {
       return this.inputClass
     },
     formattedDate() {
+      if (!this.selectedDate) {
+        return null
+      }
+
       return typeof this.format === 'function'
         ? this.format(new Date(this.selectedDate))
         : this.utils.formatDate(
@@ -124,9 +129,11 @@ export default {
       if (!this.selectedDate) {
         return null
       }
-      if (this.typedDate.length) {
+
+      if (this.typedDate && this.typedDate.length) {
         return this.typedDate
       }
+
       return this.formattedDate
     },
   },
@@ -138,16 +145,25 @@ export default {
      * Emits a `clear-date` event
      */
     clearDate() {
+      this.input.value = ''
       this.$emit('clear-date')
     },
     /**
-     * Submit typedDate and emit a `blur` event
+     * Emits `clear-date` and `close` events
+     */
+    clearDateAndClose() {
+      this.clearDate()
+
+      if (this.isOpen) {
+        this.$emit('close')
+      }
+    },
+    /**
+     * Validate typedDate and emit a `blur` event
      */
     handleInputBlur() {
       this.isBlurred = this.isOpen
-      if (this.typeable) {
-        this.submitTypedDate()
-      }
+      this.validateTypedDate()
       this.$emit('blur')
       this.isFocusedUsed = false
     },
@@ -185,40 +201,48 @@ export default {
       }
       this.$emit('close')
     },
-    parseDate(value) {
-      return this.utils.parseDate(
-        value,
-        this.format,
-        this.translation,
-        this.parser,
-      )
-    },
     /**
-     * Attempt to parse a typed date
+     * Parses a typed date and submits it, if valid
      */
-    parseTypedDate() {
-      if (this.typeable) {
-        const parsableDate = this.parseDate(this.input.value)
-        const parsedDate = Date.parse(parsableDate)
-        if (!Number.isNaN(parsedDate)) {
-          this.typedDate = this.input.value
-          this.$emit('typed-date', new Date(parsedDate))
-        }
+    handleKeyup(event) {
+      if (!this.typeable || ['Tab', 'Shift'].includes(event.key)) {
+        return
+      }
+
+      if (this.input.value === '') {
+        this.$emit('typed-date', null)
+        return
+      }
+
+      this.parsedDate = Date.parse(
+        this.utils.parseDate(
+          this.input.value,
+          this.format,
+          this.translation,
+          this.parser,
+        ),
+      )
+
+      if (!Number.isNaN(this.parsedDate)) {
+        this.typedDate = this.input.value
+        this.$emit('typed-date', new Date(this.parsedDate))
       }
     },
     /**
      * Submits a typed date if it's valid
      */
     submitTypedDate() {
-      const parsableDate = this.parseDate(this.input.value)
-      const parsedDate = Date.parse(parsableDate)
+      if (Number.isNaN(this.parsedDate)) {
+        this.clearDateAndClose()
+        return
+      }
 
-      if (Number.isNaN(parsedDate)) {
-        this.clearDate()
-      } else {
-        this.input.value = this.formattedDate
-        this.typedDate = ''
-        this.$emit('typed-date', parsedDate)
+      this.input.value = this.formattedDate
+      this.typedDate = this.formattedDate
+      this.$emit('typed-date', this.parsedDate)
+
+      if (this.isOpen) {
+        this.$emit('close')
       }
     },
     /**
@@ -230,6 +254,17 @@ export default {
         return
       }
       this.$emit(this.isOpen ? 'close' : 'open')
+    },
+    /**
+     * Formats a typed date, or clears it if invalid
+     */
+    validateTypedDate() {
+      if (Number.isNaN(this.parsedDate)) {
+        this.input.value = ''
+        this.typedDate = ''
+      } else {
+        this.typedDate = this.formattedDate
+      }
     },
   },
 }
