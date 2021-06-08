@@ -4,7 +4,7 @@
       ref="prev"
       :class="[{ disabled: isPreviousDisabled, rtl: isRtl }, 'prev']"
       :disabled="isPreviousDisabled"
-      data-test-previous-button=""
+      data-test-previous-button
       type="button"
       @click="$emit('page-change', previousPage)"
       @keydown.down.prevent="$emit('set-focus', ['tabbable-cell'])"
