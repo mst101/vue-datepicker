@@ -1,6 +1,7 @@
 <template>
   <div class="picker-view">
     <slot name="beforeCalendarHeaderYear" />
+
     <PickerHeader
       v-if="showHeader"
       ref="PickerHeader"

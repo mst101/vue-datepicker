@@ -7,7 +7,7 @@
         placeholder="Select Date"
         :typeable="false"
         :show-header="true"
-        :calendar-button="true"
+        :inline="true"
         :open-date="new Date(2020, 2, 21)"
         :slide-duration="1000"
       />
