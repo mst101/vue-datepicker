@@ -16,16 +16,24 @@
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
     </PickerHeader>
 
-    <PickerCells
-      ref="cells"
-      :key="pageTitleYear"
-      v-slot="{ cell }"
-      :cells="cells"
-      view="year"
-      @select="select($event)"
+    <div
+      class="cells-wrapper"
+      :style="`transition-duration: ${slideDuration}ms; height: ${cellsHeight}px`"
     >
-      {{ cell.year }}
-    </PickerCells>
+      <Transition :name="transitionName">
+        <PickerCells
+          ref="cells"
+          :key="pageTitleYear"
+          v-slot="{ cell }"
+          :cells="cells"
+          :style="`transition-duration: ${slideDuration}ms`"
+          view="year"
+          @select="select($event)"
+        >
+          {{ cell.year }}
+        </PickerCells>
+      </Transition>
+    </div>
 
     <slot name="calendarFooterYear" />
   </div>

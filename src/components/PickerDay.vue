@@ -26,16 +26,25 @@
         {{ day }}
       </span>
 
-      <PickerCells
-        ref="cells"
-        :key="pageTitleDay"
-        v-slot="{ cell }"
-        :cells="cells"
-        view="day"
-        @select="select($event)"
+      <div
+        data-test-cells-wrapper
+        class="cells-wrapper"
+        :style="`transition-duration: ${slideDuration}ms; height: ${cellsHeight}px`"
       >
-        {{ dayCellContent(cell) }}
-      </PickerCells>
+        <Transition :name="transitionName">
+          <PickerCells
+            ref="cells"
+            :key="pageTitleDay"
+            v-slot="{ cell }"
+            :cells="cells"
+            :style="`transition-duration: ${slideDuration}ms`"
+            view="day"
+            @select="select($event)"
+          >
+            {{ dayCellContent(cell) }}
+          </PickerCells>
+        </Transition>
+      </div>
     </div>
 
     <slot name="calendarFooterDay" />

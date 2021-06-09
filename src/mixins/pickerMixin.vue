@@ -33,6 +33,14 @@ export default {
       type: Boolean,
       default: true,
     },
+    slideDuration: {
+      type: Number,
+      default: 300,
+    },
+    transitionName: {
+      type: String,
+      default: '',
+    },
     translation: {
       type: Object,
       default() {
@@ -54,6 +62,12 @@ export default {
     }
   },
   computed: {
+    cellsHeight() {
+      const columns = this.view === 'day' ? 7 : 3
+      const rows = Math.ceil(this.cells.length / columns)
+
+      return rows * 40
+    },
     /**
      * A look-up object created from 'disabledDates' prop
      * @return {Object}
@@ -79,6 +93,8 @@ export default {
       const units =
         this.view === 'year' ? incrementBy * this.yearRange : incrementBy
 
+      this.$emit('set-transition-name', incrementBy)
+
       if (this.view === 'day') {
         utils.setMonth(pageDate, utils.getMonth(pageDate) + units)
       } else {
@@ -88,10 +104,18 @@ export default {
       this.$emit('page-change', pageDate)
     },
     /**
-     * Emits a 'select' event
+     * Determines which transition to use (for edge dates) and emits a 'select' event
      * @param {Object} cell
      */
     select(cell) {
+      if (cell.isPreviousMonth) {
+        this.$emit('set-transition-name', -1)
+      }
+
+      if (cell.isNextMonth) {
+        this.$emit('set-transition-name', 1)
+      }
+
       this.$emit('select', cell)
     },
   },
