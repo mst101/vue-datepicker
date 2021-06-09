@@ -2,6 +2,7 @@
 export default {
   data() {
     return {
+      allElements: [],
       focus: {
         delay: 0,
         refs: [],
@@ -136,9 +137,12 @@ export default {
       )
     },
     /**
-     * Keeps track of focusable elements
+     * Sets `datepickerId` (as a global) and keeps track of focusable elements
      */
     handleFocusChange() {
+      document.datepickerId = this.datepickerId
+
+      this.setAllElements()
       this.setNavElements()
       this.setNavElementsFocusedIndex()
     },
@@ -163,6 +167,14 @@ export default {
           this.applyFocus()
         }, this.focus.delay)
       })
+    },
+    /**
+     * Records all focusable elements (so that we know whether any element in the datepicker is focused)
+     */
+    setAllElements() {
+      const vdpDatepicker = this.$refs['vdp-datepicker']
+
+      this.allElements = this.getFocusableElements(vdpDatepicker)
     },
     /**
      * Set the focus

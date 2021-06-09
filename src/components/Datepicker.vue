@@ -1,5 +1,6 @@
 <template>
   <div
+    :id="datepickerId"
     ref="datepicker"
     class="vdp-datepicker"
     :class="[wrapperClass, { rtl: isRtl }]"
@@ -290,6 +291,16 @@ export default {
         ? openDate
         : new Date(this.utils.setDate(openDate, 1))
     },
+    datepickerId() {
+      /* eslint-disable */
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+        (
+          c ^
+          (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+        ).toString(16),
+      )
+      /* eslint-enable */
+    },
     isInline() {
       return !!this.inline
     },
@@ -365,6 +376,10 @@ export default {
   },
   mounted() {
     this.init()
+    document.addEventListener('click', this.handleClick)
+  },
+  beforeDestroy() {
+    document.removeEventListener('click', this.handleClick)
   },
   methods: {
     /**
@@ -400,13 +415,30 @@ export default {
 
       this.view = ''
 
-      if (this.showCalendarOnFocus) {
+      if (this.showCalendarOnFocus || !this.focus.refs.length) {
         this.$refs.DateInput.shouldToggleOnClick = true
         document.body.focus()
+      } else {
+        this.reviewFocus()
       }
 
       this.resetDefaultPageDate()
       this.$emit('closed')
+    },
+    /**
+     * Closes the calendar when no element within it has focus
+     */
+    handleClick() {
+      if (document.datepickerId !== this.datepickerId) {
+        return
+      }
+
+      const isFocused = this.allElements.includes(document.activeElement)
+
+      if (!isFocused && this.isOpen) {
+        this.focus.refs = []
+        this.close()
+      }
     },
     /**
      * Emits a 'blur' event
