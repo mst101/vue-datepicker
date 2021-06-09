@@ -4,6 +4,7 @@
     class="vdp-datepicker"
     :class="[wrapperClass, { rtl: isRtl }]"
     @focusin="handleFocusChange($event)"
+    @keydown.tab="tabThroughNavigation($event)"
   >
     <DateInput
       :id="id"

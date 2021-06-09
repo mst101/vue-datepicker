@@ -221,6 +221,50 @@ export default {
         pickerCells.querySelector('button.cell:not(.muted):enabled')
     },
     /**
+     * Tab backwards through the focus-trapped elements
+     */
+    /* istanbul ignore next */
+    tabBackwards() {
+      this.navElementsFocusedIndex -= 1
+
+      if (this.navElementsFocusedIndex < 0) {
+        this.navElementsFocusedIndex = this.navElements.length - 1
+      }
+
+      this.navElements[this.navElementsFocusedIndex].focus()
+    },
+    /**
+     * Tab forwards through the focus-trapped elements
+     */
+    /* istanbul ignore next */
+    tabForwards() {
+      this.navElementsFocusedIndex += 1
+
+      if (this.navElementsFocusedIndex >= this.navElements.length) {
+        this.navElementsFocusedIndex = 0
+      }
+
+      this.navElements[this.navElementsFocusedIndex].focus()
+    },
+    /**
+     * Tab through the focus-trapped elements
+     * @param event
+     */
+    /* istanbul ignore next */
+    tabThroughNavigation(event) {
+      // Allow normal tabbing when closed
+      if (!this.isOpen) {
+        return
+      }
+      event.preventDefault()
+
+      if (event.shiftKey) {
+        this.tabBackwards()
+      } else {
+        this.tabForwards()
+      }
+    },
+    /**
      * Update which cell in the picker should be focus-trapped
      */
     updateTabbableCell() {
