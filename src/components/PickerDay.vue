@@ -24,10 +24,12 @@
       <slot slot="nextIntervalBtn" name="nextIntervalBtn" />
     </PickerHeader>
 
-    <div :class="{ 'flex-rtl': isRtl }">
-      <span v-for="day in daysOfWeek" :key="day" class="day-header">
-        {{ day }}
-      </span>
+    <div>
+      <div class="day-header">
+        <span v-for="day in daysOfWeek" :key="day">
+          {{ day }}
+        </span>
+      </div>
 
       <div
         data-test-cells-wrapper

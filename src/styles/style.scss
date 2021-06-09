@@ -118,12 +118,6 @@
     cursor: default;
   }
 
-  .flex-rtl {
-    display: flex;
-    flex-wrap: wrap;
-    width: inherit;
-  }
-
   .cell {
     border: 1px solid transparent;
     display: inline-block;
@@ -182,7 +176,7 @@
     }
   }
 
-  .day-header {
+  .day-header span {
     display: inline-block;
     font-size: 75%;
     height: 40px;
