@@ -94,7 +94,7 @@ export default {
         return this.$refs.DateInput.$refs['calendar-button']
       }
       if (ref === 'open-date') {
-        return this.$refs.picker.$refs.cells.$refs[ref][0]
+        return this.$refs.picker.$refs.cells.$refs['open-date'][0]
       }
       if (this.showHeader) {
         if (ref === 'up') {
@@ -181,7 +181,8 @@ export default {
       this.setNavElements()
       this.setNavElementsFocusedIndex()
 
-      if (this.inline) {
+      if (this.inline && !this.isDirty) {
+        this.setTabbableCell()
         this.isDirty = true
       }
     },
