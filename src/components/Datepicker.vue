@@ -99,6 +99,7 @@
               @change-picker-height="pickerHeight = $event"
               @clear-date="clearDate"
               @page-change="handlePageChange"
+              @reset-tabbable-cell="setTabbableCell"
               @select="handleSelect"
               @set-focus="setFocus($event)"
               @set-transition-name="setTransitionName($event)"

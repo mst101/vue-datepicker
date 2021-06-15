@@ -11,6 +11,7 @@
       :is-typeable="isTypeable"
       @clear-date="$emit('clear-date')"
       @page-change="changePage($event)"
+      @reset-tabbable-cell="$emit('reset-tabbable-cell')"
       @set-focus="$emit('set-focus', $event)"
     >
       <slot slot="prevIntervalBtn" name="prevIntervalBtn" />
