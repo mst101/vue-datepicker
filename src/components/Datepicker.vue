@@ -528,7 +528,7 @@ export default {
       }
 
       if (!this.isRevertingToOpenDate) {
-        this.setRefsToFocus(newView, oldView)
+        this.setViewChangeFocusRefs(newView, oldView)
         this.reviewFocus()
       }
 
@@ -665,27 +665,6 @@ export default {
       this.pageTimestamp = this.utils.setDate(new Date(dateTemp), 1)
     },
     /**
-     * Sets the array of `refs` that might be focused following a view change (in order of preference)
-     * @param {String} newView The view being changed to
-     * @param {String} oldView The previous view
-     */
-    setRefsToFocus(newView, oldView) {
-      if (oldView === '') {
-        this.focus.refs = []
-        return
-      }
-
-      const isNewView = (view) => view === newView
-      const isOldView = (view) => view === oldView
-      const newViewIndex = this.allowedViews.findIndex(isNewView)
-      const oldViewIndex = this.allowedViews.findIndex(isOldView)
-      const isViewChangeUp = newViewIndex - oldViewIndex > 0
-
-      this.focus.refs = isViewChangeUp
-        ? ['up', 'tabbable-cell']
-        : ['tabbable-cell', 'up']
-    },
-    /**
      * Set the datepicker value
      * @param {Date|String|Number|null} date
      */
@@ -706,6 +685,22 @@ export default {
       if (this.allowedToShowView(view)) {
         this.view = view
       }
+    },
+    /**
+     * Sets the array of `refs` that might be focused following a view change
+     * @param {String} newView The view being changed to
+     * @param {String} oldView The previous view
+     */
+    setViewChangeFocusRefs(newView, oldView) {
+      const isNewView = (view) => view === newView
+      const isOldView = (view) => view === oldView
+      const newViewIndex = this.allowedViews.findIndex(isNewView)
+      const oldViewIndex = this.allowedViews.findIndex(isOldView)
+      const isViewChangeUp = newViewIndex - oldViewIndex > 0
+
+      this.focus.refs = isViewChangeUp
+        ? ['up', 'tabbable-cell']
+        : ['tabbable-cell', 'up']
     },
     /**
      * Set the view to the next view down e.g. from `month` to `day`

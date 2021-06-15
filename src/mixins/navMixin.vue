@@ -75,8 +75,8 @@ export default {
     },
     /**
      * Finds an element by its `ref` attribute
-     * @param {string} ref  The `ref` name of the wanted element
-     * @returns {Element}   A Vue element
+     * @param {string} ref        The `ref` name of the wanted element
+     * @returns {HTMLElement|Vue} A Vue element
      */
     // eslint-disable-next-line complexity,max-statements
     getElementByRef(ref) {
