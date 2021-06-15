@@ -5,11 +5,60 @@
       <h3>Default datepicker...</h3>
       <Datepicker
         placeholder="Select Date"
-        :typeable="false"
-        :show-header="true"
-        :inline="true"
+        fixed-position="top-right"
+        :inline="false"
         :open-date="new Date(2020, 2, 21)"
+        :show-header="true"
         :slide-duration="1000"
+        :typeable="false"
+      />
+      <code>
+        &lt;datepicker placeholder="Select Date"&gt;&lt;/datepicker&gt;
+      </code>
+    </div>
+
+    <div class="example">
+      <h3>Default datepicker...</h3>
+      <Datepicker
+        placeholder="Select Date"
+        fixed-position="top-right"
+        :inline="false"
+        :open-date="new Date(2020, 2, 21)"
+        :show-header="true"
+        :slide-duration="1000"
+        :typeable="false"
+      />
+      <code>
+        &lt;datepicker placeholder="Select Date"&gt;&lt;/datepicker&gt;
+      </code>
+    </div>
+
+    <div class="example">
+      <h3>Default datepicker...</h3>
+      <Datepicker
+        placeholder="Select Date"
+        fixed-position="top-right"
+        :inline="false"
+        :open-date="new Date(2020, 2, 21)"
+        :show-header="true"
+        :slide-duration="1000"
+        :typeable="false"
+      />
+      <code>
+        &lt;datepicker placeholder="Select Date"&gt;&lt;/datepicker&gt;
+      </code>
+    </div>
+
+    <div class="example">
+      <h3>Default datepicker...</h3>
+      <Datepicker
+        placeholder="Select Date"
+        fixed-position="top-right"
+        :inline="false"
+        :open-date="new Date(2020, 2, 21)"
+        :show-header="true"
+        :slide-duration="1000"
+        :typeable="false"
       />
       <code>
         &lt;datepicker placeholder="Select Date"&gt;&lt;/datepicker&gt;

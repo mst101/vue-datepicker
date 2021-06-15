@@ -52,6 +52,7 @@
 
     <Popup
       ref="popup"
+      style="position: relative"
       :append-to-body="appendToBody"
       :fixed-position="fixedPosition"
       :inline="inline"
@@ -65,6 +66,7 @@
           class="vdp-datepicker__calendar"
           :class="pickerClasses"
           data-test-calendar
+          style="position: absolute"
           :style="calendarStyle"
           @mousedown.prevent
         >
@@ -483,7 +485,7 @@ export default {
     /**
      * Set the date, or go to the next view down
      */
-    // eslint-disable-next-line max-statements
+    // eslint-disable-next-line max-statements,complexity
     handleSelect(cell) {
       if (this.allowedToShowView(this.nextView.down)) {
         this.showNextViewDown(cell)
@@ -731,5 +733,244 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../styles/style.scss';
+//@import '../styles/style.scss';
+
+.rtl {
+  direction: rtl;
+}
+
+.vdp-datepicker {
+  position: relative;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.vdp-datepicker__calendar {
+  background: #fff;
+  border: 1px solid #ccc;
+  //position: absolute;
+  width: 300px;
+  z-index: 10000;
+
+  .today {
+    background-color: #eee;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &.inline {
+    position: static;
+  }
+
+  button {
+    background: inherit;
+    text-align: center;
+
+    &:disabled {
+      color: #ddd;
+    }
+  }
+
+  header {
+    display: flex;
+    height: 40px;
+    justify-content: space-between;
+
+    button {
+      border: none;
+
+      &:hover:not(:disabled) {
+        background: #eee;
+      }
+
+      &.up {
+        color: #000;
+        flex-grow: 5;
+      }
+    }
+
+    .prev,
+    .next {
+      max-height: 40px;
+      position: relative;
+      width: 40px;
+
+      .default {
+        text-indent: -10000px;
+
+        &:after {
+          border: 6px solid transparent;
+          content: '';
+          left: 50%;
+          position: absolute;
+          top: 50%;
+          transform: translateX(-50%) translateY(-50%);
+        }
+      }
+
+      &.rtl {
+        transform: rotate(180deg);
+      }
+    }
+
+    .prev {
+      .default {
+        &:after {
+          border-right: 10px solid #000;
+          margin-left: -5px;
+        }
+      }
+
+      &:disabled {
+        .default {
+          &:after {
+            border-right: 10px solid #ddd;
+          }
+        }
+      }
+    }
+
+    .next {
+      .default {
+        &:after {
+          border-left: 10px solid #000;
+          margin-left: 5px;
+        }
+      }
+
+      &:disabled {
+        .default {
+          &:after {
+            border-left: 10px solid #ddd;
+          }
+        }
+      }
+    }
+  }
+
+  .cell {
+    border: 1px solid transparent;
+    display: inline-block;
+    height: 40px;
+    padding: 0 5px;
+    text-align: center;
+    vertical-align: middle;
+    width: 14.285714285714286%;
+
+    &:not(.blank):not(.disabled).day,
+    &:not(.blank):not(.disabled).month,
+    &:not(.blank):not(.disabled).year {
+      cursor: pointer;
+
+      &:hover {
+        border: 1px solid #4bd;
+      }
+    }
+
+    &.selected {
+      background: #4bd;
+      color: #104756;
+
+      &:hover {
+        background: #4bd;
+      }
+
+      &.highlighted {
+        background: #4bd;
+      }
+    }
+
+    &.highlighted {
+      background: #cae5ed;
+      color: #104756;
+
+      &.disabled {
+        color: #accad2;
+      }
+    }
+
+    &.muted {
+      color: #757575;
+
+      &.selected {
+        color: #104756;
+      }
+
+      &.disabled:not(.selected) {
+        color: #ddd;
+
+        &.highlighted {
+          color: #accad2;
+        }
+      }
+    }
+  }
+
+  .day-header span {
+    display: inline-block;
+    font-size: 75%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 5px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 14.285714285714286%;
+  }
+
+  .month,
+  .year {
+    width: 33.333%;
+  }
+
+  .picker-view {
+    background: white;
+    border: 1px solid #ccc;
+    position: absolute;
+    width: inherit;
+
+    .cells-wrapper {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-right-leave-active,
+    .slide-right-enter-active {
+      position: absolute;
+      top: 0;
+    }
+    .slide-right-enter {
+      transform: translate(100%, 0);
+    }
+    .slide-right-leave-to {
+      transform: translate(-100%, 0);
+    }
+
+    .slide-left-leave-active,
+    .slide-left-enter-active {
+      position: absolute;
+      top: 0;
+    }
+    .slide-left-enter {
+      transform: translate(-100%, 0);
+    }
+    .slide-left-leave-to {
+      transform: translate(100%, 0);
+    }
+  }
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.vdp-datepicker__clear-button,
+.vdp-datepicker__calendar-button {
+  border: none;
+  font-style: normal;
+  padding: 0;
+}
 </style>

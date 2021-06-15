@@ -70,6 +70,24 @@ export default {
       const relativeElement = this.$parent.$el
       this.popupRect = getPopupElementSize(popup)
       const { width, height } = this.popupRect
+      console.log({
+        el: popup,
+        elRelative: relativeElement,
+        targetWidth: width,
+        targetHeight: height,
+        appendToBody: this.appendToBody,
+        fixedPosition: this.fixedPosition,
+        rtl: this.rtl,
+      })
+      console.log(getRelativePosition({
+        el: popup,
+        elRelative: relativeElement,
+        targetWidth: width,
+        targetHeight: height,
+        appendToBody: this.appendToBody,
+        fixedPosition: this.fixedPosition,
+        rtl: this.rtl,
+      }))
       const { left, top } = getRelativePosition({
         el: popup,
         elRelative: relativeElement,
