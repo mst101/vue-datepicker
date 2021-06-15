@@ -27,10 +27,14 @@ describe('PickerHeader', () => {
   })
 
   it('should `arrow up` to input, if typeable', () => {
+    const prevButton = wrapper.find('button.prev')
+
+    prevButton.trigger('keydown.up')
+    expect(wrapper.emitted('set-focus')).toBeUndefined()
+
     wrapper.setProps({
       isTypeable: true,
     })
-    const prevButton = wrapper.find('button.prev')
 
     prevButton.trigger('keydown.up')
     expect(wrapper.emitted('set-focus')[0][0]).toEqual(['input'])
@@ -42,7 +46,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: -1,
-      refsToFocus: ['prev'],
+      focusRefs: ['prev'],
     })
   })
 
@@ -52,7 +56,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: -1,
-      refsToFocus: ['prev'],
+      focusRefs: ['prev'],
     })
   })
 
@@ -66,7 +70,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: -1,
-      refsToFocus: ['prev'],
+      focusRefs: ['prev'],
     })
   })
 
@@ -76,7 +80,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: 1,
-      refsToFocus: ['next'],
+      focusRefs: ['next'],
     })
   })
 
@@ -86,7 +90,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: 1,
-      refsToFocus: ['next'],
+      focusRefs: ['next'],
     })
   })
 
@@ -100,7 +104,7 @@ describe('PickerHeader', () => {
 
     expect(wrapper.emitted('page-change')[0][0]).toEqual({
       incrementBy: 1,
-      refsToFocus: ['next'],
+      focusRefs: ['next'],
     })
   })
 

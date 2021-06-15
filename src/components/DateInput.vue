@@ -336,6 +336,7 @@ export default {
       if (this.isOpen) {
         this.$emit('set-focus', [refToFocus || 'input'])
       }
+
       this.$emit(this.isOpen ? 'close' : 'open')
     },
     /**

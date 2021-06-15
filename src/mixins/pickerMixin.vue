@@ -159,9 +159,9 @@ export default {
     /**
      * Changes the page up or down
      * @param {Number} incrementBy
-     * @param {String} refsToFocus
+     * @param {[String]} focusRefs
      */
-    changePage({ incrementBy, refsToFocus }) {
+    changePage({ incrementBy, focusRefs }) {
       const { pageDate, utils } = this
       const units =
         this.view === 'year' ? incrementBy * this.yearRange : incrementBy
@@ -175,7 +175,7 @@ export default {
         utils.setFullYear(pageDate, utils.getFullYear(pageDate) + units)
       }
 
-      this.$emit('page-change', { refsToFocus, pageDate })
+      this.$emit('page-change', { focusRefs, pageDate })
     },
     /**
      * Changes the page and focuses the cell that is being 'arrowed' to
@@ -193,7 +193,7 @@ export default {
 
       this.changePage({
         incrementBy: Math.sign(delta),
-        refsToFocus: ['tabbable-cell'],
+        focusRefs: ['tabbable-cell'],
       })
 
       this.$nextTick(() => {

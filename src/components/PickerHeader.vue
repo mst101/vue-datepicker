@@ -8,10 +8,10 @@
       data-test-previous-button
       type="button"
       @click="$emit('page-change', previousPage)"
-      @keydown.down.prevent="$emit('set-focus', ['tabbable-cell'])"
+      @keydown.down.prevent="focusTabbableCell"
       @keydown.enter.prevent="$emit('page-change', previousPage)"
       @keydown.esc.prevent="$emit('clear-date')"
-      @keydown.up.prevent="isTypeable ? $emit('set-focus', ['input']) : null"
+      @keydown.up.prevent="focusInput"
       @keydown.left.prevent="arrowLeftPrev"
       @keydown.right.prevent="arrowRightPrev"
       @keyup.space.prevent="$emit('page-change', previousPage)"
@@ -29,10 +29,10 @@
       data-test-next-button
       type="button"
       @click="$emit('page-change', nextPage)"
-      @keydown.down.prevent="$emit('set-focus', ['tabbable-cell'])"
+      @keydown.down.prevent="focusTabbableCell"
       @keydown.enter.prevent="$emit('page-change', nextPage)"
       @keydown.esc.prevent="$emit('clear-date')"
-      @keydown.up.prevent="isTypeable ? $emit('set-focus', ['input']) : null"
+      @keydown.up.prevent="focusInput"
       @keydown.left.prevent="arrowLeftNext"
       @keydown.right.prevent="arrowRightNext"
       @keyup.space.prevent="$emit('page-change', nextPage)"
@@ -67,8 +67,8 @@ export default {
   },
   data() {
     return {
-      previousPage: { incrementBy: -1, refsToFocus: ['prev'] },
-      nextPage: { incrementBy: 1, refsToFocus: ['next'] },
+      previousPage: { incrementBy: -1, focusRefs: ['prev'] },
+      nextPage: { incrementBy: 1, focusRefs: ['next'] },
     }
   },
   methods: {
@@ -111,6 +111,15 @@ export default {
         return
       }
       this.$emit('page-change', this.nextPage)
+    },
+    focusInput() {
+      if (this.isTypeable) {
+        this.$emit('set-focus', ['input'])
+      }
+    },
+    focusTabbableCell() {
+      this.$emit('reset-tabbable-cell')
+      this.$emit('set-focus', ['tabbable-cell'])
     },
   },
 }

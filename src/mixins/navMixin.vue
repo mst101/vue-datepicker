@@ -3,13 +3,15 @@ export default {
   data() {
     return {
       allElements: [],
-      focusDelay: 0,
+      focus: {
+        delay: 0,
+        refs: [],
+      },
       isDirty: false,
       isRevertingToOpenDate: false,
       navElements: [],
       navElementsFocusedIndex: 0,
       resetTabbableCell: false,
-      refsToFocus: [],
       tabbableCell: null,
       transitionName: '',
     }
@@ -43,24 +45,19 @@ export default {
   },
   methods: {
     /**
-     * Focuses the first non-disabled element found in the `refsToFocus` array
+     * Focuses the first non-disabled element found in the `focus.refs` array and sets `navElementsFocusedIndex`
      */
     applyFocus() {
-      let elementToFocus
-      const refsToFocus = [...this.refsToFocus]
-      refsToFocus.push(this.fallbackElementToFocus)
+      const focusRefs = [...this.focus.refs, this.fallbackElementToFocus]
 
-      for (let i = 0; i < refsToFocus.length; i += 1) {
-        const element = this.getElementByRef(refsToFocus[i])
+      for (let i = 0; i < focusRefs.length; i += 1) {
+        const element = this.getElementByRef(focusRefs[i])
 
         if (element && !element.getAttribute('disabled')) {
-          elementToFocus = element
+          element.focus()
+          this.setNavElementsFocusedIndex()
           break
         }
-      }
-
-      if (elementToFocus) {
-        elementToFocus.focus()
       }
     },
     /**
@@ -179,7 +176,6 @@ export default {
 
       this.setAllElements()
       this.setNavElements()
-      this.setNavElementsFocusedIndex()
 
       if (this.inline && !this.isDirty) {
         this.setTabbableCell()
@@ -190,12 +186,10 @@ export default {
      * Returns true if the user has arrowed to a new page
      */
     hasArrowedToNewPage() {
-      const { refsToFocus } = this
+      const focusRefs = this.focus.refs
 
       return (
-        refsToFocus &&
-        refsToFocus.length === 1 &&
-        refsToFocus[0] === 'tabbable-cell'
+        focusRefs && focusRefs.length === 1 && focusRefs[0] === 'tabbable-cell'
       )
     },
     /**
@@ -210,7 +204,7 @@ export default {
      * Resets the focus to the open date
      */
     resetFocusToOpenDate() {
-      this.refsToFocus = ['open-date']
+      this.focus.refs = ['open-date']
       this.setTransitionAndFocusDelay(
         this.focusedDateTimestamp,
         this.computedOpenDate,
@@ -242,7 +236,7 @@ export default {
 
         setTimeout(() => {
           this.applyFocus()
-        }, this.focusDelay)
+        }, this.focus.delay)
 
         this.resetTabbableCell = false
       })
@@ -258,9 +252,9 @@ export default {
       const isInTheFuture = startPageDate < endPageDate
 
       if (this.isMinimumView) {
-        this.focusDelay = isInTheFuture ? this.slideDuration : 0
+        this.focus.delay = isInTheFuture ? this.slideDuration : 0
       } else {
-        this.focusDelay = 0
+        this.focus.delay = 0
       }
 
       this.setTransitionName(endDate - startDate)
@@ -274,11 +268,11 @@ export default {
       this.allElements = this.getFocusableElements(vdpDatepicker)
     },
     /**
-     * Sets the array of `refs` that might be focused following a view change (in order of preference)
-     * @param {Array} refs The view being changed to
+     * Set the focus
+     * @param {Array} refs An array of `refs` to focus (in order of preference)
      */
     setFocus(refs) {
-      this.refsToFocus = refs
+      this.focus.refs = refs
       this.applyFocus()
     },
     /**

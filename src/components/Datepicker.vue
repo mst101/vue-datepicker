@@ -417,7 +417,7 @@ export default {
       }
 
       this.selectedDate = null
-      this.refsToFocus = ['input']
+      this.focus.refs = ['input']
       this.close()
       this.$emit('selected', null)
       this.$emit('input', null)
@@ -433,7 +433,7 @@ export default {
 
       this.view = ''
 
-      if (this.showCalendarOnFocus || !this.refsToFocus.length) {
+      if (this.showCalendarOnFocus || !this.focus.refs.length) {
         this.$refs.DateInput.shouldToggleOnClick = true
         document.body.focus()
       } else {
@@ -454,7 +454,7 @@ export default {
       const isFocused = this.allElements.includes(document.activeElement)
 
       if (!isFocused && this.isOpen) {
-        this.refsToFocus = []
+        this.focus.refs = []
         this.close()
       }
     },
@@ -473,9 +473,9 @@ export default {
     /**
      * Set the new pageDate, focus the relevant element and emit a `changed-<view>` event
      */
-    handlePageChange({ refsToFocus, pageDate }) {
+    handlePageChange({ focusRefs, pageDate }) {
       this.setPageDate(pageDate)
-      this.refsToFocus = refsToFocus
+      this.focus.refs = focusRefs
       this.reviewFocus()
       this.$emit(`changed-${this.nextView.up}`, pageDate)
     },
@@ -489,10 +489,10 @@ export default {
         return
       }
 
-      this.focusDelay = cell.isNextMonth ? this.slideDuration : 0
+      this.focus.delay = cell.isNextMonth ? this.slideDuration : 0
       this.$refs.DateInput.typedDate = ''
       this.selectDate(cell.timestamp)
-      this.refsToFocus = ['input']
+      this.focus.refs = ['input']
       this.close()
 
       if (this.showCalendarOnFocus && !this.inline) {
@@ -670,7 +670,7 @@ export default {
      */
     setRefsToFocus(newView, oldView) {
       if (oldView === '') {
-        this.refsToFocus = []
+        this.focus.refs = []
         return
       }
 
@@ -680,7 +680,7 @@ export default {
       const oldViewIndex = this.allowedViews.findIndex(isOldView)
       const isViewChangeUp = newViewIndex - oldViewIndex > 0
 
-      this.refsToFocus = isViewChangeUp
+      this.focus.refs = isViewChangeUp
         ? ['up', 'tabbable-cell']
         : ['tabbable-cell', 'up']
     },
