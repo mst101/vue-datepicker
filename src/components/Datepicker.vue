@@ -86,6 +86,7 @@
               :show-header="showHeader"
               :slide-duration="slideDuration"
               :style="`transition-duration: ${fadeDuration}ms`"
+              :tabbable-cell-id="tabbableCellId"
               :transition-name="transitionName"
               :translation="translation"
               :use-utc="useUtc"

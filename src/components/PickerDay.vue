@@ -41,6 +41,7 @@
             v-slot="{ cell }"
             :cells="cells"
             :style="`transition-duration: ${slideDuration}ms`"
+            :tabbable-cell-id="tabbableCellId"
             view="day"
             @select="select($event)"
           >
