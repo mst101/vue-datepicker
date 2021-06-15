@@ -332,9 +332,9 @@ export default {
     /**
      * Opens or closes the calendar
      */
-    toggle(refToFocus) {
+    toggle(calendarButton) {
       if (this.isOpen) {
-        this.$emit('set-focus', [refToFocus || 'input'])
+        this.$emit('set-focus', [calendarButton || 'input'])
       }
 
       this.$emit(this.isOpen ? 'close' : 'open')
