@@ -3,6 +3,7 @@
     ref="datepicker"
     class="vdp-datepicker"
     :class="[wrapperClass, { rtl: isRtl }]"
+    @focusin="handleFocusChange($event)"
   >
     <DateInput
       :id="id"
