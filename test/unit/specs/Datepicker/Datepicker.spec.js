@@ -247,17 +247,19 @@ describe('Datepicker mounted to body', () => {
   })
 
   it("focuses today's date by default", async () => {
-    wrapper.vm.open()
+    const input = wrapper.find('input')
+    await input.trigger('click')
 
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     const todayCell = wrapper.find('button.today')
 
     expect(todayCell.text()).toBe(new Date().getDate().toString())
-    expect(document.activeElement).toBe(todayCell.element)
+    expect(document.activeElement).toStrictEqual(todayCell.element)
   })
 
   it('focuses the up button on increasing the view', async () => {
-    await wrapper.vm.open()
+    const input = wrapper.find('input')
+    await input.trigger('click')
 
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     let upButton = wrapper.find('button.up')
@@ -270,9 +272,11 @@ describe('Datepicker mounted to body', () => {
   })
 
   it('focuses the tabbable-cell on decreasing the view', async () => {
-    await wrapper.vm.open()
+    const input = wrapper.find('input')
+    await input.trigger('click')
 
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
+
     const upButton = wrapper.find('button.up')
 
     await upButton.trigger('click')
@@ -287,7 +291,8 @@ describe('Datepicker mounted to body', () => {
   })
 
   it('closes when the calendar loses focus', async () => {
-    wrapper.vm.open()
+    const input = wrapper.find('input')
+    await input.trigger('click')
 
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
@@ -730,11 +735,9 @@ describe('Datepicker mounted to body with openDate', () => {
     })
 
     const input = wrapper.find('input')
-    await input.trigger('click')
-
-    expect(document.activeElement).toBe(input.element)
-
+    await input.element.focus()
     await input.trigger('keydown.down')
+
     const tabbableCell = wrapper.find('button.cell[data-test-tabbable-cell]')
 
     expect(document.activeElement).toStrictEqual(tabbableCell.element)
@@ -750,7 +753,9 @@ describe('Datepicker mounted to body with openDate', () => {
 
   it('reverts focus to the `open-date` when another date on the same page has focus and the `escape` key is pressed', async () => {
     const input = wrapper.find('input')
+
     await input.trigger('click')
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
     const openDateCell = wrapper.find('button.open')
     expect(document.activeElement).toStrictEqual(openDateCell.element)
@@ -760,8 +765,7 @@ describe('Datepicker mounted to body with openDate', () => {
     const downCell = wrapper.findAll('button.cell').at(10)
     await downCell.trigger('keydown.esc')
 
-    // TODO: Not sure why we need this?
-    jest.advanceTimersByTime(0)
+    jest.advanceTimersByTime(wrapper.vm.fadeDuration)
 
     expect(document.activeElement).toBe(openDateCell.element)
   })
@@ -823,7 +827,6 @@ describe('Datepicker mounted to body with openDate', () => {
     expect(wrapper.vm.view).toBe('month')
 
     upButton = wrapper.find('button.up')
-    await upButton.trigger('focusin')
     await upButton.trigger('click')
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     expect(wrapper.vm.view).toBe('year')
@@ -832,6 +835,7 @@ describe('Datepicker mounted to body with openDate', () => {
     upButton = wrapper.find('button.up')
     await upButton.trigger('keydown.down')
 
+    await firstCell.element.focus()
     await firstCell.trigger('keydown.esc')
     jest.advanceTimersByTime(wrapper.vm.fadeDuration)
     expect(wrapper.vm.view).toBe('day')
@@ -1323,6 +1327,20 @@ describe('Datepicker.vue inline mounted to body', () => {
 
     expect(document.activeElement).toEqual(todayCell.element)
     expect(wrapper.vm.isDirty).toBeTruthy()
+  })
+
+  it('focuses the date when selected', async () => {
+    const openDate = wrapper.find('button.open')
+    await openDate.element.focus()
+    await openDate.trigger('click')
+
+    expect(document.activeElement).toBe(openDate.element)
+
+    const anotherDate = wrapper.findAll('button.cell').at(10)
+    await anotherDate.element.focus()
+    await anotherDate.trigger('click')
+
+    expect(document.activeElement).toBe(anotherDate.element)
   })
 })
 

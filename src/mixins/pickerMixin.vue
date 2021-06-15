@@ -193,7 +193,7 @@ export default {
 
       this.changePage({
         incrementBy: Math.sign(delta),
-        focusRefs: ['tabbable-cell'],
+        focusRefs: ['arrow-to-cell'],
       })
 
       this.$nextTick(() => {

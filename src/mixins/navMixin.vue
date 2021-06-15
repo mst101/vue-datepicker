@@ -81,7 +81,6 @@ export default {
     // eslint-disable-next-line complexity,max-statements
     getElementByRef(ref) {
       if (ref === 'tabbable-cell') {
-        this.updateTabbableCell()
         return this.tabbableCell
       }
       if (ref === 'input') {
@@ -184,13 +183,10 @@ export default {
     },
     /**
      * Returns true if the user has arrowed to a new page
+     * @return {Boolean}
      */
     hasArrowedToNewPage() {
-      const focusRefs = this.focus.refs
-
-      return (
-        focusRefs && focusRefs.length === 1 && focusRefs[0] === 'tabbable-cell'
-      )
+      return this.focus.refs && this.focus.refs[0] === 'arrow-to-cell'
     },
     /**
      * Returns true if the calendar has been passed the given slot

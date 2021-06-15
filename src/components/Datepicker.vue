@@ -490,10 +490,10 @@ export default {
         return
       }
 
-      this.focus.delay = cell.isNextMonth ? this.slideDuration : 0
       this.$refs.DateInput.typedDate = ''
       this.selectDate(cell.timestamp)
-      this.focus.refs = ['input']
+      this.focus.delay = cell.isNextMonth ? this.slideDuration : 0
+      this.focus.refs = this.isInline ? ['tabbable-cell'] : ['input']
       this.close()
 
       if (this.showCalendarOnFocus && !this.inline) {
@@ -692,6 +692,11 @@ export default {
      * @param {String} oldView The previous view
      */
     setViewChangeFocusRefs(newView, oldView) {
+      if (oldView === '') {
+        this.focus.refs = []
+        return
+      }
+
       const isNewView = (view) => view === newView
       const isOldView = (view) => view === oldView
       const newViewIndex = this.allowedViews.findIndex(isNewView)
@@ -710,6 +715,8 @@ export default {
       this.setPageDate(new Date(cell.timestamp))
       this.$emit(`changed-${this.view}`, cell)
       this.setView(this.nextView.down)
+      this.setTabbableCell()
+      this.reviewFocus()
     },
     /**
      * Capitalizes the first letter
