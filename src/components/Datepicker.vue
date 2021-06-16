@@ -52,7 +52,6 @@
 
     <Popup
       ref="popup"
-      style="position: relative"
       :append-to-body="appendToBody"
       :fixed-position="fixedPosition"
       :inline="inline"
@@ -66,7 +65,6 @@
           class="vdp-datepicker__calendar"
           :class="pickerClasses"
           data-test-calendar
-          style="position: absolute"
           :style="calendarStyle"
           @mousedown.prevent
         >
