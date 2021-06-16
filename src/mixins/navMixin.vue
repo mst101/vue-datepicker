@@ -198,7 +198,7 @@ export default {
      * Resets the focus to the open date
      */
     resetFocusToOpenDate() {
-      this.focus.refs = ['open-date']
+      this.focus.refs = ['openDate']
       this.setTransitionAndFocusDelay(
         this.focusedDateTimestamp,
         this.computedOpenDate,
