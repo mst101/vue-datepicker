@@ -84,13 +84,13 @@ export default {
         return this.tabbableCell
       }
       if (ref === 'input') {
-        return this.$refs.DateInput && this.$refs.DateInput.$refs[this.refName]
+        return this.$refs.dateInput && this.$refs.dateInput.$refs[this.refName]
       }
-      if (ref === 'calendar-button') {
-        return this.$refs.DateInput.$refs['calendar-button']
+      if (ref === 'calendarButton') {
+        return this.$refs.dateInput.$refs.calendarButton
       }
-      if (ref === 'open-date') {
-        return this.$refs.picker.$refs.cells.$refs['open-date'][0]
+      if (ref === 'openDate') {
+        return this.$refs.picker.$refs.cells.$refs.openDate[0]
       }
       if (this.showHeader) {
         if (ref === 'up') {
@@ -98,8 +98,8 @@ export default {
         }
         return (
           this.$refs.picker &&
-          this.$refs.picker.$refs.PickerHeader &&
-          this.$refs.picker.$refs.PickerHeader.$refs[ref]
+          this.$refs.picker.$refs.pickerHeader &&
+          this.$refs.picker.$refs.pickerHeader.$refs[ref]
         )
       }
       return null
@@ -144,7 +144,7 @@ export default {
         return null
       }
 
-      return this.$refs.DateInput.$refs[this.refName]
+      return this.$refs.dateInput.$refs[this.refName]
     },
     /**
      * Returns an array of focusable elements in a given HTML fragment
@@ -163,9 +163,7 @@ export default {
      * @returns {HTMLElement}
      */
     getPicker() {
-      return (
-        this.$refs.datepicker.children[1] || this.$refs.datepicker.children[0]
-      )
+      return this.$refs.calendar.children[1] || this.$refs.calendar.children[0]
     },
     /**
      * Sets `datepickerId` (as a global) and keeps track of focusable elements
@@ -259,9 +257,7 @@ export default {
      * Records all focusable elements (so that we know whether any element in the datepicker is focused)
      */
     setAllElements() {
-      const vdpDatepicker = this.$refs['vdp-datepicker']
-
-      this.allElements = this.getFocusableElements(vdpDatepicker)
+      this.allElements = this.getFocusableElements(this.$refs.datepicker)
     },
     /**
      * Set the focus

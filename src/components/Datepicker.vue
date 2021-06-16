@@ -1,7 +1,7 @@
 <template>
   <div
     :id="datepickerId"
-    ref="vdp-datepicker"
+    ref="datepicker"
     class="vdp-datepicker"
     :class="[wrapperClass, { rtl: isRtl }]"
     @focusin="handleFocusChange($event)"
@@ -9,7 +9,7 @@
   >
     <DateInput
       :id="id"
-      ref="DateInput"
+      ref="dateInput"
       :autofocus="autofocus"
       :bootstrap-styling="bootstrapStyling"
       :calendar-button="calendarButton"
@@ -61,7 +61,7 @@
       <Transition name="fade">
         <div
           v-show="isOpen"
-          ref="datepicker"
+          ref="calendar"
           class="vdp-datepicker__calendar"
           :class="pickerClasses"
           data-test-calendar
@@ -435,7 +435,7 @@ export default {
       this.view = ''
 
       if (this.showCalendarOnFocus || !this.focus.refs.length) {
-        this.$refs.DateInput.shouldToggleOnClick = true
+        this.$refs.dateInput.shouldToggleOnClick = true
         document.body.focus()
       } else {
         this.reviewFocus()
@@ -490,14 +490,14 @@ export default {
         return
       }
 
-      this.$refs.DateInput.typedDate = ''
+      this.$refs.dateInput.typedDate = ''
       this.selectDate(cell.timestamp)
       this.focus.delay = cell.isNextMonth ? this.slideDuration : 0
       this.focus.refs = this.isInline ? ['tabbable-cell'] : ['input']
       this.close()
 
       if (this.showCalendarOnFocus && !this.inline) {
-        this.$refs.DateInput.shouldToggleOnClick = true
+        this.$refs.dateInput.shouldToggleOnClick = true
       } else {
         this.reviewFocus()
       }
