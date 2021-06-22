@@ -55,6 +55,7 @@
       :append-to-body="appendToBody"
       :fixed-position="fixedPosition"
       :inline="inline"
+      :height="pickerHeight"
       :rtl="isRtl"
       :visible="isOpen"
     >

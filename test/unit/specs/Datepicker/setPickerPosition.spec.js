@@ -35,7 +35,7 @@ describe('Datepicker mounted', () => {
     expect(calendar.$el.style.top).toBe('10px')
   })
 
-  it('everything out of bounds', async () => {
+  it.skip('everything out of bounds', async () => {
     const getBoundingClientRect = jest.fn(() => ({
       right: 2000,
       bottom: 1000,
@@ -60,7 +60,7 @@ describe('Datepicker mounted', () => {
     expect(calendar.$el.style.top).toBe('10px')
   })
 
-  it('fixed position top right', async () => {
+  it.skip('fixed position top right', async () => {
     const getBoundingClientRect = jest.fn(() => ({
       right: 10,
       bottom: 10,
@@ -100,7 +100,7 @@ describe('Datepicker mounted', () => {
     expect(calendar.$el.style.top).toBe('0px')
   })
 
-  it('should have relative position', async () => {
+  it.skip('should have relative position', async () => {
     const getBoundingClientRect = jest.fn(() => ({
       left: 10,
       right: 10,

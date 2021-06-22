@@ -192,7 +192,7 @@ export default {
      * @return {Boolean}
      */
     hasSlot(slotName) {
-      return Object.prototype.hasOwnProperty.call(this.$slots, slotName)
+      return !!this.$slots[slotName]
     },
     /**
      * Resets the focus to the open date

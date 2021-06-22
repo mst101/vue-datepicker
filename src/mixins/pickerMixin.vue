@@ -98,13 +98,12 @@ export default {
     disabledConfig() {
       return new DisabledDate(this.utils, this.disabledDates).config
     },
-    hasSection() {
+    hasSlot() {
       const view = this.ucFirst(this.view)
 
       return {
-        headerSlot: this.hasSlot(`beforeCalendarHeader${view}`),
-        header: this.showHeader,
-        footerSlot: this.hasSlot(`calendarFooter${view}`),
+        header: !!this.$slots[`beforeCalendarHeader${view}`],
+        footer: !!this.$slots[`calendarFooter${view}`],
       }
     },
     /**
@@ -121,16 +120,19 @@ export default {
       )
     },
     sectionHeights() {
-      const { sections } = this
+      if (!this.sections.length) return { total: 0 }
 
-      if (!sections.length) return { total: 0 }
+      const view = this.ucFirst(this.view)
+      const headerSlot = this.$refs[`beforeCalendarHeader${view}`]
+      const footerSlot = this.$refs[`calendarFooter${view}`]
+      const { pickerHeader, dayHeader } = this.$refs
 
       return {
-        headerSlot: this.heightOfSlot('header'),
-        header: this.heightOfHeader(),
-        daysOfWeek: this.view === 'day' ? 40 : 0,
+        headerSlot: this.getElementHeight(headerSlot),
+        header: this.getElementHeight(pickerHeader && pickerHeader.$el),
+        dayHeader: this.getElementHeight(dayHeader),
         cells: this.cellsHeight,
-        footerSlot: this.heightOfSlot('footer'),
+        footerSlot: this.getElementHeight(footerSlot),
       }
     },
   },
@@ -232,6 +234,31 @@ export default {
       return element
     },
     /**
+     * Finds the height of an element
+     * @param  {HTMLElement|Vue} element
+     * @return {Number}
+     */
+    getElementHeight(element) {
+      if (!element) return 0
+
+      const originalPickerDisplay = this.$parent.$el.style.display
+      const originalPickerVisibility = this.$parent.$el.style.visibility
+
+      this.$parent.$el.style.display = 'block'
+      this.$parent.$el.style.visibility = 'block'
+
+      const styles = window.getComputedStyle(element)
+      const height =
+        element.offsetHeight +
+        parseInt(styles.marginTop, 10) +
+        parseInt(styles.marginBottom, 10)
+
+      this.$parent.$el.style.display = originalPickerDisplay
+      this.$parent.$el.style.visibility = originalPickerVisibility
+
+      return height
+    },
+    /**
      * Returns the element directly next to the currentElement
      * @param  {HTMLElement} currentElement  The element currently being iterated on
      * @param  {Number}      delta           The number of cells that the focus should move
@@ -270,6 +297,14 @@ export default {
       this.setFocusToAvailableCell(options)
     },
     /**
+     * Returns true if the calendar has been passed the given slot
+     * @param  {String} slotName The name of the slot
+     * @return {Boolean}
+     */
+    // hasSlot(slotName) {
+    //   return !!this.$slots[slotName]
+    // },
+    /**
      * Determines which transition to use (for edge dates) and emits a 'select' event
      * @param {Object} cell
      */
@@ -283,42 +318,6 @@ export default {
       }
 
       this.$emit('select', cell)
-    },
-    /**
-     * Returns true if the picker has been passed the relevant slot
-     * @param  {String} slotName The name of the slot
-     * @return {Boolean}
-     */
-    hasSlot(slotName) {
-      return Object.prototype.hasOwnProperty.call(this.$slots, slotName)
-    },
-    /**
-     * Calculates the height of the picker's `header` section
-     * @return {Number}
-     */
-    heightOfHeader() {
-      let headerHeight = 0
-
-      if (this.hasSection.header) {
-        if (this.hasSection.headerSlot) {
-          headerHeight = this.sections[1].clientHeight
-        } else {
-          headerHeight = this.sections[0].clientHeight
-        }
-      }
-
-      return headerHeight
-    },
-    /**
-     * Calculates the height of the given slot
-     * @param {String} slotName The name of the slot
-     * @return {Number}
-     */
-    heightOfSlot(slotName) {
-      const sectionIndex = slotName === 'header' ? 0 : this.sections.length - 1
-      const section = this.sections[sectionIndex]
-
-      return this.hasSection[`${slotName}Slot`] ? section.clientHeight : 0
     },
     /**
      * Returns true if the given element cannot be focused

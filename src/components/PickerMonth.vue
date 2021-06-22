@@ -1,6 +1,8 @@
 <template>
   <div class="picker-view">
-    <slot name="beforeCalendarHeaderMonth" />
+    <div ref="beforeCalendarHeaderMonth" v-if="hasSlot.header">
+      <slot name="beforeCalendarHeaderMonth" />
+    </div>
 
     <PickerHeader
       v-if="showHeader"
@@ -54,7 +56,9 @@
       </Transition>
     </div>
 
-    <slot name="calendarFooterMonth" />
+    <div ref="calendarFooterMonth" v-if="hasSlot.footer">
+      <slot name="calendarFooterMonth" />
+    </div>
   </div>
 </template>
 

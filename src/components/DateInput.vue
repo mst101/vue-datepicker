@@ -10,10 +10,10 @@
       data-test-calendar-button
       :disabled="disabled"
       type="button"
-      @click="toggle('calendar-button')"
+      @click="toggle('calendarButton')"
       @focus="handleButtonFocus"
-      @keydown.enter.prevent="toggle('calendar-button')"
-      @keyup.space.prevent="toggle('calendar-button')"
+      @keydown.enter.prevent="toggle('calendarButton')"
+      @keyup.space.prevent="toggle('calendarButton')"
     >
       <span :class="{ 'input-group-text': bootstrapStyling }">
         <slot name="calendarBtn">

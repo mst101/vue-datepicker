@@ -1,6 +1,8 @@
 <template>
   <div class="picker-view">
-    <slot name="beforeCalendarHeaderDay" />
+    <div ref="beforeCalendarHeaderDay" v-if="hasSlot.header">
+      <slot name="beforeCalendarHeaderDay" />
+    </div>
 
     <PickerHeader
       v-if="showHeader"
@@ -32,7 +34,7 @@
     </PickerHeader>
 
     <div>
-      <div class="day-header">
+      <div ref="dayHeader" class="day-header">
         <span v-for="day in daysOfWeek" :key="day">
           {{ day }}
         </span>
@@ -65,7 +67,9 @@
       </div>
     </div>
 
-    <slot name="calendarFooterDay" />
+    <div ref="calendarFooterDay" v-if="hasSlot.footer">
+      <slot name="calendarFooterDay" />
+    </div>
   </div>
 </template>
 

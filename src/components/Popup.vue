@@ -16,6 +16,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    height: {
+      type: Number,
+      default: 0,
+    },
     rtl: {
       type: Boolean,
       default: false,
@@ -27,7 +31,10 @@ export default {
   },
   data() {
     return {
-      popupRect: null,
+      popupRect: {
+        width: 0,
+        height: 0,
+      },
     }
   },
   watch: {
@@ -69,12 +76,12 @@ export default {
       const popup = this.$el
       const relativeElement = this.$parent.$el
       this.popupRect = getPopupElementSize(popup)
-      const { width, height } = this.popupRect
+      const { width } = this.popupRect
       const { left, top } = getRelativePosition({
         el: popup,
         elRelative: relativeElement,
         targetWidth: width,
-        targetHeight: height,
+        targetHeight: this.height,
         appendToBody: this.appendToBody,
         fixedPosition: this.fixedPosition,
         rtl: this.rtl,
