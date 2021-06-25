@@ -236,6 +236,10 @@ export default {
         typeof val === 'string' ||
         typeof val === 'number',
     },
+    width: {
+      type: Number,
+      default: 300,
+    },
     wrapperClass: {
       type: [String, Object, Array],
       default: '',
@@ -275,6 +279,7 @@ export default {
       if (this.isInline) {
         const style = {
           height: `${this.pickerHeight}px`,
+          width: `${this.width}px`,
         }
 
         if (this.isDirty) {
@@ -286,6 +291,7 @@ export default {
 
       return {
         'transition-duration': `${this.fadeDuration}ms`,
+        'width': `${this.width}px`,
       }
     },
     computedInitialView() {
