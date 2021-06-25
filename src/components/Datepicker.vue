@@ -54,10 +54,11 @@
       ref="popup"
       :append-to-body="appendToBody"
       :fixed-position="fixedPosition"
-      :inline="inline"
       :height="pickerHeight"
+      :inline="inline"
       :rtl="isRtl"
       :visible="isOpen"
+      :width="width"
     >
       <Transition name="fade">
         <div
