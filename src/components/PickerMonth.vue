@@ -57,7 +57,7 @@
           @clear-date="$emit('clear-date')"
           @select="select($event)"
         >
-          {{ cell.month }}
+          {{ monthCellContent(cell) }}
         </PickerCells>
       </Transition>
     </div>
@@ -77,6 +77,12 @@ import UpButton from './UpButton.vue'
 export default {
   name: 'PickerMonth',
   components: { PickerCells, UpButton },
+  props: {
+    monthCellContent: {
+      type: Function,
+      default: (month) => month.month,
+    },
+  },
   mixins: [pickerMixin],
   computed: {
     /**
@@ -96,14 +102,15 @@ export default {
             d.getHours(),
             d.getMinutes(),
           )
-
+      const { translation } = this
       const todayMonth = new Date(
         this.utils.setDate(this.utils.getNewDateObject(), 1),
       )
 
       for (let i = 0; i < 12; i += 1) {
         months.push({
-          month: this.utils.getMonthName(i, this.translation.months),
+          month: this.utils.getMonthName(i, translation.months),
+          monthAbbr: this.utils.getMonthNameAbbr(i, translation.monthsAbbr),
           timestamp: dObj.valueOf(),
           isDisabled: this.isDisabledMonth(dObj),
           isOpenDate:

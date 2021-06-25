@@ -86,6 +86,7 @@
               :is-typeable="typeable"
               :is-up-disabled="isUpDisabled"
               :is-minimum-view="isMinimumView"
+              :month-cell-content="monthCellContent"
               :open-date="computedOpenDate"
               :page-date="pageDate"
               :selected-date="selectedDate"
@@ -221,6 +222,10 @@ export default {
     minimumView: {
       type: String,
       default: 'day',
+    },
+    monthCellContent: {
+      type: Function,
+      default: (month) => month.month,
     },
     rowHeight: {
       type: Number,
