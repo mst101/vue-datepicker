@@ -4,7 +4,7 @@
     @keydown.tab="$emit('tab', $event)"
     @focusin="$emit('focusin', $event)"
   >
-    <div ref="beforeCalendarHeaderYear" v-if="hasSlot.header">
+    <div v-if="hasSlot.header" ref="beforeCalendarHeaderYear">
       <slot name="beforeCalendarHeaderYear" />
     </div>
 
@@ -57,7 +57,7 @@
       </Transition>
     </div>
 
-    <div ref="calendarFooterYear" v-if="hasSlot.footer">
+    <div v-if="hasSlot.footer" ref="calendarFooterYear">
       <slot name="calendarFooterYear" />
     </div>
   </div>

@@ -4,7 +4,7 @@
     @keydown.tab="$emit('tab', $event)"
     @focusin="$emit('focusin', $event)"
   >
-    <div ref="beforeCalendarHeaderDay" v-if="hasSlot.header">
+    <div v-if="hasSlot.header" ref="beforeCalendarHeaderDay">
       <slot name="beforeCalendarHeaderDay" />
     </div>
 
@@ -80,7 +80,7 @@
       </div>
     </div>
 
-    <div ref="calendarFooterDay" v-if="hasSlot.footer">
+    <div v-if="hasSlot.footer" ref="calendarFooterDay">
       <slot name="calendarFooterDay" />
     </div>
   </div>
