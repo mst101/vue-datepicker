@@ -7,11 +7,19 @@ export default {
   components: { PickerHeader },
   inheritAttrs: false,
   props: {
+    rowHeight: {
+      type: Number,
+      default: 40,
+    },
     disabledDates: {
       type: Object,
       default() {
         return {}
       },
+    },
+    headerHeight: {
+      type: Number,
+      default: 40,
     },
     isRtl: {
       type: Boolean,
@@ -89,7 +97,7 @@ export default {
       const columns = this.view === 'day' ? 7 : 3
       const rows = Math.ceil(this.cells.length / columns)
 
-      return rows * 40
+      return rows * this.rowHeight
     },
     /**
      * A look-up object created from 'disabledDates' prop

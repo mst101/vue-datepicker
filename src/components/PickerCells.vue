@@ -10,6 +10,7 @@
       :data-test-open-date="cell.isOpenDate"
       :data-test-today-cell="cell.isToday"
       :disabled="cell.isDisabled"
+      :style="{ height: `${rowHeight}px` }"
       type="button"
       @click="$emit('select', cell)"
       @keydown.enter.prevent="$emit('select', cell)"
@@ -29,6 +30,10 @@
 export default {
   name: 'PickerCells',
   props: {
+    rowHeight: {
+      type: Number,
+      default: 40,
+    },
     cells: {
       type: Array,
       required: true,

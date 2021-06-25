@@ -11,6 +11,7 @@
     <PickerHeader
       v-if="showHeader"
       ref="pickerHeader"
+      :height="headerHeight"
       :is-next-disabled="isNextDisabled"
       :is-previous-disabled="isPreviousDisabled"
       :is-rtl="isRtl"
@@ -48,6 +49,7 @@
           v-slot="{ cell }"
           :cells="cells"
           :is-rtl="isRtl"
+          :row-height="rowHeight"
           :style="`transition-duration: ${slideDuration}ms`"
           :tabbable-cell-id="tabbableCellId"
           view="month"

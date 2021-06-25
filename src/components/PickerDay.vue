@@ -11,6 +11,7 @@
     <PickerHeader
       v-if="showHeader"
       ref="pickerHeader"
+      :height="headerHeight"
       :is-next-disabled="isNextDisabled"
       :is-previous-disabled="isPreviousDisabled"
       :is-rtl="isRtl"
@@ -38,7 +39,14 @@
     </PickerHeader>
 
     <div>
-      <div ref="dayHeader" class="day-header">
+      <div
+        ref="dayHeader"
+        class="day-header"
+        :style="{
+          'height': `${rowHeight}px`,
+          'line-height': `${rowHeight}px`,
+        }"
+      >
         <span v-for="day in daysOfWeek" :key="day">
           {{ day }}
         </span>
@@ -57,6 +65,7 @@
             :cells="cells"
             :day-cell-content="dayCellContent"
             :is-rtl="isRtl"
+            :row-height="rowHeight"
             :show-edge-dates="showEdgeDates"
             :style="`transition-duration: ${slideDuration}ms`"
             :tabbable-cell-id="tabbableCellId"

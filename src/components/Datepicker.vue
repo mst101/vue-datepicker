@@ -75,9 +75,11 @@
               :is="picker"
               ref="picker"
               :key="view"
+              :row-height="rowHeight"
               :day-cell-content="dayCellContent"
               :disabled-dates="disabledDates"
               :first-day-of-week="firstDayOfWeek"
+              :header-height="headerHeight"
               :highlighted="highlighted"
               :is-rtl="isRtl"
               :is-typeable="typeable"
@@ -193,6 +195,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    headerHeight: {
+      type: Number,
+      default: 40,
+    },
     highlighted: {
       type: Object,
       default() {
@@ -214,6 +220,10 @@ export default {
     minimumView: {
       type: String,
       default: 'day',
+    },
+    rowHeight: {
+      type: Number,
+      default: 40,
     },
     showEdgeDates: {
       type: Boolean,
