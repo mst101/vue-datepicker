@@ -1,5 +1,9 @@
 <template>
-  <div :class="{ 'input-group': bootstrapStyling }">
+  <div
+    :class="{ 'input-group': bootstrapStyling }"
+    @keydown.tab="$emit('tab', $event)"
+    @focusin="$emit('focusin', $event)"
+  >
     <slot name="beforeDateInput" />
     <!-- Calendar Button -->
     <button

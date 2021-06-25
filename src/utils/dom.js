@@ -76,7 +76,7 @@ export function getRelativePosition({
     top = offsetY + relativeRect.height
   }
   const setTop = () => {
-    top = offsetY - targetHeight
+    top = offsetY - targetHeight - 2
   }
 
   if (fixedPosition === '') {

@@ -4,8 +4,6 @@
     ref="datepicker"
     class="vdp-datepicker"
     :class="[wrapperClass, { rtl: isRtl }]"
-    @focusin="handleFocusChange($event)"
-    @keydown.tab="tabThroughNavigation($event)"
   >
     <DateInput
       :id="id"
@@ -40,8 +38,10 @@
       @clear-date="clearDate"
       @close="close"
       @focus="handleInputFocus"
+      @focusin="handleFocusChange($event)"
       @open="open"
       @set-focus="setFocus($event)"
+      @tab="tabThroughNavigation($event)"
       @typed-date="handleTypedDate"
     >
       <slot slot="beforeDateInput" name="beforeDateInput" />
@@ -99,12 +99,14 @@
               :year-range="yearPickerRange"
               @change-picker-height="pickerHeight = $event"
               @clear-date="clearDate"
+              @focusin="handleFocusChange($event)"
               @page-change="handlePageChange"
               @reset-tabbable-cell="setTabbableCell"
               @select="handleSelect"
               @set-focus="setFocus($event)"
               @set-transition-name="setTransitionName($event)"
               @set-view="setView"
+              @tab="tabThroughNavigation($event)"
             >
               <template v-for="slotKey of calendarSlots">
                 <slot :slot="slotKey" :name="slotKey" />

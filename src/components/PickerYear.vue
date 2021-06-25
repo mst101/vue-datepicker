@@ -1,5 +1,9 @@
 <template>
-  <div class="picker-view">
+  <div
+    class="picker-view"
+    @keydown.tab="$emit('tab', $event)"
+    @focusin="$emit('focusin', $event)"
+  >
     <div ref="beforeCalendarHeaderYear" v-if="hasSlot.header">
       <slot name="beforeCalendarHeaderYear" />
     </div>
