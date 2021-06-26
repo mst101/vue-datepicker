@@ -17,6 +17,7 @@
       :is-rtl="isRtl"
       :is-typeable="isTypeable"
       :is-up-disabled="isUpDisabled"
+      :width="width"
       @clear-date="$emit('clear-date')"
       @page-change="changePage($event)"
       @reset-tabbable-cell="$emit('reset-tabbable-cell')"

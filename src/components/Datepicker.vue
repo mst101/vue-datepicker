@@ -100,6 +100,7 @@
               :translation="translation"
               :use-utc="useUtc"
               :view="view || computedInitialView"
+              :width="width"
               :year-range="yearPickerRange"
               @change-picker-height="pickerHeight = $event"
               @clear-date="clearDate"
@@ -161,7 +162,7 @@ export default {
     },
     dayCellContent: {
       type: Function,
-      default: (day) => day.date,
+      default: (cell) => cell.date,
     },
     disabledDates: {
       type: Object,
@@ -225,7 +226,7 @@ export default {
     },
     monthCellContent: {
       type: Function,
-      default: (month) => month.month,
+      default: (cell) => cell.month,
     },
     rowHeight: {
       type: Number,
@@ -306,6 +307,7 @@ export default {
       }
 
       return {
+        'height': `${this.pickerHeight}px`,
         'transition-duration': `${this.fadeDuration}ms`,
         'width': `${this.width}px`,
       }

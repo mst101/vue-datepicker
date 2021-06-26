@@ -85,6 +85,10 @@ export default {
       type: String,
       default: 'day',
     },
+    width: {
+      type: Number,
+      default: 300,
+    },
   },
   data() {
     return {

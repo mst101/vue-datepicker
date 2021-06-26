@@ -6,7 +6,7 @@
       :class="{ disabled: isPreviousDisabled, rtl: isRtl }"
       :disabled="isPreviousDisabled"
       data-test-previous-button
-      :style="{ 'width': `${height}px`, 'max-height': `${height}px` }"
+      :style="{ 'width': `${width / 7}px`, 'max-height': `${height}px` }"
       type="button"
       @click="$emit('page-change', previousPage)"
       @keydown.down.prevent="focusTabbableCell"
@@ -28,7 +28,7 @@
       :class="{ disabled: isNextDisabled, rtl: isRtl }"
       :disabled="isNextDisabled"
       data-test-next-button
-      :style="{ 'width': `${height}px`, 'max-height': `${height}px` }"
+      :style="{ 'width': `${width / 7}px`, 'max-height': `${height}px` }"
       type="button"
       @click="$emit('page-change', nextPage)"
       @keydown.down.prevent="focusTabbableCell"
@@ -69,6 +69,10 @@ export default {
     isTypeable: {
       type: Boolean,
       required: true,
+    },
+    width: {
+      type: Number,
+      default: 300,
     },
   },
   data() {
