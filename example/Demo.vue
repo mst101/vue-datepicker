@@ -4,18 +4,21 @@
     <p style="height: 300px"></p>
     <div class="example">
       <h3>Default datepicker...</h3>
-<!--      :open-date="new Date(2020, 0, 1)"-->
       <Datepicker
         :append-to-body="false"
         placeholder="Select Date"
-        fixed-position=""
+        fixed-position="bottom-right"
+        :day-cell-content="(day) => day.date"
+        :header-height="40"
         :inline="false"
+        :row-height="40"
         :show-header="true"
         :slide-duration="1000"
         :typeable="false"
+        :width="300"
       >
-        <template #beforeCalendarHeaderDay>Example <a href="#" tabindex="0">beforeCalendarHeaderDay</a> slot</template>
-        <template #calendarFooterDay>Example <a href="#" tabindex="0">calendarFooterDay</a> slot wow is it working yet? Anyone know?</template>
+        <template #beforeCalendarHeaderDay><div style="padding: 10px">Example <a href="#" tabindex="0">beforeCalendarHeaderDay</a> slot</div></template>
+        <template #calendarFooterDay><div style="padding: 10px">Example <a href="#" tabindex="0">calendarFooterDay</a> slot wow is it working yet? Anyone know?</div></template>
       </Datepicker>
       <code>
         &lt;datepicker placeholder="Select Date"&gt;&lt;/datepicker&gt;

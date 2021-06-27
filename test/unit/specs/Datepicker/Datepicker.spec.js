@@ -85,15 +85,15 @@ describe('Datepicker mounted', () => {
     expect(wrapper.emitted('changed-decade')).toBeTruthy()
   })
 
-  it('emits blur', () => {
+  it('emits blur', async () => {
     const input = wrapper.find('input')
-    input.trigger('blur')
+    await input.trigger('blur')
     expect(wrapper.emitted().blur).toBeTruthy()
   })
 
-  it('emits focus', () => {
+  it('emits focus', async () => {
     const input = wrapper.find('input')
-    input.trigger('focus')
+    await input.trigger('focus')
     expect(wrapper.emitted().focus).toBeTruthy()
   })
 
@@ -197,7 +197,7 @@ describe('Datepicker mounted', () => {
   })
 
   it('resets the date correctly when typeable', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       typeable: true,
     })
 
@@ -506,7 +506,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows up on cell, bypassing a disabled cell on the previous page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       disabledDates: {
         dates: [new Date(2019, 11, 25)],
       },
@@ -526,7 +526,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows down on cell, bypassing a disabled cell on the next page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       disabledDates: {
         dates: [new Date(2020, 1, 5)],
       },
@@ -546,7 +546,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows left on cell, bypassing a disabled cell on the previous page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       disabledDates: {
         dates: [new Date(2019, 11, 31)],
       },
@@ -566,7 +566,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows right on cell, bypassing a disabled cell on the next page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       disabledDates: {
         dates: [new Date(2020, 1, 1)],
       },
@@ -586,7 +586,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows left on first cell (with no dates from previous month) to the previous page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       value: new Date(2020, 2, 1),
     })
 
@@ -604,7 +604,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows right on last cell (with no dates from next month) to the next page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       value: new Date(2020, 1, 29),
     })
 
@@ -622,7 +622,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows up on first cell (with no dates from previous month) to the previous page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       value: new Date(2020, 2, 1),
     })
 
@@ -640,7 +640,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows down on last cell (with no dates from next month) to the next page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       value: new Date(2020, 1, 29),
     })
 
@@ -658,7 +658,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows up on cell, bypassing a disabled cell, to reach the previous page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       value: new Date(2020, 1, 8),
       disabledDates: {
         dates: [new Date(2020, 1, 1)],
@@ -679,7 +679,7 @@ describe('Datepicker mounted to body with openDate', () => {
   })
 
   it('arrows down on cell, bypassing a disabled cell, to reach the next page', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       value: new Date(2020, 1, 22),
       disabledDates: {
         dates: [new Date(2020, 1, 29)],
@@ -1101,8 +1101,8 @@ describe('Datepicker shallowMounted', () => {
     expect(wrapper.vm.pageDate.getDate()).toEqual(1)
   })
 
-  it('sets the date on typedDate event', () => {
-    wrapper.setProps({
+  it('sets the date on typedDate event', async () => {
+    await wrapper.setProps({
       typeable: true,
     })
     const today = new Date()
@@ -1112,8 +1112,8 @@ describe('Datepicker shallowMounted', () => {
 
   it('watches value', async () => {
     const spy = jest.spyOn(wrapper.vm, 'setValue')
-    wrapper.setProps({ value: '2018-04-26' })
-    await wrapper.vm.$nextTick()
+    await wrapper.setProps({ value: '2018-04-26' })
+
     expect(spy).toHaveBeenCalled()
   })
 
@@ -1122,8 +1122,8 @@ describe('Datepicker shallowMounted', () => {
       openDate: new Date(2018, 0, 1),
     })
     const spy = jest.spyOn(wrapper.vm, 'setPageDate')
-    wrapper.setProps({ openDate: new Date(2018, 3, 26) })
-    await wrapper.vm.$nextTick()
+    await wrapper.setProps({ openDate: new Date(2018, 3, 26) })
+
     expect(spy).toHaveBeenCalled()
   })
 
@@ -1133,7 +1133,6 @@ describe('Datepicker shallowMounted', () => {
       inline: true,
     })
 
-    await wrapper.vm.$nextTick()
     const datepicker = wrapper.find('.vdp-datepicker__calendar')
 
     expect(datepicker.element.className).toContain('vdp-datepicker__calendar')
@@ -1164,19 +1163,21 @@ describe('Datepicker shallowMounted', () => {
         },
       },
     })
-    await wrapperTemp.vm.$nextTick()
+
     expect(wrapperTemp.vm.selectedDate).toEqual(null)
     expect(wrapperTemp.emitted().input).toBeTruthy()
   })
 
-  it('sets the transition correctly', () => {
+  it('sets the transition correctly', async () => {
     wrapper.vm.setTransitionName(1)
     expect(wrapper.vm.transitionName).toBe('slide-right')
 
     wrapper.vm.setTransitionName(-1)
     expect(wrapper.vm.transitionName).toBe('slide-left')
 
-    wrapper.setData({ translation: { rtl: true } })
+    await wrapper.setData({
+      translation: { rtl: true },
+    })
 
     wrapper.vm.setTransitionName(1)
     expect(wrapper.vm.transitionName).toBe('slide-left')
@@ -1231,7 +1232,7 @@ describe('Datepicker.vue using UTC', () => {
   it('correctly sets the value using UTC', async () => {
     const timezoneOffset = new Date().getTimezoneOffset() / 60
 
-    // this is ambiguous because localzone differs by one day than UTC
+    // This is ambiguous because localzone differs from UTC by one day
     const ambiguousHour = 25 - timezoneOffset
     const ambiguousDate = new Date(2018, 3, 15, ambiguousHour)
     const ambiguousYear = ambiguousDate.getUTCFullYear()
@@ -1247,6 +1248,7 @@ describe('Datepicker.vue using UTC', () => {
         useUtc: true, // This should fail if `useUtc=false`
       },
     })
+
     // It's important to assert the input rendered output
     await wrapper.vm.$nextTick()
     expect(wrapper.findComponent(DateInput).vm.formattedValue).toEqual(
@@ -1347,8 +1349,8 @@ describe('Datepicker with initial-view', () => {
     expect(wrapper.vm.picker).toEqual('PickerDay')
   })
 
-  it('opens in Month view', () => {
-    wrapper.setProps({
+  it('opens in Month view', async () => {
+    await wrapper.setProps({
       initialView: 'month',
     })
     wrapper.vm.open()
@@ -1356,8 +1358,8 @@ describe('Datepicker with initial-view', () => {
     expect(wrapper.vm.picker).toEqual('PickerMonth')
   })
 
-  it('opens in Year view', () => {
-    wrapper.setProps({
+  it('opens in Year view', async () => {
+    await wrapper.setProps({
       initialView: 'year',
     })
     wrapper.vm.open()
@@ -1365,8 +1367,8 @@ describe('Datepicker with initial-view', () => {
     expect(wrapper.vm.picker).toEqual('PickerYear')
   })
 
-  it('does not open if the calendar is disabled', () => {
-    wrapper.setProps({
+  it('does not open if the calendar is disabled', async () => {
+    await wrapper.setProps({
       disabled: true,
     })
     wrapper.vm.open()

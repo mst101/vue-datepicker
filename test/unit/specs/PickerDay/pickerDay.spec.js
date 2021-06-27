@@ -18,9 +18,9 @@ describe('PickerDay', () => {
     wrapper.destroy()
   })
 
-  it('knows the selected date', () => {
+  it('knows the selected date', async () => {
     const newDate = new Date(2016, 9, 15)
-    wrapper.setProps({
+    await wrapper.setProps({
       selectedDate: newDate,
     })
     expect(wrapper.vm.isSelectedDate(newDate)).toEqual(true)
@@ -42,20 +42,20 @@ describe('PickerDay', () => {
     expect(wrapper.emitted('select')).toBeTruthy()
   })
 
-  it('knows the current page month', () => {
+  it('knows the current page month', async () => {
     expect(wrapper.vm.pageMonth).toEqual(1)
     expect(wrapper.vm.currMonthName).toEqual('Feb')
 
-    wrapper.setProps({
+    await wrapper.setProps({
       showFullMonthName: true,
     })
     expect(wrapper.vm.currMonthName).toEqual('February')
   })
 
-  it('displays page title correctly', () => {
+  it('displays page title correctly', async () => {
     expect(wrapper.vm.pageTitleDay).toEqual('Feb 2018')
 
-    wrapper.setProps({
+    await wrapper.setProps({
       translation: mn, // Mongolian has dates in ymd format
     })
 

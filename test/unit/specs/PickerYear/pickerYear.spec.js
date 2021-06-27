@@ -81,11 +81,11 @@ describe('PickerYear', () => {
   })
 
   it('should set custom decade range', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       pageDate: new Date(2021, 1, 1),
       yearRange: 12,
     })
-    await wrapper.vm.$nextTick()
+
     expect(wrapper.vm.pageTitleYear).toEqual('2016 - 2027')
     expect(wrapper.vm.cells.length).toEqual(12)
   })

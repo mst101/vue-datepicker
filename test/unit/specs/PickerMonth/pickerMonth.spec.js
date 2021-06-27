@@ -18,18 +18,18 @@ describe('PickerMonth', () => {
     wrapper.destroy()
   })
 
-  it('knows the selected month', () => {
+  it('knows the selected month', async () => {
     const newDate = new Date(2016, 9, 15)
-    wrapper.setProps({
+    await wrapper.setProps({
       selectedDate: newDate,
     })
     expect(wrapper.vm.isSelectedMonth(newDate)).toEqual(true)
     expect(wrapper.vm.isSelectedMonth(new Date(2017, 1, 1))).toEqual(false)
   })
 
-  it('knows the selected month when useUtc = true', () => {
+  it('knows the selected month when useUtc = true', async () => {
     const newDate = new Date(2016, 9, 15)
-    wrapper.setProps({
+    await wrapper.setProps({
       selectedDate: newDate,
       useUtc: true,
     })

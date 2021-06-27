@@ -38,7 +38,7 @@ describe('DateInput', () => {
   })
 
   it('emits close on enter when calendar is open and date is valid', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       isOpen: true,
     })
     const input = wrapper.find('input')
@@ -56,23 +56,23 @@ describe('DateInput', () => {
     expect(wrapper.emitted('close')).toBeFalsy()
   })
 
-  it('does not format the date when typed', () => {
+  it('does not format the date when typed', async () => {
     const dateString = '2018-04-24'
     wrapper.vm.input.value = dateString
     expect(wrapper.vm.input.value).toEqual(dateString)
-    wrapper.setData({
+    await wrapper.setData({
       typedDate: dateString,
     })
-    wrapper.setProps({
+    await wrapper.setProps({
       selectedDate: new Date(dateString),
     })
     expect(wrapper.vm.typedDate).toEqual(dateString)
     expect(wrapper.vm.formattedValue).toEqual(dateString)
   })
 
-  it('allows international custom date format d.M.yyyy', () => {
+  it('allows international custom date format d.M.yyyy', async () => {
     const dateString = '24.06.2018'
-    wrapper.setProps({
+    await wrapper.setProps({
       selectedDate: new Date(dateString),
       typeable: true,
       format: 'd.M.yyyy',
@@ -84,9 +84,9 @@ describe('DateInput', () => {
     expect(wrapper.vm.formattedValue).toEqual(dateString)
   })
 
-  it('allows international custom date format dd/MM/yyyy', () => {
+  it('allows international custom date format dd/MM/yyyy', async () => {
     const dateString = '24/06/2018'
-    wrapper.setProps({
+    await wrapper.setProps({
       selectedDate: new Date(dateString),
       typeable: true,
       format: 'dd/MM/yyyy',
@@ -98,9 +98,9 @@ describe('DateInput', () => {
     expect(wrapper.vm.formattedValue).toEqual(dateString)
   })
 
-  it('allows international custom date format dd MM yyyy', () => {
+  it('allows international custom date format dd MM yyyy', async () => {
     const dateString = '24 06 2018'
-    wrapper.setProps({
+    await wrapper.setProps({
       selectedDate: new Date(dateString),
       typeable: true,
       format: 'dd MM yyyy',
@@ -112,9 +112,9 @@ describe('DateInput', () => {
     expect(wrapper.vm.formattedValue).toEqual(dateString)
   })
 
-  it('allows function format', () => {
+  it('allows function format', async () => {
     const dateString = '2018-08-12'
-    wrapper.setProps({
+    await wrapper.setProps({
       selectedDate: new Date(dateString),
       typeable: true,
       format(date) {

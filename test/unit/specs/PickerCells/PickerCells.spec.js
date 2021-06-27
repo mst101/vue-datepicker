@@ -16,10 +16,12 @@ describe('PickerCells', () => {
     wrapper.destroy()
   })
 
-  it('knows the number of columns', () => {
+  it('knows the number of columns', async () => {
     expect(wrapper.vm.columns).toEqual(7)
 
-    wrapper.setProps({ view: 'month' })
+    await wrapper.setProps({
+      view: 'month',
+    })
 
     expect(wrapper.vm.columns).toEqual(3)
   })

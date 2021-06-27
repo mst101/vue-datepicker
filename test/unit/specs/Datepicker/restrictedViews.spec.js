@@ -112,8 +112,9 @@ describe('Datepicker with restricted views', () => {
         maximumView: 'day',
       },
     })
-    wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+
+    await wrapper.vm.open()
+
     expect(
       wrapper.vm.$el.querySelectorAll('.vdp-datepicker__calendar').length,
     ).toEqual(1)
@@ -138,8 +139,9 @@ describe('Datepicker with restricted views', () => {
         maximumView: 'year',
       },
     })
-    wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+
+    await wrapper.vm.open()
+
     expect(
       wrapper.vm.$el.querySelectorAll('.vdp-datepicker__calendar').length,
     ).toEqual(1)

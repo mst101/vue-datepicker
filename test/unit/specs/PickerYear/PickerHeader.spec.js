@@ -26,13 +26,13 @@ describe('PickerHeader', () => {
     expect(wrapper.emitted('set-focus')[0][0]).toEqual(['tabbable-cell'])
   })
 
-  it('should `arrow up` to input, if typeable', () => {
+  it('should `arrow up` to input, if typeable', async () => {
     const prevButton = wrapper.find('button.prev')
 
     prevButton.trigger('keydown.up')
     expect(wrapper.emitted('set-focus')).toBeUndefined()
 
-    wrapper.setProps({
+    await wrapper.setProps({
       isTypeable: true,
     })
 
