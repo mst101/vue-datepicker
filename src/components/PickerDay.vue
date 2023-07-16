@@ -204,11 +204,7 @@ export default {
         return false
       }
 
-      const { from } = this.disabledConfig
-      const disabledFromMonth = this.utils.monthYearDate(from.year, from.month)
-      const pageMonth = this.utils.monthYearDate(this.pageYear, this.pageMonth)
-
-      return disabledFromMonth <= pageMonth
+      return this.latestPossibleDate < this.firstOfNextMonth
     },
     /**
      * Is the previous month disabled?
@@ -219,11 +215,15 @@ export default {
         return false
       }
 
-      const { to } = this.disabledConfig
-      const disabledToMonth = this.utils.monthYearDate(to.year, to.month)
-      const pageMonth = this.utils.monthYearDate(this.pageYear, this.pageMonth)
-
-      return disabledToMonth >= pageMonth
+      return this.earliestPossibleDate > this.lastOfPreviousMonth
+    },
+    /**
+     * The first day of the next page's month.
+     * @return {Date}
+     */
+    lastOfPreviousMonth() {
+      const d = new Date(this.pageDate)
+      return new Date(this.utils.setDate(d, 0))
     },
     /**
      * Returns the current page's month as an integer.

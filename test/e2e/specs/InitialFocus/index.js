@@ -60,7 +60,7 @@ describe('Set the initial focus', () => {
     })
 
     Then('the {string} day cell has focus', (firstAvailableCell) => {
-      const cellId = firstAvailableCell === 'next-day' ? 19 : 4
+      const cellId = firstAvailableCell === 'next-day' ? 20 : 4
 
       cy.get(`[data-id=${cellId}]`).should('have.focus')
     })

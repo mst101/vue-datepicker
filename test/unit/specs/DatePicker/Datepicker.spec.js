@@ -696,8 +696,8 @@ describe('Datepicker mounted and attached to body with openDate', () => {
   it('cannot arrow to a disabled page', async () => {
     await wrapper.setProps({
       disabledDates: {
-        to: new Date(2020, 0, 1),
-        from: new Date(2020, 0, 31),
+        to: new Date(2019, 11, 31),
+        from: new Date(2020, 1, 1),
       },
     })
 
