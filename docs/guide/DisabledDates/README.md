@@ -25,7 +25,7 @@ var state = {
 }
 ```
 
-All dates before 2016-01-05 are disabled.
+2016-01-05 and all earlier dates are disabled.
 
 ## Disable from a specific date
 
@@ -37,7 +37,7 @@ var state = {
 }
 ```
 
-All dates after 2016-01-26 are disabled.
+2016-01-26 and all later dates are disabled.
 
 ## Disable specific days of the week
 
@@ -102,7 +102,7 @@ var state = {
 }
 ```
 
-The dates from 2016-12-26 to 2016-12-29 (inclusive) and 2017-02-13 to 2017-03-24
+The dates from 2016-12-25 to 2016-12-30 (inclusive) and 2017-02-12 to 2017-03-25
 (inclusive) are disabled.
 
 ## Disable based on custom logic

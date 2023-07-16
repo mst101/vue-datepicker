@@ -42,10 +42,10 @@ export default class DisabledDate {
 
     return {
       to: () => {
-        return has.to && date < disabledDates.to
+        return has.to && date <= disabledDates.to
       },
       from: () => {
-        return has.from && date > disabledDates.from
+        return has.from && date >= disabledDates.from
       },
       range: () => {
         if (!has.ranges) return false
@@ -58,7 +58,7 @@ export default class DisabledDate {
           const hasTo = u.isDefined(thisRange, 'to')
 
           return (
-            hasFrom && hasTo && date < thisRange.to && date > thisRange.from
+            hasFrom && hasTo && date <= thisRange.to && date >= thisRange.from
           )
         })
       },

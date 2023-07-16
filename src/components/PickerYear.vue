@@ -113,7 +113,8 @@ export default {
       if (!this.disabledConfig.has.from) {
         return false
       }
-      return this.disabledConfig.from.year <= this.pageDecadeEnd
+      const firstDayOfNextDecade = new Date(this.pageDecadeEnd + 1, 0, 1)
+      return this.latestPossibleDate < firstDayOfNextDecade
     },
     /**
      * Is the previous decade disabled?
@@ -123,7 +124,8 @@ export default {
       if (!this.disabledConfig.has.to) {
         return false
       }
-      return this.disabledConfig.to.year >= this.pageDecadeStart
+      const lastDayOfPreviousDecade = new Date(this.pageDecadeStart - 1, 11, 31)
+      return this.earliestPossibleDate > lastDayOfPreviousDecade
     },
     /**
      * The year at which the current yearRange starts

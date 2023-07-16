@@ -1,7 +1,12 @@
 # Migration
 
+## 5.x.x to 6.x.x
+
+- disabled and highlighted `to`/`from` dates are now **inclusive** e.g. `<DatePicker :disabled-dates="{ from: new Date(2023, 6, 15) }" />` now disables 15th July 2023 and all dates beyond.
+
 ## 4.x.x to 5.x.x
 
+- the datepicker now supports Vue 3. Please use version 4.x.x for Vue 2 compatibility.
 - the `selected` event has been deprecated in favour of `input`. You should therefore listen to `input` events on the datepicker, or simply bind your date via v-model: `<DatePicker v-model="myDate" />`
 - a `typeable` datepicker no longer selects the date each time the input string can be parsed to a date. Instead, a typed date is only selected - and an `input` event fired - when the input field is focused and the `enter` key is pressed, or when the datepicker loses focus entirely.
 - a new `changed` event is emitted whenever the selected date deviates from its previous value.

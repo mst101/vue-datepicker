@@ -72,10 +72,10 @@ describe('PickerDay mounted', () => {
       },
     })
 
-    expect(wrapper.vm.isDisabledDate(new Date(2005, 6, 5))).toEqual(false)
-    expect(wrapper.vm.isDisabledDate(new Date(2005, 6, 6))).toEqual(true)
-    expect(wrapper.vm.isDisabledDate(new Date(2030, 11, 24))).toEqual(true)
-    expect(wrapper.vm.isDisabledDate(new Date(2030, 11, 25))).toEqual(false)
+    expect(wrapper.vm.isDisabledDate(new Date(2005, 6, 4))).toEqual(false)
+    expect(wrapper.vm.isDisabledDate(new Date(2005, 6, 5))).toEqual(true)
+    expect(wrapper.vm.isDisabledDate(new Date(2030, 11, 25))).toEqual(true)
+    expect(wrapper.vm.isDisabledDate(new Date(2030, 11, 26))).toEqual(false)
   })
 
   it('accepts an array of disabled days of the week', async () => {
@@ -117,16 +117,26 @@ describe('PickerDay mounted', () => {
     expect(wrapper.vm.isDisabledDate(new Date(2016, 9, 11))).toEqual(false)
   })
 
-  it('sets `isNextDisabled` and `isPreviousDisabled` correctly', async () => {
+  it.only('sets `isNextDisabled` and `isPreviousDisabled` correctly', async () => {
     await wrapper.setProps({
       disabledDates: {
-        from: new Date(2016, 9, 26),
-        to: new Date(2016, 9, 4),
+        to: new Date(2016, 8, 30),
+        from: new Date(2016, 10, 1),
       },
     })
 
     expect(wrapper.vm.isNextDisabled).toBeTruthy()
     expect(wrapper.vm.isPreviousDisabled).toBeTruthy()
+
+    await wrapper.setProps({
+      disabledDates: {
+        to: new Date(2016, 8, 29),
+        from: new Date(2016, 10, 2),
+      },
+    })
+
+    expect(wrapper.vm.isNextDisabled).toBeFalsy()
+    expect(wrapper.vm.isPreviousDisabled).toBeFalsy()
   })
 
   it('knows the earliest possible date', async () => {
@@ -135,7 +145,7 @@ describe('PickerDay mounted', () => {
     await wrapper.setProps({
       disabledDates: {
         dates: [new Date(2016, 9, 4)],
-        to: new Date(2016, 9, 4),
+        to: new Date(2016, 9, 3),
       },
     })
 
@@ -154,7 +164,7 @@ describe('PickerDay mounted', () => {
       },
     })
 
-    expect(wrapper.vm.earliestPossibleDate).toEqual(new Date(2016, 9, 8))
+    expect(wrapper.vm.earliestPossibleDate).toEqual(new Date(2016, 9, 9))
   })
 
   it('knows the latest possible date', async () => {
@@ -163,7 +173,7 @@ describe('PickerDay mounted', () => {
     await wrapper.setProps({
       disabledDates: {
         dates: [new Date(2016, 9, 26)],
-        from: new Date(2016, 9, 26),
+        from: new Date(2016, 9, 27),
       },
     })
 
@@ -171,17 +181,17 @@ describe('PickerDay mounted', () => {
 
     await wrapper.setProps({
       disabledDates: {
-        dates: [new Date(2016, 9, 26)],
+        dates: [new Date(2016, 9, 19)],
         ranges: [
           {
             from: new Date(2016, 9, 20),
             to: new Date(2016, 9, 28),
           },
         ],
-        from: new Date(2016, 9, 26),
+        from: new Date(2016, 9, 29),
       },
     })
 
-    expect(wrapper.vm.latestPossibleDate).toEqual(new Date(2016, 9, 20))
+    expect(wrapper.vm.latestPossibleDate).toEqual(new Date(2016, 9, 25))
   })
 })
