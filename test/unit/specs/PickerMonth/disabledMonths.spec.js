@@ -26,14 +26,14 @@ describe('PickerMonth mounted', () => {
       },
     })
 
-    expect(wrapper.vm.isDisabledMonth(new Date(2015, 9, 1))).toEqual(false)
-    expect(wrapper.vm.isDisabledMonth(new Date(2015, 10, 1))).toEqual(true)
+    expect(wrapper.vm.isDisabledMonth(new Date(2015, 8, 1))).toEqual(false)
+    expect(wrapper.vm.isDisabledMonth(new Date(2015, 9, 1))).toEqual(true)
   })
 
   it('disables months to a given date', async () => {
     await wrapper.setProps({
       disabledDates: {
-        to: new Date(2017, 9, 1),
+        to: new Date(2017, 8, 30),
       },
     })
 
@@ -71,11 +71,11 @@ describe('PickerMonth mounted', () => {
         ranges: [
           {
             from: new Date(2005, 6, 1),
-            to: new Date(2016, 9, 1),
+            to: new Date(2016, 8, 30),
           },
           {
             from: new Date(2016, 10, 1),
-            to: new Date(2030, 11, 1),
+            to: new Date(2030, 10, 30),
           },
         ],
       },
@@ -106,8 +106,8 @@ describe('PickerMonth mounted', () => {
   it('sets `isNextDisabled` and `isPreviousDisabled` correctly', async () => {
     await wrapper.setProps({
       disabledDates: {
-        from: new Date(2016, 11, 1),
-        to: new Date(2016, 0, 1),
+        from: new Date(2017, 0, 1),
+        to: new Date(2015, 11, 31),
       },
     })
 
