@@ -7,7 +7,9 @@ This is a fork from the project [vuejs-datepicker](https://github.com/charliekas
 which is licensed under the [MIT](https://github.com/charliekassel/vuejs-datepicker/blob/master/LICENSE) license.
 Thanks to the original creators [charliekassel](https://github.com/charliekassel) for the great work.
 
-A datepicker Vue component. Compatible with Vue 2.x.
+A datepicker Vue component compatible with Vue 3.x.
+
+N.B. For Vue 2.x, please use version 4.x.
 
 - [Features](#features)
 - [Documentation](#Documentation)
@@ -17,8 +19,8 @@ A datepicker Vue component. Compatible with Vue 2.x.
 ## Features
 
 - accepts keyboard input
+- keyboard navigable
 - internationalized
-- date picker
 - disable dates
 - highlight dates
 - inline calendar
@@ -39,7 +41,7 @@ Please feel free to [open up an issue](https://github.com/sumcumo/vue-datepicker
 
 ## License
 
-Copyright 2019 [sum.cumo GmbH](https://www.sumcumo.com/)
+Copyright 2023 [sum.cumo GmbH](https://www.sumcumo.com/)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [5.0.0](https://github.com/sumcumo/vue-datepicker/compare/v4.0.0...v5.0.0) (2023-05-06)
 
-
 ### Features
 
 * **dateinput:** Emit `typed-date` event on keyup ([c14e718](https://github.com/sumcumo/vue-datepicker/commit/c14e71816f0d473d835e32eba5319a8c5224a223))
