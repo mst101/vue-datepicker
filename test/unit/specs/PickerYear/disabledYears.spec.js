@@ -26,14 +26,14 @@ describe('PickerYear mounted', () => {
       },
     })
 
-    expect(wrapper.vm.isDisabledYear(new Date(2016, 0, 1))).toEqual(false)
-    expect(wrapper.vm.isDisabledYear(new Date(2017, 0, 1))).toEqual(true)
+    expect(wrapper.vm.isDisabledYear(new Date(2015, 0, 1))).toEqual(false)
+    expect(wrapper.vm.isDisabledYear(new Date(2016, 0, 1))).toEqual(true)
   })
 
-  it('disables months to a given date', async () => {
+  it('disables years to a given date', async () => {
     await wrapper.setProps({
       disabledDates: {
-        to: new Date(2017, 0, 1),
+        to: new Date(2016, 11, 31),
       },
     })
 
@@ -47,18 +47,18 @@ describe('PickerYear mounted', () => {
         ranges: [
           {
             from: new Date(2005, 0, 1),
-            to: new Date(2016, 0, 1),
+            to: new Date(2015, 11, 31),
           },
           {
             from: new Date(2016, 0, 1),
-            to: new Date(2030, 0, 1),
+            to: new Date(2029, 11, 31),
           },
         ],
       },
     })
 
-    expect(wrapper.vm.isDisabledYear(new Date(2005, 0, 1))).toEqual(false)
-    expect(wrapper.vm.isDisabledYear(new Date(2006, 0, 1))).toEqual(true)
+    expect(wrapper.vm.isDisabledYear(new Date(2004, 0, 1))).toEqual(false)
+    expect(wrapper.vm.isDisabledYear(new Date(2005, 0, 1))).toEqual(true)
     expect(wrapper.vm.isDisabledYear(new Date(2029, 0, 1))).toEqual(true)
     expect(wrapper.vm.isDisabledYear(new Date(2030, 0, 1))).toEqual(false)
   })
@@ -82,13 +82,23 @@ describe('PickerYear mounted', () => {
   it('sets `isNextDisabled` and `isPreviousDisabled` correctly', async () => {
     await wrapper.setProps({
       disabledDates: {
-        from: new Date(2019, 0, 1),
-        to: new Date(2010, 0, 1),
+        to: new Date(2009, 11, 31),
+        from: new Date(2020, 0, 1),
       },
     })
 
     expect(wrapper.vm.isNextDisabled).toBeTruthy()
     expect(wrapper.vm.isPreviousDisabled).toBeTruthy()
+
+    await wrapper.setProps({
+      disabledDates: {
+        to: new Date(2009, 11, 30),
+        from: new Date(2020, 0, 2),
+      },
+    })
+
+    expect(wrapper.vm.isNextDisabled).toBeFalsy()
+    expect(wrapper.vm.isPreviousDisabled).toBeFalsy()
   })
 
   it('knows the earliest possible year', async () => {

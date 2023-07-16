@@ -50,10 +50,10 @@ export default class HighlightedDate {
 
     return {
       to: () => {
-        return has.to && date < highlightedDates.to
+        return has.to && date <= highlightedDates.to
       },
       from: () => {
-        return has.from && date > highlightedDates.from
+        return has.from && date >= highlightedDates.from
       },
       range: () => {
         if (!has.ranges) return false

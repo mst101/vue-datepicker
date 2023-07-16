@@ -23,7 +23,7 @@ var state = {
 }
 ```
 
-Everything before 2016-01-05 is highlighted.
+2016-01-05 and all earlier dates are highlighted.
 
 ## Highlight from a specific date
 
@@ -35,7 +35,7 @@ var state = {
 }
 ```
 
-Everything after 2016-01-26 is highlighted.
+2016-01-26 and all later dates are highlighted.
 
 ## Highlight specific days of the week
 

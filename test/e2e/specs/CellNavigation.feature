@@ -43,8 +43,8 @@ Feature: Cell Navigation
 
     Examples:
       | # | openDate   | direction | view  | toOrFrom | disabled   | page     | focusedCell |
-      | 1 | 2020-01-01 | up        | day   | to       | 2019-12-26 | previous | 26          |
-      | 2 | 2020-01-31 | down      | day   | from     | 2020-02-05 | next     | 5           |
+      | 1 | 2020-01-01 | up        | day   | to       | 2019-12-25 | previous | 26          |
+      | 2 | 2020-01-31 | down      | day   | from     | 2020-02-06 | next     | 5           |
       | 3 | 2020-01-01 | up        | month | to       | 2019-12-01 | previous | December    |
       | 4 | 2019-12-31 | down      | month | from     | 2020-01-31 | next     | January     |
       | 5 | 2022-01-01 | up        | year  | to       | 2019-01-01 | previous | 2019        |
@@ -59,8 +59,8 @@ Feature: Cell Navigation
 
     Examples:
       | # | openDate   | direction | view  | toOrFrom | disabled   | focusedCell |
-      | 1 | 2020-01-15 | left      | day   | to       | 2020-01-14 | 14          |
-      | 2 | 2020-01-15 | right     | day   | from     | 2020-01-16 | 16          |
+      | 1 | 2020-01-15 | left      | day   | to       | 2020-01-13 | 14          |
+      | 2 | 2020-01-15 | right     | day   | from     | 2020-01-17 | 16          |
       | 3 | 2020-06-01 | left      | month | to       | 2020-05-15 | May         |
       | 4 | 2020-06-01 | right     | month | from     | 2020-07-15 | July        |
       | 5 | 2023-01-01 | left      | year  | to       | 2022-06-01 | 2022        |

@@ -103,7 +103,7 @@ export default {
       if (!this.disabledConfig.has.from) {
         return false
       }
-      return this.disabledConfig.from.year <= this.pageYear
+      return this.latestPossibleDate <= new Date(this.pageYear, 11, 31)
     },
     /**
      * Is the previous year disabled?
@@ -113,7 +113,7 @@ export default {
       if (!this.disabledConfig.has.to) {
         return false
       }
-      return this.disabledConfig.to.year >= this.pageYear
+      return this.earliestPossibleDate >= new Date(this.pageYear, 0, 1)
     },
     /**
      * Display the current page's year as the title.

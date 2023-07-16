@@ -391,18 +391,6 @@ const utils = {
   },
 
   /**
-   * Create a date object from a month and year, using UTC or not
-   * @param {Number} year
-   * @param {Number} monthIndex
-   * @return {Date}
-   */
-  monthYearDate(year, monthIndex) {
-    return this.useUtc
-      ? new Date(Date.UTC(year, monthIndex, 1))
-      : new Date(year, monthIndex, 1)
-  },
-
-  /**
    * Return a new date object with hours/minutes/seconds/milliseconds removed.
    * Defaults to today's date, if no parameter is provided
    * @param {Date=} date
