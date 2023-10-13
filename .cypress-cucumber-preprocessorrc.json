@@ -1,6 +1,6 @@
 {
   "e2e": {
-    "stepDefinitions": "test/e2e/specs/**/*.{js,mjs,ts,tsx}",
+    "stepDefinitions": "test/e2e/specs/[filepath]/*.{js,mjs,ts,tsx}",
     "messages": {
       "enabled": true,
       "output": "test/e2e/cucumber-messages.ndjson"
