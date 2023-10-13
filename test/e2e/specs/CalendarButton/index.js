@@ -60,12 +60,6 @@ describe('Calendar button', () => {
   })
 
   describe('@id-3: Press the enter key', () => {
-    Given('the calendar is closed', () => {
-      createCalendar({
-        calendarButton: true,
-      })
-    })
-
     When('the user presses the enter key', () => {
       the('calendar-button').type('{enter}')
     })
