@@ -47,7 +47,7 @@
           <div class="slot">
             Read all about:
             <a
-              href="https://sumcumo.github.io/vue-datepicker/guide/Slots/"
+              href="https://mst101.github.io/vue-datepicker/guide/Slots/"
               tabindex="0"
               target="_blank"
             >
@@ -60,7 +60,7 @@
           <div class="slot">
             They're very flexible. Here's that link again:
             <a
-              href="https://sumcumo.github.io/vue-datepicker/guide/Slots/"
+              href="https://mst101.github.io/vue-datepicker/guide/Slots/"
               tabindex="0"
               target="_blank"
             >
@@ -73,7 +73,7 @@
 &lt;DatePicker&gt;
   &lt;template #beforeCalendarHeader&gt;
     &lt;div&gt;
-      Read all about: &lt;a href="https://sumcumo.github.io/vue-datepicker/guide/Slots/"
+      Read all about: &lt;a href="https://mst101.github.io/vue-datepicker/guide/Slots/"
       tabindex="0"&gt;available slots&lt;/a&gt;
     &lt;/div&gt;
   &lt;/template&gt;
@@ -81,7 +81,7 @@
   &lt;template #calendarFooter&gt;
     &lt;div&gt;
       They're very flexible. Here's that link again:
-      &lt;a href="https://sumcumo.github.io/vue-datepicker/guide/Slots/"
+      &lt;a href="https://mst101.github.io/vue-datepicker/guide/Slots/"
       tabindex="0"&gt;available slots&lt;/a&gt;
     &lt;/div&gt;
   &lt;/template&gt;

@@ -14,6 +14,6 @@ git add -A
 git commit -m 'chore(docs): deploying'
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:sumcumo/vue-datepicker.git master:gh-pages
+git push -f git@github.com:mst101/vue-datepicker.git master:gh-pages
 
 cd -

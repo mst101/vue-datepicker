@@ -1,6 +1,6 @@
 # Migration
 
-## 5.x.x to 6.x.x
+## From `@sum.cumo/vue-datepicker 5.x.x` to `@mst101/vue-datepicker 6.x.x`
 
 - disabled and highlighted `to`/`from` dates are now **inclusive** e.g. `<DatePicker :disabled-dates="{ from: new Date(2023, 6, 15) }" />` now disables 15th July 2023 and all dates beyond.
 
