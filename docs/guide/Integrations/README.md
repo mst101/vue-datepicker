@@ -67,7 +67,7 @@ Click here to see a [working example](../../demo/Integrations#vee-validate/).
 
 <script setup>
 import { useField } from 'vee-validate'
-import DatePicker from '@sum.cumo/vue-datepicker'
+import DatePicker from '@mst101/vue-datepicker'
 
 // Validator function
 const isRequired = (value) => (value ? true : 'Please enter a date')
