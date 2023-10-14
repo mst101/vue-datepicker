@@ -1,11 +1,7 @@
-[![@sum.cumo/vue-datepicker](https://badgen.net/bundlephobia/min/@sum.cumo/vue-datepicker)](https://bundlephobia.com/result?p=@sum.cumo/vue-datepicker)
-[![@sum.cumo/vue-datepicker](https://badgen.net/npm/v/@sum.cumo/vue-datepicker)](https://www.npmjs.com/package/@sum.cumo/vue-datepicker)
+[![@mst101/vue-datepicker](https://badgen.net/bundlephobia/min/@mst101/vue-datepicker)](https://bundlephobia.com/result?p=@mst101/vue-datepicker)
+[![@mst101/vue-datepicker](https://badgen.net/npm/v/@mst101/vue-datepicker)](https://www.npmjs.com/package/@mst101/vue-datepicker)
 
 # Datepicker
-
-This is a fork from the project [vuejs-datepicker](https://github.com/charliekassel/vuejs-datepicker)
-which is licensed under the [MIT](https://github.com/charliekassel/vuejs-datepicker/blob/master/LICENSE) license.
-Thanks to the original creators [charliekassel](https://github.com/charliekassel) for the great work.
 
 A datepicker Vue component compatible with Vue 3.x.
 
@@ -15,6 +11,9 @@ N.B. For Vue 2.x, please use version 4.x.
 - [Documentation](#Documentation)
 - [Contribution](#Contribution)
 - [License](#License)
+
+N.B. This is a fork from [@sum.cumo/vue-datepicker](https://github.com/sumcumo/vue-datepicker) to which I have previously contributed but which is no longer maintained. That project was originally forked from [vuejs-datepicker](https://github.com/charliekassel/vuejs-datepicker) which is licensed under the [MIT](https://github.com/charliekassel/vuejs-datepicker/blob/master/LICENSE) license.
+Thanks to the original creators for the great work.
 
 ## Features
 
@@ -31,17 +30,17 @@ N.B. For Vue 2.x, please use version 4.x.
 
 ## Documentation
 
-Checkout the vuepress [Documentation](https://sumcumo.github.io/vue-datepicker/).
-There you will also find the [Demo](https://sumcumo.github.io/vue-datepicker/demo/) pages
-and the [Migration](https://sumcumo.github.io/vue-datepicker/guide/Migration) guide.
+Checkout the vuepress [Documentation](https://mst101.github.io/vue-datepicker/).
+There you will also find the [Demo](https://mst101.github.io/vue-datepicker/demo/) pages
+and the [Migration](https://mst101.github.io/vue-datepicker/guide/Migration) guide.
 
 ## Contribution
 
-Please feel free to [open up an issue](https://github.com/sumcumo/vue-datepicker/issues/new) or provide a pull request.
+Please feel free to [open up an issue](https://github.com/mst101/vue-datepicker/issues/new) or provide a pull request.
 
 ## License
 
-Copyright 2023 [sum.cumo GmbH](https://www.sumcumo.com/)
+Copyright 2023 Mark Thompson
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

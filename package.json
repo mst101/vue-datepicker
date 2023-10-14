@@ -1,16 +1,17 @@
 {
-  "name": "@sum.cumo/vue-datepicker",
+  "name": "@mst101/vue-datepicker",
   "version": "5.0.0",
-  "description": "A simple, but powerful, Vue.js datepicker component. Supports disabling of dates, inline mode, translations & custom slots",
+  "description": "A simple, but powerful, Vue 3 datepicker component. Supports disabling of dates, inline mode, translations & custom slots",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/sumcumo/vue-datepicker",
+  "homepage": "https://github.com/mst101/vue-datepicker",
   "repository": {
     "type": "git",
-    "url": "git@github.com:sumcumo/vue-datepicker.git"
+    "url": "git@github.com:mst101/vue-datepicker.git"
   },
-  "author": "sum.cumo GmbH",
+  "author": "Mark Thompson",
   "keywords": [
     "vue",
+    "vue 3",
     "datepicker",
     "date-picker",
     "calendar",
@@ -30,6 +31,10 @@
     "./style.css": "./dist/style.css",
     "./style.scss": "./dist/style.scss"
   },
+  "bugs": {
+    "url": "https://github.com/mst101/vue-datepicker/issues"
+  },
+  "main": "./dist/vue-datepicker.mjs",
   "unpkg": "dist/vue-datepicker.umd.cjs",
   "sideEffects": [
     "*.css",
@@ -109,13 +114,13 @@
     "jsdom": "22.1.0",
     "pre-commit": "1.2.2",
     "prettier": "3.0.3",
+    "release-please": "16.0.0",
     "rollup": "4.1.0",
     "rollup-plugin-delete": "2.0.0",
     "rollup-plugin-postcss": "4.0.2",
     "rollup-plugin-vue": "6.0.0",
     "sass": "1.69.3",
     "semver": "7.5.4",
-    "standard-version": "9.5.0",
     "vee-validate": "4.11.8",
     "vite": "4.4.11",
     "vitest": "0.34.6",

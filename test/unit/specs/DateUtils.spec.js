@@ -67,7 +67,6 @@ describe('dateUtils', () => {
     )
   })
 
-  // issue: https://github.com/sumcumo/vue-datepicker/issues/29
   it('formats date strings without formatting issues like 03 Nrdv 2016', () => {
     expect(dateUtils.formatDate(new Date(2016, 0, 12), 'd MMM yyyy')).toEqual(
       '12 Jan 2016',

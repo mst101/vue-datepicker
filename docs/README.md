@@ -21,5 +21,5 @@ features:
   - title: Append to body
     details: Append the picker to the body
 
-footer: sum.cumo ® - Made to Innovate
+# footer: Mark Thompson
 ---
