@@ -7,6 +7,6 @@ export default [
   },
   {
     text: 'Changelog',
-    link: `${pkg.homepage}/blob/master/CHANGELOG.md`,
+    link: `${pkg.homepage}/blob/main/CHANGELOG.md`,
   },
 ]
