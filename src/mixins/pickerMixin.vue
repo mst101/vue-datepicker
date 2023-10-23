@@ -257,7 +257,7 @@ export default {
      */
     getFirstOrLastElement(delta) {
       const isNext = delta > 0
-      const elements = this.$refs.cells.$el.children
+      const elements = this.$refs.pickerCells.$el.children
 
       return isNext ? elements[0] : elements[elements.length - 1]
     },

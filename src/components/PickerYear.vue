@@ -28,7 +28,7 @@
     <div class="cells-wrapper">
       <Transition :name="transitionName">
         <PickerCells
-          ref="cells"
+          ref="pickerCells"
           :key="pageTitleYear"
           v-slot="{ cell }"
           :bootstrap-styling="bootstrapStyling"

@@ -592,12 +592,12 @@ export default {
      * @returns {Number|null}
      */
     getCellId(date) {
-      if (!date || !this.$refs.picker.$refs.cells) {
+      if (!date || !this.$refs.picker.$refs.pickerCells) {
         return null
       }
 
       const cellDate = this.getCellDate(date)
-      const { cells } = this.$refs.picker.$refs.cells
+      const { cells } = this.$refs.picker.$refs.pickerCells
 
       for (let i = 0; i < cells.length; i += 1) {
         if (cells[i].timestamp === cellDate.valueOf()) {
@@ -624,7 +624,7 @@ export default {
         return this.$refs.dateInput && this.$refs.dateInput.$refs.calendarButton
       }
       if (ref === 'openDate') {
-        return this.$refs.picker.$refs.cells.$refs.openDate[0]
+        return this.$refs.picker.$refs.pickerCells.$refs.openDate[0]
       }
       if (this.showHeader) {
         return (
@@ -737,7 +737,9 @@ export default {
 
       const cellId = this.getCellId(this.latestValidTypedDate)
 
-      return cellId ? this.$refs.picker.$refs.cells.$el.children[cellId] : null
+      return cellId
+        ? this.$refs.picker.$refs.pickerCells.$el.children[cellId]
+        : null
     },
     /**
      * Sets `datepickerId` (as a global) and keeps track of focusable elements
@@ -936,11 +938,11 @@ export default {
      */
     // eslint-disable-next-line complexity
     setTabbableCell() {
-      if (!this.$refs.picker || !this.$refs.picker.$refs.cells) {
+      if (!this.$refs.picker || !this.$refs.picker.$refs.pickerCells) {
         return
       }
 
-      const pickerCells = this.$refs.picker.$refs.cells.$el
+      const pickerCells = this.$refs.picker.$refs.pickerCells.$el
 
       this.tabbableCell =
         this.getActiveCell() ||
@@ -1437,10 +1439,10 @@ export default {
      * Sets the slide duration in milliseconds by looking up the stylesheet
      */
     setSlideDuration() {
-      if (!this.$refs.picker || !this.$refs.picker.$refs.cells) {
+      if (!this.$refs.picker || !this.$refs.picker.$refs.pickerCells) {
         return
       }
-      const cells = this.$refs.picker.$refs.cells.$el
+      const cells = this.$refs.picker.$refs.pickerCells.$el
       const durationInSecs = window.getComputedStyle(cells).transitionDuration
 
       this.slideDuration = parseFloat(durationInSecs) * 1000

@@ -40,7 +40,7 @@
       <div class="cells-wrapper">
         <Transition :name="transitionName">
           <PickerCells
-            ref="cells"
+            ref="pickerCells"
             :key="pageTitleDay"
             v-slot="{ cell }"
             :bootstrap-styling="bootstrapStyling"
