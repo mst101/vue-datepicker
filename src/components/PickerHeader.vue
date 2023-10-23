@@ -3,13 +3,13 @@
     <button
       ref="prev"
       class="prev"
-      :class="{ btn: bootstrapStyling, rtl: isRtl }"
+      :class="{ btn: props.bootstrapStyling, rtl: props.isRtl }"
       data-test-previous-button
-      :disabled="isPreviousDisabled"
+      :disabled="props.isPreviousDisabled"
       type="button"
       @click.stop="goToPreviousPage"
       @keydown.down.prevent="focusTabbableCell"
-      @keydown.up.prevent="focusInput"
+      @keydown.up.prevent="emit('focusInput')"
       @keydown.left.prevent="arrowLeftPrev"
       @keydown.right.prevent="arrowRightPrev"
     >
@@ -20,13 +20,13 @@
     <button
       ref="up"
       class="vdp-datepicker__up"
-      :class="{ btn: bootstrapStyling }"
+      :class="{ btn: props.bootstrapStyling }"
       data-test-up-button
-      :disabled="isUpDisabled"
+      :disabled="props.isUpDisabled"
       type="button"
       @click="selectUpButton"
       @keydown.down.prevent="focusTabbableCell"
-      @keydown.up.prevent="focusInput"
+      @keydown.up.prevent="emit('focusInput')"
       @keydown.left.prevent="focusLeftButton"
       @keydown.right.prevent="focusRightButton"
     >
@@ -35,13 +35,13 @@
     <button
       ref="next"
       class="next"
-      :class="{ btn: bootstrapStyling, rtl: isRtl }"
+      :class="{ btn: props.bootstrapStyling, rtl: props.isRtl }"
       data-test-next-button
-      :disabled="isNextDisabled"
+      :disabled="props.isNextDisabled"
       type="button"
       @click.stop="goToNextPage"
       @keydown.down.prevent="focusTabbableCell"
-      @keydown.up.prevent="focusInput"
+      @keydown.up.prevent="emit('focusInput')"
       @keydown.left.prevent="arrowLeftNext"
       @keydown.right.prevent="arrowRightNext"
     >
@@ -52,127 +52,118 @@
   </header>
 </template>
 
-<script>
-export default {
-  name: 'PickerHeader',
-  props: {
-    bootstrapStyling: {
-      type: Boolean,
-      default: false,
-    },
-    isNextDisabled: {
-      type: Boolean,
-      required: true,
-    },
-    isPreviousDisabled: {
-      type: Boolean,
-      required: true,
-    },
-    isRtl: {
-      type: Boolean,
-      required: true,
-    },
-    isUpDisabled: {
-      type: Boolean,
-      default: false,
-    },
-    nextViewUp: {
-      type: String,
-      default: null,
-    },
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  bootstrapStyling: {
+    type: Boolean,
+    default: false,
   },
-  emits: {
-    focusInput: null,
-    pageChange: (page) => {
-      return typeof page === 'object'
-    },
-    setFocus: (refArray) => {
-      return refArray.every((ref) => {
-        return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(ref)
-      })
-    },
-    setView: (view) => {
-      return ['day', 'month', 'year'].includes(view)
-    },
+  isNextDisabled: {
+    type: Boolean,
+    required: true,
   },
-  data() {
-    return {
-      previousPage: { incrementBy: -1, focusRefs: ['prev'] },
-      nextPage: { incrementBy: 1, focusRefs: ['next'] },
-    }
+  isPreviousDisabled: {
+    type: Boolean,
+    required: true,
   },
-  computed: {
-    leftButton() {
-      return [this.isRtl ? 'next' : 'prev']
-    },
-    rightButton() {
-      return [this.isRtl ? 'prev' : 'next']
-    },
+  isRtl: {
+    type: Boolean,
+    required: true,
   },
-  methods: {
-    /**
-     * Changes the page, or sets focus to the adjacent button
-     */
-    arrowLeftPrev() {
-      if (this.isRtl) {
-        this.$emit('setFocus', ['up', 'next', 'tabbableCell'])
-        return
-      }
-      this.goToPreviousPage()
-    },
-    /**
-     * Changes the page, or sets focus to the adjacent button
-     */
-    arrowRightPrev() {
-      if (this.isRtl) {
-        this.goToPreviousPage()
-        return
-      }
-      this.$emit('setFocus', ['up', 'next', 'tabbableCell'])
-    },
-    /**
-     * Changes the page, or sets focus to the adjacent button
-     */
-    arrowLeftNext() {
-      if (this.isRtl) {
-        this.goToNextPage()
-        return
-      }
-      this.$emit('setFocus', ['up', 'prev', 'tabbableCell'])
-    },
-    /**
-     * Changes the page, or sets focus to the adjacent button
-     */
-    arrowRightNext() {
-      if (this.isRtl) {
-        this.$emit('setFocus', ['up', 'prev', 'tabbableCell'])
-        return
-      }
-      this.goToNextPage()
-    },
-    focusInput() {
-      this.$emit('focusInput')
-    },
-    focusTabbableCell() {
-      this.$emit('setFocus', ['tabbableCell'])
-    },
-    focusLeftButton() {
-      this.$emit('setFocus', this.leftButton)
-    },
-    focusRightButton() {
-      this.$emit('setFocus', this.rightButton)
-    },
-    goToNextPage() {
-      this.$emit('pageChange', { incrementBy: 1, focusRefs: ['next'] })
-    },
-    goToPreviousPage() {
-      this.$emit('pageChange', { incrementBy: -1, focusRefs: ['prev'] })
-    },
-    selectUpButton() {
-      if (!this.isUpDisabled) {
-        this.$emit('setView', this.nextViewUp)
-      }
-    },
+  isUpDisabled: {
+    type: Boolean,
+    default: false,
   },
+  nextViewUp: {
+    type: String,
+    default: null,
+  },
+})
+
+const emit = defineEmits({
+  focusInput: null,
+  pageChange: (page) => {
+    return typeof page === 'object'
+  },
+  setFocus: (refArray) => {
+    return refArray.every((ref) => {
+      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(ref)
+    })
+  },
+  setView: (view) => {
+    return ['day', 'month', 'year'].includes(view)
+  },
+})
+
+// computed
+const leftButton = computed(() => {
+  return [props.isRtl ? 'next' : 'prev']
+})
+const rightButton = computed(() => {
+  return [props.isRtl ? 'prev' : 'next']
+})
+
+// methods
+/**
+ * Changes the page, or sets focus to the adjacent button function
+ */
+function arrowLeftPrev() {
+  if (props.isRtl) {
+    emit('setFocus', ['up', 'next', 'tabbableCell'])
+    return
+  }
+  goToPreviousPage()
+}
+/**
+ * Changes the page, or sets focus to the adjacent button
+ */
+function arrowRightPrev() {
+  if (props.isRtl) {
+    goToPreviousPage()
+    return
+  }
+  emit('setFocus', ['up', 'next', 'tabbableCell'])
+}
+/**
+ * Changes the page, or sets focus to the adjacent button
+ */
+function arrowLeftNext() {
+  if (props.isRtl) {
+    goToNextPage()
+    return
+  }
+  emit('setFocus', ['up', 'prev', 'tabbableCell'])
+}
+/**
+ * Changes the page, or sets focus to the adjacent button
+ */
+function arrowRightNext() {
+  if (props.isRtl) {
+    emit('setFocus', ['up', 'prev', 'tabbableCell'])
+    return
+  }
+  goToNextPage()
+}
+function focusTabbableCell() {
+  emit('setFocus', ['tabbableCell'])
+}
+function focusLeftButton() {
+  emit('setFocus', leftButton.value)
+}
+function focusRightButton() {
+  emit('setFocus', rightButton.value)
+}
+function goToNextPage() {
+  emit('pageChange', { incrementBy: 1, focusRefs: ['next'] })
+}
+function goToPreviousPage() {
+  emit('pageChange', { incrementBy: -1, focusRefs: ['prev'] })
+}
+function selectUpButton() {
+  if (!props.isUpDisabled) {
+    emit('setView', props.nextViewUp)
+  }
 }
 </script>
