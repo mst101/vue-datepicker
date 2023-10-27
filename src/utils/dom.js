@@ -54,8 +54,8 @@ export function getRelativePosition({
   const documentWidth = document.documentElement.clientWidth
   const documentHeight = document.documentElement.clientHeight
   if (appendToBody) {
-    offsetX = window.pageXOffset + relativeRect.left
-    offsetY = window.pageYOffset + relativeRect.top
+    offsetX = window.scrollX + relativeRect.left
+    offsetY = window.scrollY + relativeRect.top
   }
 
   const calendarBounding = el.getBoundingClientRect()
