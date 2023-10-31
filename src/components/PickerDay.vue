@@ -72,8 +72,8 @@
 <script setup>
 import { ref, computed, nextTick } from 'vue'
 import makeDateUtils from '~/utils/DateUtils'
-import HighlightedDate from '~/utils/HighlightedDate'
 import useDisabledDates from '../composables/useDisabledDates'
+import useHighlighted from '../composables/useHighlighted'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
 
@@ -205,6 +205,13 @@ const {
   useUtc: props.useUtc,
   view: 'day',
 })
+const { isHighlightedDate, isHighlightEnd, isHighlightStart } = useHighlighted(
+  props.highlighted,
+  {
+    disabledDates: props.disabledDates,
+    utils,
+  },
+)
 
 // computed
 /**
@@ -600,52 +607,6 @@ function firstDayCellDate() {
   const pageDate = new Date(props.pageDate)
 
   return new Date(utils.setDate(pageDate, 1 - daysFromPrevMonth.value))
-}
-
-/**
- * Whether a day is highlighted (N.B. Disabled dates are not highlighted unless
- * `highlighted.includeDisabled` is true)
- * @param {Date} date to check if highlighted
- * @return {Boolean}
- */
-function isHighlightedDate(date) {
-  if (!props.highlighted) return false
-
-  return new HighlightedDate(
-    utils,
-    props.disabledDates,
-    props.highlighted,
-  ).isDateHighlighted(date)
-}
-
-/**
- * Whether a date is the last in a range of highlighted dates
- * @param {Date} date
- * @return {Boolean}
- */
-function isHighlightEnd(date) {
-  if (!props.highlighted) return false
-
-  return new HighlightedDate(
-    utils,
-    props.disabledDates,
-    props.highlighted,
-  ).isHighlightEnd(date)
-}
-
-/**
- * Whether a date is the first in a range of highlighted dates
- * @param {Date} date
- * @return {Boolean}
- */
-function isHighlightStart(date) {
-  if (!props.highlighted) return false
-
-  return new HighlightedDate(
-    utils,
-    props.disabledDates,
-    props.highlighted,
-  ).isHighlightStart(date)
 }
 
 /**

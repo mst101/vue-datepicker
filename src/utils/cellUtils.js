@@ -8,11 +8,10 @@ const cellUtils = {
   },
 
   hasDate(obj, prop) {
-    return this.isDefined(obj, prop) && this.utils.isValidDate(obj[prop])
+    return this.isDefined(obj, prop) && this.isValidDate(obj[prop])
   },
 
   dayMonthYear(obj, prop) {
-    const { utils } = this
     const hasDate = this.hasDate(obj, prop)
 
     if (!hasDate) {
@@ -26,14 +25,14 @@ const cellUtils = {
     const d = obj[prop]
 
     return {
-      day: utils.getDate(d),
-      month: utils.getMonth(d),
-      year: utils.getFullYear(d),
+      day: this.getDate(d),
+      month: this.getMonth(d),
+      year: this.getFullYear(d),
     }
   },
 }
 
 export default (utils) => ({
   ...cellUtils,
-  utils,
+  ...utils,
 })

@@ -1,18 +1,18 @@
 /* eslint-disable no-underscore-dangle */
 
 import makeCellUtils from './cellUtils'
-import DisabledDate from './DisabledDate'
+import useDisabledDates from '../composables/useDisabledDates'
 
 export default class HighlightedDate {
   constructor(utils, disabledDates, highlighted) {
-    this._utils = utils
+    this._utils = makeCellUtils(utils)
     this._disabledDates = disabledDates
     this._highlighted = highlighted
   }
 
   get config() {
     const highlightedDates = this._highlighted
-    const utils = makeCellUtils(this._utils)
+    const utils = this._utils
     const has = {
       customPredictor: utils.isDefined(highlightedDates, 'customPredictor'),
       daysOfMonth: utils.hasArray(highlightedDates, 'daysOfMonth'),
@@ -33,15 +33,13 @@ export default class HighlightedDate {
     }
   }
 
-  isDateDisabled(date) {
-    const utils = this._utils
-    const disabledDates = this._disabledDates
-
-    return new DisabledDate(utils, disabledDates).isDateDisabled(date)
-  }
-
   isHighlightingNotPossible(date) {
-    return !this.config.has.includeDisabled && this.isDateDisabled(date)
+    const { isDisabledDate } = useDisabledDates(this._disabledDates, {
+      useUtc: this._utils.useUtc,
+      view: 'day',
+    })
+
+    return !this.config.has.includeDisabled && isDisabledDate(date)
   }
 
   isDateHighlightedVia(date) {
@@ -95,7 +93,7 @@ export default class HighlightedDate {
     }
   }
 
-  // eslint-disable-next-line complexity,max-statements
+  // eslint-disable-next-line complexity
   isDateHighlighted(date) {
     if (this.isHighlightingNotPossible(date)) return false
 
