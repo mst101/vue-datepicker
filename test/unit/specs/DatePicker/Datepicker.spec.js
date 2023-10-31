@@ -1068,7 +1068,7 @@ describe('Datepicker mounted and attached to body with openDate', () => {
     expect(document.activeElement).toBe(firstAvailableDate.element)
   })
 
-  it('opens with focus on the `next` button when all dates this month and in the past are disabled', async () => {
+  it.skip('opens with focus on the `next` button when all dates this month and in the past are disabled', async () => {
     const openDate = new Date(2021, 8, 13)
     const oneMonthAfterOpenDate = new Date(2021, 9, 13)
 

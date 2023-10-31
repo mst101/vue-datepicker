@@ -53,7 +53,7 @@
 <script setup>
 import { ref, computed, nextTick } from 'vue'
 import makeDateUtils from '~/utils/DateUtils'
-import DisabledDate from '~/utils/DisabledDate'
+import useDisabledDates from '../composables/useDisabledDates'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
 
@@ -153,41 +153,20 @@ const emit = defineEmits({
 const utils = makeDateUtils(props.useUtc)
 const pickerCellsRef = ref(null)
 const pickerHeaderRef = ref(null)
+const {
+  earliestPossibleDate,
+  latestPossibleDate,
+  isPreviousDisabled,
+  isNextDisabled,
+  isDisabledYear
+} = useDisabledDates(props.disabledDates, {
+  pageDate: props.pageDate,
+  useUtc: props.useUtc,
+  view: 'month',
+  yearRange: props.yearRange
+})
 
 // computed
-/**
- * A look-up object created from 'disabledDates' prop
- * @return {Object}
- */
-const disabledConfig = computed(() => {
-  if (!props.disabledDates) {
-    return {
-      has: {
-        from: false,
-        to: false,
-      },
-    }
-  }
-
-  return new DisabledDate(utils, props.disabledDates).config
-})
-
-const earliestPossibleDate = computed(() => {
-  if (!props.disabledDates) return null
-
-  return new DisabledDate(utils, props.disabledDates).getEarliestPossibleDate(
-    props.disabledDates.to,
-  )
-})
-
-const latestPossibleDate = computed(() => {
-  if (!props.disabledDates) return null
-
-  return new DisabledDate(utils, props.disabledDates).getLatestPossibleDate(
-    props.disabledDates.from,
-  )
-})
-
 /**
  * Returns the current page's full year as an integer.
  * @return {Number}
@@ -242,30 +221,6 @@ const pageDecadeStart = computed(() => {
  */
 const pageDecadeEnd = computed(() => {
   return pageDecadeStart.value + props.yearRange - 1
-})
-
-/**
- * Is the next decade disabled?
- * @return {Boolean}
- */
-const isNextDisabled = computed(() => {
-  if (!disabledConfig.value.has.from) {
-    return false
-  }
-  const firstDayOfNextDecade = new Date(pageDecadeEnd.value + 1, 0, 1)
-  return latestPossibleDate.value < firstDayOfNextDecade
-})
-
-/**
- * Is the previous decade disabled?
- * @return {Boolean}
- */
-const isPreviousDisabled = computed(() => {
-  if (!disabledConfig.value.has.to) {
-    return false
-  }
-  const lastDayOfPreviousDecade = new Date(pageDecadeStart.value - 1, 11, 31)
-  return earliestPossibleDate.value > lastDayOfPreviousDecade
 })
 
 /**
@@ -567,17 +522,6 @@ function firstYearCellDate() {
   const date = new Date(utils.setFullYear(pageDate, firstYear))
 
   return utils.adjustDateToView(date, 'year')
-}
-
-/**
- * Whether a year is disabled
- * @param {Date} date
- * @return {Boolean}
- */
-function isDisabledYear(date) {
-  if (!props.disabledDates) return false
-
-  return new DisabledDate(utils, props.disabledDates).isYearDisabled(date)
 }
 
 /**

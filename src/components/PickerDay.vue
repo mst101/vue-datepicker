@@ -72,8 +72,8 @@
 <script setup>
 import { ref, computed, nextTick } from 'vue'
 import makeDateUtils from '~/utils/DateUtils'
-import DisabledDate from '~/utils/DisabledDate'
 import HighlightedDate from '~/utils/HighlightedDate'
+import useDisabledDates from '../composables/useDisabledDates'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
 
@@ -194,39 +194,19 @@ const emit = defineEmits({
 const utils = makeDateUtils(props.useUtc)
 const pickerCellsRef = ref(null)
 const pickerHeaderRef = ref(null)
+const {
+  earliestPossibleDate,
+  latestPossibleDate,
+  isPreviousDisabled,
+  isNextDisabled,
+  isDisabledDate,
+} = useDisabledDates(props.disabledDates, {
+  pageDate: props.pageDate,
+  useUtc: props.useUtc,
+  view: 'day',
+})
 
 // computed
-/**
- * A look-up object created from 'disabledDates' prop
- * @return {Object}
- */
-const disabledConfig = computed(() => {
-  if (!props.disabledDates) {
-    return {
-      has: {
-        from: false,
-        to: false,
-      },
-    }
-  }
-
-  return new DisabledDate(utils, props.disabledDates).config
-})
-
-const earliestPossibleDate = computed(() => {
-  if (!props.disabledDates) return null
-
-  return new DisabledDate(utils, props.disabledDates).getEarliestPossibleDate(
-    props.disabledDates.to,
-  )
-})
-const latestPossibleDate = computed(() => {
-  if (!props.disabledDates) return null
-
-  return new DisabledDate(utils, props.disabledDates).getLatestPossibleDate(
-    props.disabledDates.from,
-  )
-})
 /**
  * Returns the current page's full year as an integer.
  * @return {Number}
@@ -322,36 +302,7 @@ const firstOfNextMonth = computed(() => {
   const d = new Date(props.pageDate)
   return new Date(utils.setMonth(d, utils.getMonth(d) + 1))
 })
-/**
- * Is the next month disabled?
- * @return {Boolean}
- */
-const isNextDisabled = computed(() => {
-  if (!disabledConfig.value.has.from) {
-    return false
-  }
 
-  return latestPossibleDate.value < firstOfNextMonth.value
-})
-/**
- * The first day of the next page's month.
- * @return {Date}
- */
-const lastOfPreviousMonth = computed(() => {
-  const d = new Date(props.pageDate)
-  return new Date(utils.setDate(d, 0))
-})
-/**
- * Is the previous month disabled?
- * @return {Boolean}
- */
-const isPreviousDisabled = computed(() => {
-  if (!disabledConfig.value.has.to) {
-    return false
-  }
-
-  return earliestPossibleDate.value > lastOfPreviousMonth.value
-})
 /**
  * Display the current page's month & year as the title.
  * @return {String}
@@ -649,17 +600,6 @@ function firstDayCellDate() {
   const pageDate = new Date(props.pageDate)
 
   return new Date(utils.setDate(pageDate, 1 - daysFromPrevMonth.value))
-}
-
-/**
- * Whether a day is disabled
- * @param {Date} date to check if disabled
- * @return {Boolean}
- */
-function isDisabledDate(date) {
-  if (!props.disabledDates) return false
-
-  return new DisabledDate(utils, props.disabledDates).isDateDisabled(date)
 }
 
 /**

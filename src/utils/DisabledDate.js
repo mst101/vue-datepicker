@@ -133,7 +133,7 @@ export default class DisabledDate {
    * @param {Date} date
    * @return {Boolean}
    */
-  // eslint-disable-next-line complexity,max-statements
+  // eslint-disable-next-line complexity
   isDateDisabled(date) {
     const isDisabledVia = this.isDateDisabledVia(date)
 
@@ -153,7 +153,6 @@ export default class DisabledDate {
    * @param {Date} date
    * @return {Boolean}
    */
-  // eslint-disable-next-line complexity,max-statements
   isMonthDisabled(date) {
     const isDisabledVia = this.isMonthDisabledVia(date)
 
@@ -161,18 +160,21 @@ export default class DisabledDate {
       return true
     }
 
-    // now we have to check each day of the month
-    for (let i = 1; i <= this.daysInMonth(date); i += 1) {
-      const dayDate = new Date(date)
-      dayDate.setDate(i)
-      // if at least one day of this month is NOT disabled,
-      // we can conclude that this month SHOULD be selectable
-      if (!this.isDateDisabled(dayDate)) {
-        return false
-      }
-    }
+    const datesInMonth = Array.from(
+      new Array(this.daysInMonth(date)),
+      (_, index) =>
+        this._utils.getNewDateObject(
+          new Date(
+            this._utils.getFullYear(date),
+            this._utils.getMonth(date),
+            index + 1,
+          ),
+        ),
+    )
 
-    return true
+    // If at least one day in this month is NOT disabled,
+    // then this month SHOULD be selectable
+    return datesInMonth.includes((d) => this.isDateDisabled(d))
   }
 
   /**
@@ -180,7 +182,6 @@ export default class DisabledDate {
    * @param {Date} date
    * @return {Boolean}
    */
-  // eslint-disable-next-line complexity,max-statements
   isYearDisabled(date) {
     const isDisabledVia = this.isYearDisabledVia(date)
 
@@ -188,18 +189,19 @@ export default class DisabledDate {
       return true
     }
 
-    // now we have to check each month of the year
-    for (let i = 0; i < 12; i += 1) {
-      const monthDate = new Date(date)
-      monthDate.setMonth(i)
-      // if at least one month of this year is NOT disabled,
-      // we can conclude that this year SHOULD be selectable
-      if (!this.isMonthDisabled(monthDate)) {
-        return false
-      }
-    }
+    const monthsInYear = Array.from(new Array(12), (_, index) =>
+      this._utils.getNewDateObject(
+        new Date(
+          this._utils.getFullYear(date),
+          this._utils.getMonth(date),
+          index + 1,
+        ),
+      ),
+    )
 
-    return true
+    // If at least one month of this year is NOT disabled,
+    // then this year SHOULD be selectable
+    return monthsInYear.includes((d) => this.isMonthDisabled(d))
   }
 
   getEarliestPossibleDate(date) {

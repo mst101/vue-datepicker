@@ -13,6 +13,7 @@ export default defineConfig({
     coverage: {
       include: [
         'src/components/*.vue',
+        'src/composables/*.js',
         'src/locale/*.js',
         'src/mixins/*.vue',
         'src/utils/*.js',
