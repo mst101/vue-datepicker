@@ -1,7 +1,7 @@
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, mount } from '@vue/test-utils'
 import PickerCells from '~/components/PickerCells.vue'
 
-describe('PickerCells', () => {
+describe('PickerCells shallowMounted', () => {
   let wrapper
   beforeEach(() => {
     wrapper = shallowMount(PickerCells, {
@@ -53,5 +53,66 @@ describe('PickerCells', () => {
     cellClasses = wrapper.vm.cellClasses(cell)
 
     expect(cellClasses[2].today).toBeFalsy()
+  })
+})
+
+describe('PickerCells mounted', () => {
+  let wrapper
+  beforeEach(() => {
+    wrapper = mount(PickerCells, {
+      props: {
+        cells: [
+          {
+            date: 1,
+            isDisabled: false,
+            isHighlightEnd: false,
+            isHighlightStart: false,
+            isHighlighted: false,
+            isNextMonth: false,
+            isOpenDate: false,
+            isPreviousMonth: false,
+            isSaturday: false,
+            isSelected: false,
+            isSunday: false,
+            isToday: false,
+            isWeekend: false,
+            timestamp: 1698796800000,
+          },
+        ],
+        view: 'day',
+      },
+    })
+  })
+
+  afterEach(() => {
+    wrapper.unmount()
+  })
+
+  it('emits the correct delta value when arrowing right', async () => {
+    let firstCell = wrapper.find('.day')
+    await firstCell.trigger('keydown.right')
+    expect(wrapper.emitted('arrow')[0][0].delta).toBe(1)
+
+    await wrapper.setProps({
+      isRtl: true,
+    })
+
+    firstCell = wrapper.find('.day')
+    await firstCell.trigger('keydown.right')
+    expect(wrapper.emitted('arrow')[1][0].delta).toBe(-1)
+  })
+
+  it('emits the correct delta value when arrowing left', async () => {
+    let firstCell = wrapper.find('.day')
+    await firstCell.trigger('keydown.left')
+    expect(wrapper.emitted('arrow')[0][0].delta).toBe(-1)
+
+    await wrapper.setProps({
+      isRtl: true,
+    })
+
+    firstCell = wrapper.find('.day')
+    await firstCell.trigger('keydown.left')
+    expect(wrapper.emitted('arrow')[1][0].delta).toBe(1)
   })
 })
