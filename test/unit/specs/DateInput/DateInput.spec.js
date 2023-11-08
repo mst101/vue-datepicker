@@ -155,6 +155,35 @@ describe('DateInput shallowMounted with selectedDate', () => {
   })
 })
 
+describe('DateInput shallowMounted with clearButton', () => {
+  let wrapper
+
+  beforeEach(() => {
+    wrapper = shallowMount(DateInput, {
+      props: {
+        translation: en,
+        clearButton: true,
+      },
+    })
+  })
+
+  afterEach(() => {
+    wrapper.unmount()
+  })
+
+  it('shows the `clear button` only if a date has been selected', async () => {
+    let clearButton = wrapper.find('.vdp-datepicker__clear-button')
+
+    expect(clearButton.exists()).toBe(false)
+
+    await wrapper.setProps({ selectedDate: new Date(2018, 2, 24) })
+
+    clearButton = wrapper.find('.vdp-datepicker__clear-button')
+
+    expect(clearButton.exists()).toBe(true)
+  })
+})
+
 describe('DateInput shallowMounted with showCalendarOnFocus', () => {
   let wrapper
 
@@ -205,6 +234,18 @@ describe('DateInput shallowMounted with showCalendarOnFocus', () => {
 
     await input.trigger('focus')
     expect(wrapper.emitted('open')).toBeTruthy()
+  })
+
+  it('does not open calendar on focus when `show-calendar-on-button-click` is true', async () => {
+    await wrapper.setProps({
+      showCalendarOnButtonClick: true,
+    })
+
+    const input = wrapper.find('input')
+
+    await input.trigger('focus')
+
+    expect(wrapper.emitted('open')).toBeFalsy()
   })
 })
 
