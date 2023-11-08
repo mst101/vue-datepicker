@@ -248,15 +248,16 @@ watch(
 watch(
   () => props.isOpen,
   (isOpen, wasOpen) => {
-    nextTick(() => {
-      if (isOpen && props.showCalendarOnFocus) {
+    if (props.showCalendarOnFocus) {
+      nextTick(() => {
+        if (isOpen) {
+          shouldToggleOnFocus.value = false
+        }
         if (wasOpen && !isInputFocused.value) {
           shouldToggleOnFocus.value = true
-          return
         }
-        shouldToggleOnFocus.value = false
-      }
-    })
+      })
+    }
   },
 )
 
