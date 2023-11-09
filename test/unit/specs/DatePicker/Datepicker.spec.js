@@ -716,6 +716,29 @@ describe('Datepicker mounted and attached to body with openDate', () => {
     expect(document.activeElement).toBe(lastOfMonth.element)
   })
 
+  it('cannot arrow to a disabled page when there are no edge dates', async () => {
+    await wrapper.setProps({
+      openDate: new Date(2026, 1, 1),
+      disabledDates: {
+        to: new Date(2026, 0, 31),
+        from: new Date(2026, 2, 1),
+      },
+    })
+
+    await wrapper.vm.open()
+    vi.advanceTimersByTime(250)
+
+    const firstOfMonth = wrapper.findAll('button.cell')[0]
+    firstOfMonth.element.focus()
+    await firstOfMonth.trigger('keydown.left')
+    expect(document.activeElement).toBe(firstOfMonth.element)
+
+    const lastOfMonth = wrapper.findAll('button.cell')[27]
+    lastOfMonth.element.focus()
+    await lastOfMonth.trigger('keydown.right')
+    expect(document.activeElement).toBe(lastOfMonth.element)
+  })
+
   it('arrows left on cell to previous page', async () => {
     await wrapper.vm.open()
     vi.advanceTimersByTime(250)
@@ -1068,7 +1091,7 @@ describe('Datepicker mounted and attached to body with openDate', () => {
     expect(document.activeElement).toBe(firstAvailableDate.element)
   })
 
-  it.skip('opens with focus on the `next` button when all dates this month and in the past are disabled', async () => {
+  it('opens with focus on the `next` button when all dates this month and in the past are disabled', async () => {
     const openDate = new Date(2021, 8, 13)
     const oneMonthAfterOpenDate = new Date(2021, 9, 13)
 

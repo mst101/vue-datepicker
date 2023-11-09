@@ -1,17 +1,25 @@
 /* eslint-disable max-statements */
 import { computed } from 'vue'
-import makeDateUtils from '~/utils/DateUtils'
+import useDateUtils from './useDateUtils'
 import DisabledDate from '../utils/DisabledDate'
+import convertToRef from '../utils/convertToRef'
 
-export default function useDisabledDates(disabledDates, options = {}) {
-  const { useUtc = false, pageDate, view = 'day', yearRange = 10 } = options
-  const utils = makeDateUtils(useUtc)
+// eslint-disable-next-line max-lines-per-function
+export default function useDisabledDates(disabledDatesOrig, options = {}) {
+  const disabledDates = convertToRef(disabledDatesOrig)
+  const { useUtc = false } = options
+  const utils = useDateUtils(useUtc)
+  let { pageDate, view = 'day', yearRange = 10 } = options
+  pageDate = convertToRef(pageDate)
+  view = convertToRef(view)
+  yearRange = convertToRef(yearRange)
+
   /**
    * A look-up object created from 'disabledDates' prop
    * @return {Object}
    */
   const disabledConfig = computed(() => {
-    if (!disabledDates) {
+    if (!disabledDates.value) {
       return {
         has: {
           from: false,
@@ -20,21 +28,20 @@ export default function useDisabledDates(disabledDates, options = {}) {
       }
     }
 
-    return new DisabledDate(utils, disabledDates).config
+    return new DisabledDate(utils, disabledDates.value).config
   })
-
   const earliestPossibleDate = computed(() => {
-    if (!disabledDates) return null
+    if (!disabledDates.value) return null
 
-    return new DisabledDate(utils, disabledDates).getEarliestPossibleDate(
-      disabledDates.to,
+    return new DisabledDate(utils, disabledDates.value).getEarliestPossibleDate(
+      disabledDates.value.to,
     )
   })
   const latestPossibleDate = computed(() => {
-    if (!disabledDates) return null
+    if (!disabledDates.value) return null
 
-    return new DisabledDate(utils, disabledDates).getLatestPossibleDate(
-      disabledDates.from,
+    return new DisabledDate(utils, disabledDates.value).getLatestPossibleDate(
+      disabledDates.value.from,
     )
   })
 
@@ -124,9 +131,9 @@ export default function useDisabledDates(disabledDates, options = {}) {
    * @return {Boolean}
    */
   function isDisabledDate(date) {
-    if (!disabledDates) return false
+    if (!disabledDates.value) return false
 
-    return new DisabledDate(utils, disabledDates).isDateDisabled(date)
+    return new DisabledDate(utils, disabledDates.value).isDateDisabled(date)
   }
 
   /**
@@ -135,9 +142,9 @@ export default function useDisabledDates(disabledDates, options = {}) {
    * @return {Boolean}
    */
   function isDisabledMonth(date) {
-    if (!disabledDates) return false
+    if (!disabledDates.value) return false
 
-    return new DisabledDate(utils, disabledDates).isMonthDisabled(date)
+    return new DisabledDate(utils, disabledDates.value).isMonthDisabled(date)
   }
 
   /**
@@ -146,9 +153,9 @@ export default function useDisabledDates(disabledDates, options = {}) {
    * @return {Boolean}
    */
   function isDisabledYear(date) {
-    if (!disabledDates) return false
+    if (!disabledDates.value) return false
 
-    return new DisabledDate(utils, disabledDates).isYearDisabled(date)
+    return new DisabledDate(utils, disabledDates.value).isYearDisabled(date)
   }
 
   return {
