@@ -24,7 +24,7 @@
       data-test-up-button
       :disabled="props.isUpDisabled"
       type="button"
-      @click="selectUpButton"
+      @click.stop="selectUpButton"
       @keydown.down.prevent="focusTabbableCell"
       @keydown.up.prevent="emit('focusInput')"
       @keydown.left.prevent="focusLeftButton"
@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   bootstrapStyling: {
@@ -88,14 +88,18 @@ const emit = defineEmits({
     return typeof page === 'object'
   },
   setFocus: (refArray) => {
-    return refArray.every((ref) => {
-      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(ref)
+    return refArray.every((refAttr) => {
+      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(refAttr)
     })
   },
   setView: (view) => {
     return ['day', 'month', 'year'].includes(view)
   },
 })
+
+const prev = ref(null)
+const up = ref(null)
+const next = ref(null)
 
 // computed
 const leftButton = computed(() => {
@@ -166,4 +170,6 @@ function selectUpButton() {
     emit('setView', props.nextViewUp)
   }
 }
+
+defineExpose({ prev, up, next })
 </script>

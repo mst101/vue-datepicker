@@ -207,15 +207,13 @@ const emit = defineEmits({
 })
 
 // data
+const calendarButtonRef = ref(null)
 const inputRef = ref(null)
 const isInputFocused = ref(false)
 const shouldToggleOnFocus = ref(false)
 const shouldToggleOnClick = ref(true)
 const typedDate = ref('')
 const utils = makeDateUtils(props.useUtc)
-
-// expose functions to parent
-defineExpose({ parseInput, inputRef })
 
 // computed
 const computedInputClass = computed(() => {
@@ -510,4 +508,12 @@ function toggle(calendarButton) {
 
   emit(props.isOpen ? 'close' : 'open')
 }
+
+defineExpose({
+  parseInput,
+  inputRef,
+  calendarButtonRef,
+  shouldToggleOnFocus,
+  shouldToggleOnClick,
+})
 </script>

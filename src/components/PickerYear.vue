@@ -152,6 +152,7 @@ const emit = defineEmits({
 
 const utils = makeDateUtils(props.useUtc)
 const pickerCellsRef = ref(null)
+const pickerHeaderRef = ref(null)
 
 // computed
 /**
@@ -616,4 +617,6 @@ function isTodayYear(date) {
 
   return utils.getFullYear(date) === todayYear
 }
+
+defineExpose({ cells, pickerCellsRef, pickerHeaderRef })
 </script>

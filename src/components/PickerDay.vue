@@ -193,6 +193,7 @@ const emit = defineEmits({
 
 const utils = makeDateUtils(props.useUtc)
 const pickerCellsRef = ref(null)
+const pickerHeaderRef = ref(null)
 
 // computed
 /**
@@ -360,8 +361,6 @@ const pageTitleDay = computed(() => {
     ? `${currYearName.value} ${currMonthName.value}`
     : `${currMonthName.value} ${currYearName.value}`
 })
-
-defineExpose({ cells })
 
 // methods
 /**
@@ -751,4 +750,6 @@ function makeDay(dObj) {
     isNextMonth,
   }
 }
+
+defineExpose({ cells, pickerCellsRef, pickerHeaderRef })
 </script>

@@ -85,6 +85,10 @@ describe('Show calendar on focus', () => {
 
       the('picker-cells').should('have.length', 1)
       the('calendar').should(`${isNot}be.visible`)
+      // TODO: Remove arbitrary wait
+      // Wait for `shouldToggleOnClick` property on DateInput to be activated
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(200)
     })
   })
 })

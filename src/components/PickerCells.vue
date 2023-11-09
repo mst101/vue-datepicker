@@ -14,7 +14,7 @@
       :data-test-today-cell="cell.isToday || null"
       :disabled="cell.isDisabled"
       type="button"
-      @click="emit('select', cell)"
+      @click.stop="emit('select', cell)"
       @keydown.up.prevent="handleArrow(id, -columns)"
       @keydown.down.prevent="handleArrow(id, columns)"
       @keydown.left.prevent="handleArrow(id, isRtl ? 1 : -1)"
@@ -64,8 +64,6 @@ const emit = defineEmits({
     return typeof cell === 'object'
   },
 })
-
-defineExpose({ cellClasses })
 
 const openDateRef = ref(null)
 
@@ -131,4 +129,6 @@ function isTabbableCell(cell, id) {
 
   return id === props.tabbableCellId || null
 }
+
+defineExpose({ cellClasses, openDateRef })
 </script>

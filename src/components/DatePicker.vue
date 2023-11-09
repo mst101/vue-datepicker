@@ -729,20 +729,16 @@ function getElementByRef(refAttr) {
     return tabbableCell.value
   }
   if (refAttr === 'input') {
-    return dateInputRef.value && dateInputRef.value?.inputRef
+    return dateInputRef.value?.inputRef
   }
   if (refAttr === 'calendarButton') {
-    return dateInputRef.value && dateInputRef.value.$refs.calendarButtonRef
+    return dateInputRef.value && dateInputRef.value.calendarButtonRef
   }
   if (refAttr === 'openDate') {
-    return pickerRef.value.$refs.pickerCellsRef.$refs.openDateRef[0]
+    return pickerRef.value.pickerCellsRef.openDateRef
   }
   if (props.showHeader) {
-    return (
-      pickerRef.value &&
-      pickerRef.value.$refs.pickerHeaderRef &&
-      pickerRef.value.$refs.pickerHeaderRef.$refs[refAttr]
-    )
+    return pickerRef.value?.pickerHeaderRef[refAttr]
   }
   return null
 }
@@ -854,9 +850,7 @@ function getTypedCell() {
 
   const cellId = getCellId(latestValidTypedDate.value)
 
-  return cellId
-    ? pickerRef.value.pickerCellsRef.$el.children[cellId]
-    : null
+  return cellId ? pickerRef.value.pickerCellsRef.$el.children[cellId] : null
 }
 
 /**
@@ -1066,7 +1060,7 @@ function setNavElementsFocusedIndex() {
  */
 // eslint-disable-next-line complexity
 function setTabbableCell() {
-  if (!pickerRef.value || !pickerRef.value.pickerCellsRef) {
+  if (!pickerRef.value.pickerCellsRef) {
     return
   }
 
@@ -1588,7 +1582,7 @@ function setPageDate(date) {
  * Sets the slide duration in milliseconds by looking up the stylesheet
  */
 function setSlideDuration() {
-  if (!pickerRef.value || !pickerRef.value.pickerCellsRef) {
+  if (!pickerRef.value?.pickerCellsRef) {
     return
   }
   const cells = pickerRef.value.pickerCellsRef.$el

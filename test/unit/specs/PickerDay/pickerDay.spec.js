@@ -120,7 +120,7 @@ describe('PickerDay mounted', () => {
       showEdgeDates: true,
     })
 
-    let cellClasses = wrapper.vm.$refs.pickerCellsRef.cellClasses(cell)
+    let cellClasses = wrapper.vm.pickerCellsRef.cellClasses(cell)
 
     expect(cellClasses[2].today).toBeTruthy()
 
@@ -128,7 +128,7 @@ describe('PickerDay mounted', () => {
       showEdgeDates: false,
     })
 
-    cellClasses = wrapper.vm.$refs.pickerCellsRef.cellClasses(cell)
+    cellClasses = wrapper.vm.pickerCellsRef.cellClasses(cell)
 
     expect(cellClasses[2].today).toBeFalsy()
   })
@@ -145,7 +145,7 @@ describe('PickerDay mounted', () => {
       showEdgeDates: true,
     })
 
-    let cellClasses = wrapper.vm.$refs.pickerCellsRef.cellClasses(day)
+    let cellClasses = wrapper.vm.pickerCellsRef.cellClasses(day)
 
     expect(cellClasses[2].selected).toBeTruthy()
 
@@ -153,7 +153,7 @@ describe('PickerDay mounted', () => {
       showEdgeDates: false,
     })
 
-    cellClasses = wrapper.vm.$refs.pickerCellsRef.cellClasses(day)
+    cellClasses = wrapper.vm.pickerCellsRef.cellClasses(day)
 
     expect(cellClasses[2].selected).toBeFalsy()
   })

@@ -153,6 +153,7 @@ const emit = defineEmits({
 
 const utils = makeDateUtils(props.useUtc)
 const pickerCellsRef = ref(null)
+const pickerHeaderRef = ref(null)
 
 // computed
 /**
@@ -594,4 +595,6 @@ function isTodayMonth(date) {
 
   return utils.compareDates(date, todayMonth)
 }
+
+defineExpose({ cells, pickerCellsRef, pickerHeaderRef })
 </script>
