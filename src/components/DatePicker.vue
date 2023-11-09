@@ -707,7 +707,7 @@ function getCellId(date) {
   }
 
   const cellDate = getCellDate(date)
-  const { cells } = pickerRef.value.$refs.pickerCellsRef
+  const { cells } = pickerRef.value
 
   for (let i = 0; i < cells.length; i += 1) {
     if (cells[i].timestamp === cellDate.valueOf()) {
