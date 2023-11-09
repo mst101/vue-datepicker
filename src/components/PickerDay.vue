@@ -15,8 +15,8 @@
       next-view-up="month"
       @focus-input="focusInput"
       @page-change="changePage($event)"
-      @set-focus="$emit('setFocus', $event)"
-      @set-view="$emit('setView', $event)"
+      @set-focus="emit('setFocus', $event)"
+      @set-view="emit('setView', $event)"
     >
       <template #prevIntervalBtn>
         <slot name="prevIntervalBtn" />
@@ -69,685 +69,686 @@
   </div>
 </template>
 
-<script>
-// import { ref, onMounted } from 'vue'
+<script setup>
+import { ref, computed, nextTick } from 'vue'
 import makeDateUtils from '~/utils/DateUtils'
 import DisabledDate from '~/utils/DisabledDate'
 import HighlightedDate from '~/utils/HighlightedDate'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
 
-export default {
-  name: 'PickerDay',
-  components: { PickerCells, PickerHeader },
-  props: {
-    bootstrapStyling: {
-      type: Boolean,
-      default: false,
-    },
-    disabledDates: {
-      type: Object,
-      default: null,
-    },
-    isRtl: {
-      type: Boolean,
-      default: false,
-    },
-    isTypeable: {
-      type: Boolean,
-      default: false,
-    },
-    isUpDisabled: {
-      type: Boolean,
-      default: false,
-    },
-    isMinimumView: {
-      type: Boolean,
-      default: true,
-    },
-    openDate: {
-      type: [String, Date, Number],
-      default: null,
-    },
-    pageDate: {
-      type: Date,
-      default: null,
-    },
-    selectedDate: {
-      type: Date,
-      default: null,
-    },
-    showHeader: {
-      type: Boolean,
-      default: true,
-    },
-    slideDuration: {
-      type: Number,
-      default: 250,
-    },
-    tabbableCellId: {
-      type: Number,
-      default: null,
-    },
-    transitionName: {
-      type: String,
-      default: '',
-    },
-    translation: {
-      type: Object,
-      default() {
-        return {}
-      },
-    },
-    useUtc: {
-      type: Boolean,
-      default: false,
-    },
-    view: {
-      type: String,
-      default: 'day',
-    },
-    dayCellContent: {
-      type: Function,
-      default: (day) => day.date,
-    },
-    firstDayOfWeek: {
-      type: String,
-      default: 'sun',
-    },
-    highlighted: {
-      type: Object,
-      default() {
-        return {}
-      },
-    },
-    showFullMonthName: {
-      type: Boolean,
-      default: false,
-    },
-    showEdgeDates: {
-      type: Boolean,
-      default: true,
+const props = defineProps({
+  bootstrapStyling: {
+    type: Boolean,
+    default: false,
+  },
+  disabledDates: {
+    type: Object,
+    default: null,
+  },
+  isRtl: {
+    type: Boolean,
+    default: false,
+  },
+  isTypeable: {
+    type: Boolean,
+    default: false,
+  },
+  isUpDisabled: {
+    type: Boolean,
+    default: false,
+  },
+  isMinimumView: {
+    type: Boolean,
+    default: true,
+  },
+  openDate: {
+    type: [String, Date, Number],
+    default: null,
+  },
+  pageDate: {
+    type: Date,
+    default: null,
+  },
+  selectedDate: {
+    type: Date,
+    default: null,
+  },
+  showHeader: {
+    type: Boolean,
+    default: true,
+  },
+  slideDuration: {
+    type: Number,
+    default: 250,
+  },
+  tabbableCellId: {
+    type: Number,
+    default: null,
+  },
+  transitionName: {
+    type: String,
+    default: '',
+  },
+  translation: {
+    type: Object,
+    default() {
+      return {}
     },
   },
-  emits: {
-    pageChange: (config) => {
-      return typeof config === 'object'
-    },
-    select: (cell) => {
-      return typeof cell === 'object'
-    },
-    setSkipReviewFocus: (value) => {
-      return typeof value === 'boolean'
-    },
-    setTransitionName: (incrementBy) => {
-      return incrementBy === -1 || incrementBy === 1
-    },
-    setFocus: (refArray) => {
-      return refArray.every((ref) => {
-        return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(ref)
-      })
-    },
-    setView: (view) => {
-      return view === 'month'
+  useUtc: {
+    type: Boolean,
+    default: false,
+  },
+  view: {
+    type: String,
+    default: 'day',
+  },
+  dayCellContent: {
+    type: Function,
+    default: (day) => day.date,
+  },
+  firstDayOfWeek: {
+    type: String,
+    default: 'sun',
+  },
+  highlighted: {
+    type: Object,
+    default() {
+      return {}
     },
   },
-  // setup() {
-  //   const pickerHeaderRef = ref(null)
+  showFullMonthName: {
+    type: Boolean,
+    default: false,
+  },
+  showEdgeDates: {
+    type: Boolean,
+    default: true,
+  },
+})
 
-  //   onMounted(() => {
-  //     console.log(pickerHeaderRef.value.$el)
-  //   })
+const emit = defineEmits({
+  pageChange: (config) => {
+    return typeof config === 'object'
+  },
+  select: (cell) => {
+    return typeof cell === 'object'
+  },
+  setSkipReviewFocus: (value) => {
+    return typeof value === 'boolean'
+  },
+  setTransitionName: (incrementBy) => {
+    return incrementBy === -1 || incrementBy === 1
+  },
+  setFocus: (refArray) => {
+    return refArray.every((refAttr) => {
+      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(refAttr)
+    })
+  },
+  setView: (view) => {
+    return view === 'month'
+  },
+})
 
-  //   return {
-  //     pickerHeaderRef
-  //   }
-  // },
-  data() {
+const utils = makeDateUtils(props.useUtc)
+const pickerCellsRef = ref(null)
+
+// computed
+/**
+ * A look-up object created from 'disabledDates' prop
+ * @return {Object}
+ */
+const disabledConfig = computed(() => {
+  if (!props.disabledDates) {
     return {
-      utils: makeDateUtils(this.useUtc),
+      has: {
+        from: false,
+        to: false,
+      },
     }
-  },
-  computed: {
-    /**
-     * A look-up object created from 'disabledDates' prop
-     * @return {Object}
-     */
-    disabledConfig() {
-      if (!this.disabledDates) {
-        return {
-          has: {
-            from: false,
-            to: false,
-          },
-        }
-      }
+  }
 
-      return new DisabledDate(this.utils, this.disabledDates).config
-    },
-    earliestPossibleDate() {
-      if (!this.disabledDates) return null
+  return new DisabledDate(utils, props.disabledDates).config
+})
 
-      return new DisabledDate(
-        this.utils,
-        this.disabledDates,
-      ).getEarliestPossibleDate(this.disabledDates.to)
-    },
-    latestPossibleDate() {
-      if (!this.disabledDates) return null
+const earliestPossibleDate = computed(() => {
+  if (!props.disabledDates) return null
 
-      return new DisabledDate(
-        this.utils,
-        this.disabledDates,
-      ).getLatestPossibleDate(this.disabledDates.from)
-    },
-    /**
-     * Returns the current page's full year as an integer.
-     * @return {Number}
-     */
-    pageYear() {
-      return this.utils.getFullYear(this.pageDate)
-    },
-    /**
-     * Sets an array with all days to show this month
-     * @return {Array}
-     */
-    cells() {
-      const days = []
-      const daysInCalendar =
-        this.daysFromPrevMonth + this.daysInMonth + this.daysFromNextMonth
-      const dObj = this.firstDayCellDate()
+  return new DisabledDate(utils, props.disabledDates).getEarliestPossibleDate(
+    props.disabledDates.to,
+  )
+})
+const latestPossibleDate = computed(() => {
+  if (!props.disabledDates) return null
 
-      for (let i = 0; i < daysInCalendar; i += 1) {
-        days.push(this.makeDay(dObj))
-        this.utils.setDate(dObj, this.utils.getDate(dObj) + 1)
-      }
+  return new DisabledDate(utils, props.disabledDates).getLatestPossibleDate(
+    props.disabledDates.from,
+  )
+})
+/**
+ * Returns the current page's full year as an integer.
+ * @return {Number}
+ */
+const pageYear = computed(() => {
+  return utils.getFullYear(props.pageDate)
+})
+/**
+ * Returns the current page's month as an integer.
+ * @return {Number}
+ */
+const pageMonth = computed(() => {
+  return utils.getMonth(props.pageDate)
+})
+/**
+ * Gets the name of the month the current page is on
+ * @return {String}
+ */
+const currMonthName = computed(() => {
+  const monthName = props.showFullMonthName
+    ? props.translation.months
+    : props.translation.monthsAbbr
 
-      return days
-    },
-    /**
-     * Gets the name of the month the current page is on
-     * @return {String}
-     */
-    currMonthName() {
-      const monthName = this.showFullMonthName
-        ? this.translation.months
-        : this.translation.monthsAbbr
+  return utils.getMonthNameAbbr(pageMonth.value, monthName)
+})
+/**
+ * Gets the name of the year that current page is on
+ * @return {String}
+ */
+const currYearName = computed(() => {
+  const { yearSuffix } = props.translation
+  return `${pageYear.value}${yearSuffix}`
+})
+/**
+ * Returns first-day-of-week as a number (Sunday is 0)
+ * @return {Number}
+ */
+const firstDayOfWeekNumber = computed(() => {
+  return utils.getDayFromAbbr(props.firstDayOfWeek)
+})
+/**
+ * Returns an array of day names
+ * @return {String[]}
+ */
+const daysOfWeek = computed(() => {
+  return props.translation.getDaysStartingOn(firstDayOfWeekNumber.value)
+})
+/**
+ * Returns the number of days in this month
+ * @return {String[]}
+ */
+const daysInMonth = computed(() => {
+  return utils.getDaysInMonth(props.pageDate)
+})
+/**
+ * Calculates how many days to show from the previous month
+ * @return {number}
+ */
+const daysFromPrevMonth = computed(() => {
+  const firstOfMonthDayNumber = utils.getDay(props.pageDate)
+  return (7 - firstDayOfWeekNumber.value + firstOfMonthDayNumber) % 7
+})
+/**
+ * Calculates how many days to show from the next month
+ * @return {number}
+ */
+const daysFromNextMonth = computed(() => {
+  const daysThisAndPrevMonth = daysFromPrevMonth.value + daysInMonth.value
+  return Math.ceil(daysThisAndPrevMonth / 7) * 7 - daysThisAndPrevMonth
+})
+/**
+ * Sets an array with all days to show this month
+ * @return {Array}
+ */
+const cells = computed(() => {
+  const days = []
+  const daysInCalendar =
+    daysFromPrevMonth.value + daysInMonth.value + daysFromNextMonth.value
+  const dObj = firstDayCellDate()
 
-      return this.utils.getMonthNameAbbr(this.pageMonth, monthName)
-    },
-    /**
-     * Gets the name of the year that current page is on
-     * @return {String}
-     */
-    currYearName() {
-      const { yearSuffix } = this.translation
-      return `${this.pageYear}${yearSuffix}`
-    },
-    /**
-     * Returns an array of day names
-     * @return {String[]}
-     */
-    daysOfWeek() {
-      return this.translation.getDaysStartingOn(this.firstDayOfWeekNumber)
-    },
-    /**
-     * Returns the number of days in this month
-     * @return {String[]}
-     */
-    daysInMonth() {
-      return this.utils.getDaysInMonth(this.pageDate)
-    },
-    /**
-     * Calculates how many days to show from the previous month
-     * @return {number}
-     */
-    daysFromPrevMonth() {
-      const firstOfMonthDayNumber = this.utils.getDay(this.pageDate)
-      return (7 - this.firstDayOfWeekNumber + firstOfMonthDayNumber) % 7
-    },
-    /**
-     * Calculates how many days to show from the next month
-     * @return {number}
-     */
-    daysFromNextMonth() {
-      const daysThisAndPrevMonth = this.daysFromPrevMonth + this.daysInMonth
-      return Math.ceil(daysThisAndPrevMonth / 7) * 7 - daysThisAndPrevMonth
-    },
-    /**
-     * Returns first-day-of-week as a number (Sunday is 0)
-     * @return {Number}
-     */
-    firstDayOfWeekNumber() {
-      return this.utils.getDayFromAbbr(this.firstDayOfWeek)
-    },
-    /**
-     * The first day of the next page's month.
-     * @return {Date}
-     */
-    firstOfNextMonth() {
-      const d = new Date(this.pageDate)
-      return new Date(this.utils.setMonth(d, this.utils.getMonth(d) + 1))
-    },
-    /**
-     * Is the next month disabled?
-     * @return {Boolean}
-     */
-    isNextDisabled() {
-      if (!this.disabledConfig.has.from) {
-        return false
-      }
+  for (let i = 0; i < daysInCalendar; i += 1) {
+    days.push(makeDay(dObj))
+    utils.setDate(dObj, utils.getDate(dObj) + 1)
+  }
 
-      return this.latestPossibleDate < this.firstOfNextMonth
-    },
-    /**
-     * Is the previous month disabled?
-     * @return {Boolean}
-     */
-    isPreviousDisabled() {
-      if (!this.disabledConfig.has.to) {
-        return false
-      }
+  return days
+})
+/**
+ * The first day of the next page's month.
+ * @return {Date}
+ */
+const firstOfNextMonth = computed(() => {
+  const d = new Date(props.pageDate)
+  return new Date(utils.setMonth(d, utils.getMonth(d) + 1))
+})
+/**
+ * Is the next month disabled?
+ * @return {Boolean}
+ */
+const isNextDisabled = computed(() => {
+  if (!disabledConfig.value.has.from) {
+    return false
+  }
 
-      return this.earliestPossibleDate > this.lastOfPreviousMonth
-    },
-    /**
-     * The first day of the next page's month.
-     * @return {Date}
-     */
-    lastOfPreviousMonth() {
-      const d = new Date(this.pageDate)
-      return new Date(this.utils.setDate(d, 0))
-    },
-    /**
-     * Returns the current page's month as an integer.
-     * @return {Number}
-     */
-    pageMonth() {
-      return this.utils.getMonth(this.pageDate)
-    },
-    /**
-     * Display the current page's month & year as the title.
-     * @return {String}
-     */
-    pageTitleDay() {
-      return this.translation.ymd
-        ? `${this.currYearName} ${this.currMonthName}`
-        : `${this.currMonthName} ${this.currYearName}`
-    },
-  },
-  methods: {
-    /**
-     * Used when an arrow key press would cause the focus to land on a disabled date
-     * @param {Object} options
-     */
-    addMoreSteps(options) {
-      if (options.stepsRemaining <= 0 && Math.abs(options.delta) > 1) {
-        return Math.abs(options.delta)
-      }
-      return options.stepsRemaining
-    },
-    /**
-     * Changes the page up or down
-     * @param {Number} incrementBy
-     * @param {[String]} focusRefs
-     */
-    changePage({ incrementBy, focusRefs }) {
-      const { pageDate, utils } = this
-      const units =
-        this.view === 'year' ? incrementBy * this.yearRange : incrementBy
+  return latestPossibleDate.value < firstOfNextMonth.value
+})
+/**
+ * The first day of the next page's month.
+ * @return {Date}
+ */
+const lastOfPreviousMonth = computed(() => {
+  const d = new Date(props.pageDate)
+  return new Date(utils.setDate(d, 0))
+})
+/**
+ * Is the previous month disabled?
+ * @return {Boolean}
+ */
+const isPreviousDisabled = computed(() => {
+  if (!disabledConfig.value.has.to) {
+    return false
+  }
 
-      this.$emit('setTransitionName', incrementBy)
+  return earliestPossibleDate.value > lastOfPreviousMonth.value
+})
+/**
+ * Display the current page's month & year as the title.
+ * @return {String}
+ */
+const pageTitleDay = computed(() => {
+  return props.translation.ymd
+    ? `${currYearName.value} ${currMonthName.value}`
+    : `${currMonthName.value} ${currYearName.value}`
+})
 
-      if (this.view === 'day') {
-        utils.setMonth(pageDate, utils.getMonth(pageDate) + units)
-      } else {
-        utils.setFullYear(pageDate, utils.getFullYear(pageDate) + units)
-      }
+defineExpose({ cells })
 
-      this.$emit('pageChange', { focusRefs, pageDate })
-    },
-    /**
-     * Changes the page and focuses the cell that is being 'arrowed' to
-     * @param {Object} options
-     */
-    changePageAndSetFocus(options) {
-      const { delta } = options
-      const isPageDisabled =
-        (delta > 0 && this.isNextDisabled) ||
-        (delta < 0 && this.isPreviousDisabled)
+// methods
+/**
+ * Used when an arrow key press would cause the focus to land on a disabled date
+ * @param {Object} options
+ */
+function addMoreSteps(options) {
+  if (options.stepsRemaining <= 0 && Math.abs(options.delta) > 1) {
+    return Math.abs(options.delta)
+  }
+  return options.stepsRemaining
+}
 
-      if (isPageDisabled) {
-        return
-      }
+/**
+ * Changes the page up or down
+ * @param {Number} incrementBy
+ * @param {[String]} focusRefs
+ */
+function changePage({ incrementBy, focusRefs }) {
+  const pageDate = new Date(props.pageDate)
+  const units =
+    props.view === 'year' ? incrementBy * this.yearRange : incrementBy
 
-      this.$emit('setSkipReviewFocus', true)
+  emit('setTransitionName', incrementBy)
 
-      this.changePage({
-        incrementBy: Math.sign(delta),
-        focusRefs: ['arrow-to-cell'],
-      })
+  if (props.view === 'day') {
+    utils.setMonth(pageDate, utils.getMonth(pageDate) + units)
+  } else {
+    utils.setFullYear(pageDate, utils.getFullYear(pageDate) + units)
+  }
 
-      this.$nextTick(() => {
-        this.setFocusOnNewPage(options)
-        this.$emit('setSkipReviewFocus', false)
-      })
-    },
-    /**
-     * Focuses the input field, if typeable
-     */
-    focusInput() {
-      if (this.isTypeable) {
-        this.$emit('setFocus', ['input'])
-      }
-    },
-    /**
-     * Returns the element that should be focused when navigating via an arrow key
-     * @param  {HTMLButtonElement} currentElement  The element currently being iterated on
-     * @param  {Number}            delta           The number of cells that the focus should move
-     * @param  {Number}            stepsRemaining  The number of steps remaining in the iteration
-     * @return {HTMLButtonElement | void}
-     */
-    // eslint-disable-next-line complexity,max-statements
-    getElement({ currentElement, delta, stepsRemaining }) {
-      const element = this.getElementSibling(currentElement, delta)
-      const options = {
-        currentElement: element,
-        delta,
-        stepsRemaining: stepsRemaining - 1,
-      }
+  emit('pageChange', { focusRefs, pageDate })
+}
 
-      if (!element) {
-        return this.changePageAndSetFocus(options)
-      }
+/**
+ * Changes the page and focuses the cell that is being 'arrowed' to
+ * @param {Object} options
+ */
+function changePageAndSetFocus(options) {
+  const { delta } = options
+  const isPageDisabled =
+    (delta > 0 && isNextDisabled.value) ||
+    (delta < 0 && isPreviousDisabled.value)
 
-      if (this.isBeyondPossibleDate(options)) {
-        return this.firstOrLastPossibleDate(options)
-      }
+  if (isPageDisabled) {
+    return
+  }
 
-      if (this.isMutedOrDisabled(element)) {
-        options.stepsRemaining = this.addMoreSteps(options)
+  emit('setSkipReviewFocus', true)
 
-        return this.getElement(options)
-      }
+  changePage({
+    incrementBy: Math.sign(delta),
+    focusRefs: ['arrow-to-cell'],
+  })
 
-      if (stepsRemaining > 1 && options.currentElement) {
-        return this.getElement(options)
-      }
+  nextTick(() => {
+    setFocusOnNewPage(options)
+    emit('setSkipReviewFocus', false)
+  })
+}
 
-      return element
-    },
-    /**
-     * Returns the element directly next to the currentElement
-     * @param  {HTMLButtonElement} currentElement The element currently being iterated on
-     * @param  {Number}            delta          The number of cells that the focus should move
-     * @return {HTMLButtonElement}
-     */
-    getElementSibling(currentElement, delta) {
-      const isNext = delta > 0
+/**
+ * Focuses the input field, if typeable
+ */
+function focusInput() {
+  if (props.isTypeable) {
+    emit('setFocus', ['input'])
+  }
+}
 
-      return isNext
-        ? currentElement.nextElementSibling
-        : currentElement.previousElementSibling
-    },
-    /**
-     * Returns the first or last cell, depending on the direction of the search
-     * @param  {Number} delta The number of cells that the focus should move
-     * @return {HTMLButtonElement}
-     */
-    getFirstOrLastElement(delta) {
-      const isNext = delta > 0
-      const elements = this.$refs.pickerCellsRef.$el.children
+/**
+ * Returns the element that should be focused when navigating via an arrow key
+ * @param  {HTMLButtonElement} currentElement  The element currently being iterated on
+ * @param  {Number}            delta           The number of cells that the focus should move
+ * @param  {Number}            stepsRemaining  The number of steps remaining in the iteration
+ * @return {HTMLButtonElement | void}
+ */
+// eslint-disable-next-line complexity,max-statements
+function getElement({ currentElement, delta, stepsRemaining }) {
+  const element = getElementSibling(currentElement, delta)
+  const options = {
+    currentElement: element,
+    delta,
+    stepsRemaining: stepsRemaining - 1,
+  }
 
-      return isNext ? elements[0] : elements[elements.length - 1]
-    },
-    /**
-     * Returns the first or last non-disabled date, depending on the direction of the search
-     * @param  {HTMLButtonElement} currentElement  The element currently being iterated on
-     * @param  {Number}            delta           The number of cells that the focus should move
-     */
-    firstOrLastPossibleDate({ currentElement, delta }) {
-      if (delta > 0) {
-        return this.getElementSibling(currentElement, -1)
-      }
+  if (!element) {
+    return changePageAndSetFocus(options)
+  }
 
-      return this.getElementSibling(currentElement, 1)
-    },
-    /**
-     * Moves the focused cell up/down/left/right
-     * @param {Object}
-     */
-    handleArrow({ delta }) {
-      const activeElement = document.activeElement.shadowRoot
-        ? document.activeElement.shadowRoot.activeElement
-        : document.activeElement
-      const stepsRemaining = Math.abs(delta)
-      const options = {
-        currentElement: activeElement,
-        delta,
-        stepsRemaining,
-      }
+  if (isBeyondPossibleDate(options)) {
+    return firstOrLastPossibleDate(options)
+  }
 
-      this.setFocusToAvailableCell(options)
-    },
-    /**
-     * Determines which transition to use (for edge dates) and emits a 'select' event
-     * @param {Object} cell
-     */
-    select(cell) {
-      if (cell.isPreviousMonth) {
-        this.$emit('setTransitionName', -1)
-      }
+  if (isMutedOrDisabled(element)) {
+    options.stepsRemaining = addMoreSteps(options)
 
-      if (cell.isNextMonth) {
-        this.$emit('setTransitionName', 1)
-      }
+    return getElement(options)
+  }
 
-      this.$emit('select', cell)
-    },
-    /**
-     * Returns true if the given element cannot be focused
-     * @param  {HTMLButtonElement} currentElement  The element currently being iterated on
-     * @param  {Number}            delta           The number of cells that the focus should move
-     * @return {Boolean}
-     */
-    isBeyondPossibleDate({ currentElement, delta }) {
-      if (delta > 0 && this.latestPossibleDate) {
-        return this.isDatePossible(currentElement, delta)
-      }
+  if (stepsRemaining > 1 && options.currentElement) {
+    return getElement(options)
+  }
 
-      if (delta < 0 && this.earliestPossibleDate) {
-        return this.isDatePossible(currentElement, delta)
-      }
+  return element
+}
 
-      return false
-    },
-    /**
-     * Returns true if the current element's date is NOT possible, given the `disabled-dates`
-     * @param  {HTMLButtonElement} element The element in question
-     * @param  {Number}            delta   Used to determine direction of travel
-     * @return {Boolean}
-     */
-    isDatePossible(element, delta) {
-      const cellId = element.getAttribute('data-id')
-      const cellDate = new Date(this.cells[cellId].timestamp)
+/**
+ * Returns the element directly next to the currentElement
+ * @param  {HTMLButtonElement} currentElement The element currently being iterated on
+ * @param  {Number}            delta          The number of cells that the focus should move
+ * @return {HTMLButtonElement}
+ */
+function getElementSibling(currentElement, delta) {
+  const isNext = delta > 0
 
-      if (delta > 0) {
-        return (
-          cellDate >
-          this.utils.adjustDateToView(this.latestPossibleDate, this.view)
-        )
-      }
+  return isNext
+    ? currentElement.nextElementSibling
+    : currentElement.previousElementSibling
+}
 
-      return (
-        cellDate <
-        this.utils.adjustDateToView(this.earliestPossibleDate, this.view)
-      )
-    },
-    /**
-     * Returns true if the given element cannot be focused
-     * @param  {HTMLButtonElement} element The element in question
-     * @return {Boolean}
-     */
-    isMutedOrDisabled(element) {
-      const isMuted = element.classList.value.split(' ').includes('muted')
-      const isDisabled = element.disabled
+/**
+ * Returns the first or last cell, depending on the direction of the search
+ * @param  {Number} delta The number of cells that the focus should move
+ * @return {HTMLButtonElement}
+ */
+function getFirstOrLastElement(delta) {
+  const isNext = delta > 0
+  const elements = pickerCellsRef.value.$el.children
 
-      return isMuted || isDisabled
-    },
-    /**
-     * Sets the focus on the correct cell following a page change
-     * @param {Object} options
-     */
-    // eslint-disable-next-line max-statements
-    setFocusOnNewPage({ delta, stepsRemaining }) {
-      const currentElement = this.getFirstOrLastElement(delta)
-      const options = {
-        currentElement,
-        delta,
-        stepsRemaining,
-      }
-      const delay = this.slideDuration
+  return isNext ? elements[0] : elements[elements.length - 1]
+}
 
-      if (stepsRemaining <= 0) {
-        if (this.isMutedOrDisabled(currentElement)) {
-          options.stepsRemaining = Math.abs(options.delta)
+/**
+ * Returns the first or last non-disabled date, depending on the direction of the search
+ * @param  {HTMLButtonElement} currentElement  The element currently being iterated on
+ * @param  {Number}            delta           The number of cells that the focus should move
+ */
+function firstOrLastPossibleDate({ currentElement, delta }) {
+  if (delta > 0) {
+    return getElementSibling(currentElement, -1)
+  }
 
-          setTimeout(() => {
-            this.setFocusToAvailableCell(options)
-          }, delay)
+  return getElementSibling(currentElement, 1)
+}
 
-          return
-        }
+/**
+ * Moves the focused cell up/down/left/right
+ * @param {Object}
+ */
+function handleArrow({ delta }) {
+  const activeElement = document.activeElement.shadowRoot
+    ? document.activeElement.shadowRoot.activeElement
+    : document.activeElement
+  const stepsRemaining = Math.abs(delta)
+  const options = {
+    currentElement: activeElement,
+    delta,
+    stepsRemaining,
+  }
 
-        setTimeout(() => {
-          currentElement.focus()
-        }, delay)
+  setFocusToAvailableCell(options)
+}
 
-        return
-      }
+/**
+ * Determines which transition to use (for edge dates) and emits a 'select' event
+ * @param {Object} cell
+ */
+function select(cell) {
+  if (cell.isPreviousMonth) {
+    emit('setTransitionName', -1)
+  }
+
+  if (cell.isNextMonth) {
+    emit('setTransitionName', 1)
+  }
+
+  emit('select', cell)
+}
+
+/**
+ * Returns true if the given element cannot be focused
+ * @param  {HTMLButtonElement} currentElement  The element currently being iterated on
+ * @param  {Number}            delta           The number of cells that the focus should move
+ * @return {Boolean}
+ */
+function isBeyondPossibleDate({ currentElement, delta }) {
+  if (delta > 0 && latestPossibleDate.value) {
+    return isDatePossible(currentElement, delta)
+  }
+
+  if (delta < 0 && earliestPossibleDate.value) {
+    return isDatePossible(currentElement, delta)
+  }
+
+  return false
+}
+
+/**
+ * Returns true if the current element's date is NOT possible, given the `disabled-dates`
+ * @param  {HTMLButtonElement} element The element in question
+ * @param  {Number}            delta   Used to determine direction of travel
+ * @return {Boolean}
+ */
+function isDatePossible(element, delta) {
+  const cellId = element.getAttribute('data-id')
+  const cellDate = new Date(cells.value[cellId].timestamp)
+
+  if (delta > 0) {
+    return (
+      cellDate > utils.adjustDateToView(latestPossibleDate.value, props.view)
+    )
+  }
+
+  return (
+    cellDate < utils.adjustDateToView(earliestPossibleDate.value, props.view)
+  )
+}
+
+/**
+ * Returns true if the given element cannot be focused
+ * @param  {HTMLButtonElement} element The element in question
+ * @return {Boolean}
+ */
+function isMutedOrDisabled(element) {
+  const isMuted = element.classList.value.split(' ').includes('muted')
+  const isDisabled = element.disabled
+
+  return isMuted || isDisabled
+}
+
+/**
+ * Sets the focus on the correct cell following a page change
+ * @param {Object} options
+ */
+// eslint-disable-next-line max-statements
+function setFocusOnNewPage({ delta, stepsRemaining }) {
+  const currentElement = getFirstOrLastElement(delta)
+  const options = {
+    currentElement,
+    delta,
+    stepsRemaining,
+  }
+  const delay = props.slideDuration
+
+  if (stepsRemaining <= 0) {
+    if (isMutedOrDisabled(currentElement)) {
+      options.stepsRemaining = Math.abs(options.delta)
 
       setTimeout(() => {
-        this.setFocusToAvailableCell(options)
+        setFocusToAvailableCell(options)
       }, delay)
-    },
-    /**
-     * Sets the focus on the next focusable cell when an arrow key is pressed
-     * @param {Object} options
-     */
-    setFocusToAvailableCell(options) {
-      const element = this.getElement(options)
 
-      if (element) {
-        element.focus()
-      }
-    },
-    /**
-     * Set up a new date object to the first day of the current 'page'
-     * @return {Date}
-     */
-    firstDayCellDate() {
-      const pageDate = new Date(this.pageDate)
+      return
+    }
 
-      return new Date(this.utils.setDate(pageDate, 1 - this.daysFromPrevMonth))
-    },
-    /**
-     * Whether a day is disabled
-     * @param {Date} date to check if disabled
-     * @return {Boolean}
-     */
-    isDisabledDate(date) {
-      if (!this.disabledDates) return false
+    setTimeout(() => {
+      currentElement.focus()
+    }, delay)
 
-      return new DisabledDate(this.utils, this.disabledDates).isDateDisabled(
-        date,
-      )
-    },
-    /**
-     * Whether a day is highlighted (N.B. Disabled dates are not highlighted unless
-     * `highlighted.includeDisabled` is true)
-     * @param {Date} date to check if highlighted
-     * @return {Boolean}
-     */
-    isHighlightedDate(date) {
-      if (!this.highlighted) return false
+    return
+  }
 
-      return new HighlightedDate(
-        this.utils,
-        this.disabledDates,
-        this.highlighted,
-      ).isDateHighlighted(date)
-    },
-    /**
-     * Whether a date is the last in a range of highlighted dates
-     * @param {Date} date
-     * @return {Boolean}
-     */
-    isHighlightEnd(date) {
-      if (!this.highlighted) return false
+  setTimeout(() => {
+    setFocusToAvailableCell(options)
+  }, delay)
+}
 
-      return new HighlightedDate(
-        this.utils,
-        this.disabledDates,
-        this.highlighted,
-      ).isHighlightEnd(date)
-    },
-    /**
-     * Whether a date is the first in a range of highlighted dates
-     * @param {Date} date
-     * @return {Boolean}
-     */
-    isHighlightStart(date) {
-      if (!this.highlighted) return false
+/**
+ * Sets the focus on the next focusable cell when an arrow key is pressed
+ * @param {Object} options
+ */
+function setFocusToAvailableCell(options) {
+  const element = getElement(options)
 
-      return new HighlightedDate(
-        this.utils,
-        this.disabledDates,
-        this.highlighted,
-      ).isHighlightStart(date)
-    },
-    /**
-     * Whether a day is selected
-     * @param {Date} dObj to check if selected
-     * @return {Boolean}
-     */
-    isSelectedDate(dObj) {
-      if (!this.selectedDate) return false
+  if (element) {
+    element.focus()
+  }
+}
 
-      return this.utils.compareDates(this.selectedDate, dObj)
-    },
-    /**
-     * Defines the objects within the days array
-     * @param  {Date} dObj
-     * @return {Object}
-     */
-    // eslint-disable-next-line complexity
-    makeDay(dObj) {
-      const { utils } = this
-      const dayOfWeek = utils.getDay(dObj)
-      const isNextMonth = dObj >= this.firstOfNextMonth
-      const isPreviousMonth = dObj < this.pageDate
-      const isSaturday = dayOfWeek === 6
-      const isSunday = dayOfWeek === 0
-      const showDate = this.showEdgeDates || !(isPreviousMonth || isNextMonth)
+/**
+ * Set up a new date object to the first day of the current 'page'
+ * @return {Date}
+ */
+function firstDayCellDate() {
+  const pageDate = new Date(props.pageDate)
 
-      return {
-        date: showDate ? utils.getDate(dObj) : '',
-        timestamp: dObj.valueOf(),
-        isSelected: this.isSelectedDate(dObj),
-        isDisabled: showDate ? this.isDisabledDate(dObj) : true,
-        isHighlighted: this.isHighlightedDate(dObj),
-        isHighlightStart: this.isHighlightStart(dObj),
-        isHighlightEnd: this.isHighlightEnd(dObj),
-        isOpenDate: utils.compareDates(dObj, this.openDate),
-        isToday: utils.compareDates(dObj, utils.getNewDateObject()),
-        isWeekend: isSaturday || isSunday,
-        isSaturday,
-        isSunday,
-        isPreviousMonth,
-        isNextMonth,
-      }
-    },
-  },
+  return new Date(utils.setDate(pageDate, 1 - daysFromPrevMonth.value))
+}
+
+/**
+ * Whether a day is disabled
+ * @param {Date} date to check if disabled
+ * @return {Boolean}
+ */
+function isDisabledDate(date) {
+  if (!props.disabledDates) return false
+
+  return new DisabledDate(utils, props.disabledDates).isDateDisabled(date)
+}
+
+/**
+ * Whether a day is highlighted (N.B. Disabled dates are not highlighted unless
+ * `highlighted.includeDisabled` is true)
+ * @param {Date} date to check if highlighted
+ * @return {Boolean}
+ */
+function isHighlightedDate(date) {
+  if (!props.highlighted) return false
+
+  return new HighlightedDate(
+    utils,
+    props.disabledDates,
+    props.highlighted,
+  ).isDateHighlighted(date)
+}
+
+/**
+ * Whether a date is the last in a range of highlighted dates
+ * @param {Date} date
+ * @return {Boolean}
+ */
+function isHighlightEnd(date) {
+  if (!props.highlighted) return false
+
+  return new HighlightedDate(
+    utils,
+    props.disabledDates,
+    props.highlighted,
+  ).isHighlightEnd(date)
+}
+
+/**
+ * Whether a date is the first in a range of highlighted dates
+ * @param {Date} date
+ * @return {Boolean}
+ */
+function isHighlightStart(date) {
+  if (!props.highlighted) return false
+
+  return new HighlightedDate(
+    utils,
+    props.disabledDates,
+    props.highlighted,
+  ).isHighlightStart(date)
+}
+
+/**
+ * Whether a day is selected
+ * @param {Date} dObj to check if selected
+ * @return {Boolean}
+ */
+function isSelectedDate(dObj) {
+  if (!props.selectedDate) return false
+
+  return utils.compareDates(props.selectedDate, dObj)
+}
+
+/**
+ * Defines the objects within the days array
+ * @param  {Date} dObj
+ * @return {Object}
+ */
+// eslint-disable-next-line complexity
+function makeDay(dObj) {
+  const dayOfWeek = utils.getDay(dObj)
+  const isNextMonth = dObj >= firstOfNextMonth.value
+  const isPreviousMonth = dObj < props.pageDate
+  const isSaturday = dayOfWeek === 6
+  const isSunday = dayOfWeek === 0
+  const showDate = props.showEdgeDates || !(isPreviousMonth || isNextMonth)
+
+  return {
+    date: showDate ? utils.getDate(dObj) : '',
+    timestamp: dObj.valueOf(),
+    isSelected: isSelectedDate(dObj),
+    isDisabled: showDate ? isDisabledDate(dObj) : true,
+    isHighlighted: isHighlightedDate(dObj),
+    isHighlightStart: isHighlightStart(dObj),
+    isHighlightEnd: isHighlightEnd(dObj),
+    isOpenDate: utils.compareDates(dObj, props.openDate),
+    isToday: utils.compareDates(dObj, utils.getNewDateObject()),
+    isWeekend: isSaturday || isSunday,
+    isSaturday,
+    isSunday,
+    isPreviousMonth,
+    isNextMonth,
+  }
 }
 </script>
