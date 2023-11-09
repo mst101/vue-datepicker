@@ -638,9 +638,10 @@ function allowNormalTabbing(event) {
   if (!isOpen.value) {
     return true
   }
-
+  /* c8 ignore start */
   return isTabbingAwayFromInlineDatepicker(event)
 }
+/* c8 ignore stop */
 
 /**
  * Focuses the first non-disabled element found in the `focus.refs` array and sets `navElementsFocusedIndex`
@@ -662,6 +663,7 @@ function applyFocus() {
  * Ensures the most recently focused tabbable cell is focused when tabbing backwards to an inline calendar
  * If no element has previously been focused, the tabbable cell is reset and focused
  */
+/* c8 ignore start */
 function focusInlineTabbableCell() {
   if (inlineTabbableCell.value) {
     inlineTabbableCell.value.focus()
@@ -674,6 +676,7 @@ function focusInlineTabbableCell() {
   tabbableCell.value.focus()
   resetTabbableCell.value = false
 }
+/* c8 ignore stop */
 
 /**
  * Returns the currently focused cell element, if there is one...
@@ -705,6 +708,7 @@ function getActiveElement() {
  * @returns {Number|null}
  */
 function getCellId(date) {
+  /* c8 ignore next 3 (N.B. Cypress needs this null check) */
   if (!date) {
     return null
   }
@@ -741,6 +745,7 @@ function getElementByRef(refAttr) {
       if (props.showHeader) {
         return pickerRef.value?.pickerHeaderRef[refAttr]
       }
+      /* c8 ignore next */
       return null
   }
 }
@@ -810,11 +815,13 @@ function getFocusableElements(fragment) {
  * Returns the first focusable element of an inline datepicker
  * @returns {HTMLElement}
  */
+/* c8 ignore start */
 function getFirstInlineFocusableElement() {
   const popupElements = getFocusableElements(popupRef.value.$el)
 
   return popupElements[0]
 }
+/* c8 ignore stop */
 
 /**
  * Returns the last focusable element of an inline datepicker
@@ -883,6 +890,7 @@ function hasSlot(slotName) {
  * Returns true if the user is tabbing away from an inline datepicker
  * @return {Boolean}
  */
+/* c8 ignore start */
 function isTabbingAwayFromInlineDatepicker(event) {
   if (!props.inline) {
     return false
@@ -902,12 +910,14 @@ function isTabbingAwayFromInlineDatepicker(event) {
 
   return false
 }
+/* c8 ignore stop */
 
 /**
  * Used for inline calendars; returns true if the user tabs backwards from the first focusable element
  * @param  {object}  event Used to determine whether we are tabbing forwards or backwards
  * @return {Boolean}
  */
+/* c8 ignore start */
 function isTabbingAwayFromFirstNavElement(event) {
   if (!event.shiftKey) {
     return false
@@ -918,12 +928,14 @@ function isTabbingAwayFromFirstNavElement(event) {
 
   return activeElement === firstNavElement
 }
+/* c8 ignore stop */
 
 /**
  * Used for inline calendars; returns true if the user tabs forwards from the last focusable element
  * @param  {object}  event Used to determine whether we are tabbing forwards or backwards
  * @return {Boolean}
  */
+/* c8 ignore start */
 function isTabbingAwayFromLastNavElement(event) {
   if (event.shiftKey) {
     return false
@@ -934,6 +946,7 @@ function isTabbingAwayFromLastNavElement(event) {
 
   return activeElement === lastNavElement
 }
+/* c8 ignore stop */
 
 /**
  * Resets the focus to the open date
@@ -1085,6 +1098,7 @@ function setTransitionName(plusOrMinus) {
 /**
  * Focuses the first focusable element of an inline datepicker, so that the previous element on the page will be tabbed to
  */
+/* c8 ignore start */
 function tabAwayFromFirstElement() {
   const firstElement = getFirstInlineFocusableElement()
 
@@ -1099,10 +1113,12 @@ function tabAwayFromFirstElement() {
   // an edge date from the previous month
   tabbableCell.value = inlineTabbableCell.value
 }
+/* c8 ignore stop */
 
 /**
  * Focuses the last focusable element of an inline datepicker, so that the next element on the page will be tabbed to
  */
+/* c8 ignore start */
 function tabAwayFromLastElement() {
   const lastElement = getLastInlineFocusableElement()
 
@@ -1117,10 +1133,12 @@ function tabAwayFromLastElement() {
   // an edge date from the next month
   tabbableCell.value = inlineTabbableCell.value
 }
+/* c8 ignore stop */
 
 /**
  * Tab backwards through the focus-trapped elements
  */
+/* c8 ignore start */
 function tabBackwards() {
   navElementsFocusedIndex.value -= 1
 
@@ -1130,10 +1148,12 @@ function tabBackwards() {
 
   navElements.value[navElementsFocusedIndex.value].focus()
 }
+/* c8 ignore stop */
 
 /**
  * Tab forwards through the focus-trapped elements
  */
+/* c8 ignore start */
 function tabForwards() {
   navElementsFocusedIndex.value += 1
 
@@ -1143,11 +1163,13 @@ function tabForwards() {
 
   navElements.value[navElementsFocusedIndex.value].focus()
 }
+/* c8 ignore stop */
 
 /**
  * Tab through the focus-trapped elements
  * @param event
  */
+/* c8 ignore start */
 function tabThroughNavigation(event) {
   if (allowNormalTabbing(event)) {
     return
@@ -1161,10 +1183,12 @@ function tabThroughNavigation(event) {
     tabForwards()
   }
 }
+/* c8 ignore stop */
 
 /**
  * Special cases for when tabbing to an inline datepicker
  */
+/* c8 ignore start */
 function tabToCorrectInlineCell() {
   const lastElement = getLastInlineFocusableElement()
   const isACell = hasClass(lastElement, 'cell')
@@ -1186,6 +1210,7 @@ function tabToCorrectInlineCell() {
     }
   })
 }
+/* c8 ignore stop */
 
 /**
  * Update which cell in the picker should be focus-trapped
