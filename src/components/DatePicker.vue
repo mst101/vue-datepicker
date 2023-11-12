@@ -857,7 +857,6 @@ function getTypedCell() {
  * Sets `datepickerId` (as a global) and keeps track of focusable elements
  */
 function handleFocusIn() {
-  document.datepickerId = datepickerId.value
   globalDatepickerId.value = datepickerId.value
 
   isActive.value = true
@@ -1311,22 +1310,9 @@ function handleClickOutside() {
     return
   }
 
-  const closeByClickOutside = () => {
+  if (!globalDatepickerId.value) {
     isClickOutside.value = true
     close()
-  }
-
-  if (!globalDatepickerId.value) {
-    closeByClickOutside()
-    return
-  }
-
-  if (document.datepickerId.toString() === datepickerId.value) {
-    nextTick(() => {
-      if (!isActive.value) {
-        closeByClickOutside()
-      }
-    })
   }
 }
 
