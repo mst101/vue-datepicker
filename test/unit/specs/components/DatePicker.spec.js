@@ -501,24 +501,28 @@ describe('Datepicker mounted with calendar button', () => {
 describe('Datepicker mounted with slots', () => {
   let wrapper
 
-  beforeEach(() => {
-    const beforeCalendarHeader =
-      'One tabbable element in the <a href="#" tabindex="0">beforeCalendarHeader</a> slot'
-    const beforeCalendarHeaderDay =
-      'One tabbable element in the <a href="#" tabindex="0">beforeCalendarHeaderDay</a> slot'
-    const calendarFooterDay =
-      'One tabbable element in the <a href="#" tabindex="0">calendarFooterDay</a> slot'
-    const beforeCalendarHeaderMonth =
-      '<div>Two <a href="#" tabindex="0">tabbable elements</a> in the <a href="#" tabindex="0">beforeCalendarHeaderMonth</a> slot</div>'
-    const calendarFooterMonth =
-      '<p>Two <button>tabbable elements</button></p> <p>in the <input placeholder="calendarFooterMonth"> slot</p>'
-    const beforeCalendarHeaderYear =
-      'One tabbable element in the <select><option>beforeCalendarHeaderYear</option></select> slot'
-    const calendarFooterYear =
-      'One tabbable element in the <textarea>calendarFooterYear</textarea> slot'
-    const calendarFooter =
-      'One tabbable element in the <div tabindex="0">calendarFooter</div> slot'
+  const beforeCalendarHeader =
+    'One tabbable element in the <a href="#" tabindex="0">beforeCalendarHeader</a> slot'
+  const beforeCalendarHeaderDay =
+    'One tabbable element in the <a href="#" tabindex="0">beforeCalendarHeaderDay</a> slot'
+  const calendarFooterDay =
+    'One tabbable element in the <a href="#" tabindex="0">calendarFooterDay</a> slot'
+  const beforeCalendarHeaderMonth =
+    '<div>Two <a href="#" tabindex="0">tabbable elements</a> in the <a href="#" tabindex="0">beforeCalendarHeaderMonth</a> slot</div>'
+  const calendarFooterMonth =
+    '<p>Two <button>tabbable elements</button></p> <p>in the <input placeholder="calendarFooterMonth"> slot</p>'
+  const beforeCalendarHeaderYear =
+    'One tabbable element in the <select><option>beforeCalendarHeaderYear</option></select> slot'
+  const calendarFooterYear =
+    'One tabbable element in the <textarea>calendarFooterYear</textarea> slot'
+  const calendarFooter =
+    'One tabbable element in the <div tabindex="0">calendarFooter</div> slot'
 
+  afterEach(() => {
+    wrapper.unmount()
+  })
+
+  it('knows how many navElements there are', async () => {
     wrapper = mount(DatePicker, {
       props: {
         typeable: true,
@@ -534,13 +538,7 @@ describe('Datepicker mounted with slots', () => {
         calendarFooter,
       },
     })
-  })
 
-  afterEach(() => {
-    wrapper.unmount()
-  })
-
-  it('knows how many navElements there are', async () => {
     expect(wrapper.vm.navElements.length).toEqual(0)
 
     await wrapper.vm.open()
@@ -556,6 +554,24 @@ describe('Datepicker mounted with slots', () => {
     await upButton.trigger('click')
 
     expect(wrapper.vm.navElements.length).toEqual(8)
+  })
+
+  it('knows how many navElements there are with no header', async () => {
+    wrapper = mount(DatePicker, {
+      props: {
+        showHeader: false,
+      },
+      slots: {
+        calendarFooterDay,
+        calendarFooter,
+      },
+    })
+
+    expect(wrapper.vm.navElements.length).toEqual(0)
+
+    await wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.navElements.length).toEqual(3)
   })
 })
 
