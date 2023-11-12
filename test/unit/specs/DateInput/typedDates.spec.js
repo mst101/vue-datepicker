@@ -1,4 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
+import { vi } from 'vitest'
 import { format, parse } from 'date-fns'
 import DateInput from '~/components/DateInput.vue'
 import DatePicker from '~/components/DatePicker.vue'
@@ -326,6 +327,8 @@ describe('DatePicker mounted and attached to body', () => {
   let wrapper
 
   beforeEach(() => {
+    vi.useFakeTimers()
+
     wrapper = mount(DatePicker, {
       attachTo: document.body,
       props: {
@@ -335,6 +338,8 @@ describe('DatePicker mounted and attached to body', () => {
   })
 
   afterEach(() => {
+    vi.clearAllTimers()
+
     wrapper.unmount()
   })
 
@@ -411,5 +416,30 @@ describe('DatePicker mounted and attached to body', () => {
     const tabbableCell = wrapper.find('button[data-id="3"]')
 
     expect(document.activeElement).toBe(tabbableCell.element)
+  })
+
+  it('sets a valid typeable date on losing focus', async () => {
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.setValue('12 january 2020')
+    await input.trigger('focusout')
+    await input.trigger('blur')
+
+    expect(input.element.value).toBe('12 Jan 2020')
+    expect(wrapper.vm.selectedDate).toEqual(new Date(2020, 0, 12))
+  })
+
+  it('clears an invalid typeable date on losing focus', async () => {
+    await wrapper.setProps({
+      modelValue: new Date(2000, 0, 1)
+    })
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.setValue('invalid date')
+    await input.trigger('focusout')
+    await input.trigger('blur')
+
+    expect(input.element.value).toBe('')
+    expect(wrapper.vm.selectedDate).toBeNull()
   })
 })
