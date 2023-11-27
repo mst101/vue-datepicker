@@ -1,17 +1,12 @@
 import { shallowMount } from '@vue/test-utils'
 import PickerHeader from '~/components/PickerHeader.vue'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 describe('PickerHeader shallowMounted', () => {
   let wrapper
 
   beforeEach(() => {
-    wrapper = shallowMount(PickerHeader, {
-      props: {
-        isRtl: false,
-        isNextDisabled: false,
-        isPreviousDisabled: false,
-      },
-    })
+    wrapper = shallowMount(PickerHeader)
   })
 
   afterEach(() => {
@@ -23,20 +18,6 @@ describe('PickerHeader shallowMounted', () => {
 
     prevButton.trigger('keydown.down')
     expect(wrapper.emitted('setFocus')[0][0]).toEqual(['tabbableCell'])
-  })
-
-  it('arrows up to input, if typeable', async () => {
-    const prevButton = wrapper.find('button.prev')
-
-    prevButton.trigger('keydown.up')
-    expect(wrapper.emitted('setFocus')).toBeUndefined()
-
-    await wrapper.setProps({
-      isTypeable: true,
-    })
-
-    prevButton.trigger('keydown.up')
-    expect(wrapper.emitted('focusInput')).toBeTruthy()
   })
 
   it('arrows right to the `up` button from the `previous` button', async () => {
@@ -245,5 +226,51 @@ describe('PickerHeader shallowMounted', () => {
       'prev',
       'tabbableCell',
     ])
+  })
+})
+
+describe('PickerHeader shallowMounted', () => {
+  let wrapper
+
+  beforeEach(() => {
+    wrapper = shallowMount(PickerHeader, {
+      props: {
+        isTypeable: true,
+      },
+    })
+  })
+
+  afterEach(() => {
+    wrapper.unmount()
+  })
+
+  it('arrows up to input from `prev` button', async () => {
+    const prevButton = wrapper.find('button.prev')
+
+    prevButton.trigger('keydown.up')
+    expect(wrapper.emitted('setFocus')).toBeUndefined()
+
+    prevButton.trigger('keydown.up')
+    expect(wrapper.emitted('focusInput')).toBeTruthy()
+  })
+
+  it('arrows up to input from `up` button', async () => {
+    const upButton = wrapper.find('.vdp-datepicker__up')
+
+    upButton.trigger('keydown.up')
+    expect(wrapper.emitted('setFocus')).toBeUndefined()
+
+    upButton.trigger('keydown.up')
+    expect(wrapper.emitted('focusInput')).toBeTruthy()
+  })
+
+  it('arrows up to input from `next` button', async () => {
+    const nextButton = wrapper.find('button.next')
+
+    nextButton.trigger('keydown.up')
+    expect(wrapper.emitted('setFocus')).toBeUndefined()
+
+    nextButton.trigger('keydown.up')
+    expect(wrapper.emitted('focusInput')).toBeTruthy()
   })
 })

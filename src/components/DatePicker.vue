@@ -4,8 +4,8 @@
     ref="datepicker"
     class="vdp-datepicker"
     :class="[wrapperClass, { rtl: isRtl }]"
-    @focusin="handleFocusIn($event)"
-    @focusout="handleFocusOut($event)"
+    @focusin="handleFocusIn()"
+    @focusout="handleFocusOut()"
     @keydown.esc="resetOrClose"
   >
     <DateInput
@@ -76,8 +76,8 @@
           :class="pickerClasses"
           data-test-calendar
           @mousedown.prevent
-          @focusin.stop="handleFocusIn($event)"
-          @focusout.stop="handleFocusOut($event)"
+          @focusin.stop="handleFocusIn()"
+          @focusout.stop="handleFocusOut()"
           @keydown.esc.stop="resetOrClose"
           @keydown.tab.stop="tabThroughNavigation($event)"
         >
@@ -103,7 +103,7 @@
                 :is-typeable="typeable"
                 :is-up-disabled="isUpDisabled"
                 :is-minimum-view="isMinimumView"
-                :open-date="computedOpenDate"
+                :computed-open-date="computedOpenDate"
                 :page-date="pageDate"
                 :selected-date="selectedDate"
                 :show-edge-dates="showEdgeDates"
@@ -148,7 +148,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   ref,
   reactive,
@@ -159,16 +159,29 @@ import {
   nextTick,
   toRefs,
   useSlots,
+  type ComputedRef,
+  type Component,
+  type Ref,
 } from 'vue'
-import en from '~/locale/translations/en'
-import calendarSlots from '~/utils/calendarSlots'
-import DateInput from '~/components/DateInput.vue'
-import DisabledDate from '~/utils/DisabledDate'
-import PopUp from '~/components/PopUp.vue'
-import PickerDay from '~/components/PickerDay.vue'
-import PickerMonth from '~/components/PickerMonth.vue'
-import PickerYear from '~/components/PickerYear.vue'
+import { en } from '../locale'
+import calendarSlots from '../utils/calendarSlots'
+import DateInput from '../components/DateInput.vue'
+import DisabledDate from '../utils/DisabledDate'
+import PopUp from '../components/PopUp.vue'
+import PickerDay from '../components/PickerDay.vue'
+import PickerMonth from '../components/PickerMonth.vue'
+import PickerYear from '../components/PickerYear.vue'
 import useDateUtils from '../composables/useDateUtils'
+import type {
+  CalendarSlot,
+  Cell,
+  CellDay,
+  DisabledConfig,
+  ElementToFocus,
+  FixedPosition,
+  PageChange,
+  View,
+} from '../types'
 
 const pickerComponents = {
   PickerDay,
@@ -274,7 +287,7 @@ const props = defineProps({
   },
   dayCellContent: {
     type: Function,
-    default: (day) => day.date,
+    default: (day: CellDay) => day.date,
   },
   disabledDates: {
     type: Object,
@@ -287,7 +300,7 @@ const props = defineProps({
   fixedPosition: {
     type: String,
     default: '',
-    validator: (val) => {
+    validator: (val: FixedPosition) => {
       const possibleValues = [
         '',
         'bottom',
@@ -353,13 +366,13 @@ const emit = defineEmits({
   'closed': null,
   'focus': null,
   'opened': null,
-  'changedMonth': (date) => {
+  'changedMonth': (date: Date) => {
     return typeof date === 'object'
   },
-  'changedYear': (date) => {
+  'changedYear': (date: Date) => {
     return typeof date === 'object'
   },
-  'changedDecade': (date) => {
+  'changedDecade': (date: Date) => {
     return typeof date === 'object'
   },
   'selected': (date) => {
@@ -376,48 +389,48 @@ const { useUtc } = toRefs(props)
 const utils = useDateUtils(useUtc)
 const initialOpenDate = utils.getOpenDate(
   props.openDate,
-  props.selectedDate,
-  props.initialView || props.minimumView,
+  props.modelValue,
+  (props.initialView as View) || (props.minimumView as View),
 )
 
 const focus = reactive({
   delay: 0,
-  refs: [],
+  refs: [] as ElementToFocus[],
 })
-const inlineTabbableCell = ref(null)
+const inlineTabbableCell = ref<HTMLButtonElement | null>(null)
 const isActive = ref(false)
 const isRevertingToOpenDate = ref(false)
-const navElements = ref([])
+const navElements = ref<HTMLElement[]>([])
 const navElementsFocusedIndex = ref(0)
 const resetTabbableCell = ref(false)
 const skipReviewFocus = ref(false)
-const tabbableCell = ref(null)
-const transitionName = ref('')
+const tabbableCell = ref<HTMLButtonElement | null>(null)
+const transitionName = ref<'slide-left' | 'slide-right'>('slide-left')
 const isClickOutside = ref(false)
 const globalDatepickerId = ref('')
 /*
  * The latest valid `typedDate` (used for typeable datepicker)
  * {Date}
  */
-const latestValidTypedDate = ref(null)
+const latestValidTypedDate = ref<Date | null>(null)
 /*
  * Vue cannot observe changes to a Date Object so date must be stored as a timestamp
  * This represents the first day of the current viewing month
  * {Number}
  */
 const pageTimestamp = ref(utils.setDate(initialOpenDate, 1))
-const selectedDate = ref(null)
+const selectedDate = ref<Date | null>(null)
 const slideDuration = ref(250)
-const view = ref('')
-const pickerRef = ref(null)
-const viewRef = ref(null)
-const dateInputRef = ref(null)
-const popupRef = ref(null)
+const view = ref<View>('')
+const pickerRef = ref<typeof pickerComponents | null>(null)
+const viewRef = ref<HTMLDivElement | null>(null)
+const dateInputRef = ref<Component | null>(null)
+const popupRef = ref<HTMLDivElement | null>(null)
 const slots = useSlots()
 
 // computed
 const fallbackElementsToFocus = computed(() => {
-  const elements = ['tabbableCell', 'prev', 'next']
+  const elements: ElementToFocus[] = ['tabbableCell', 'prev', 'next']
 
   if (props.typeable) {
     elements.unshift('input')
@@ -427,27 +440,32 @@ const fallbackElementsToFocus = computed(() => {
 })
 const tabbableCellId = computed(() => {
   return (
-    tabbableCell.value && Number(tabbableCell.value.getAttribute('data-id'))
+    tabbableCell.value &&
+    Number((tabbableCell.value as HTMLButtonElement).getAttribute('data-id'))
   )
 })
 const focusedDateTimestamp = computed(() => {
   const pageDate = new Date(pageTimestamp.value)
-  if (hasClass(tabbableCell.value, 'day')) {
-    return utils.setDate(pageDate, tabbableCell.value.innerHTML.trim())
+  if (hasClass(tabbableCell.value as HTMLElement, 'day')) {
+    return utils.setDate(pageDate, Number(tabbableCell.value?.innerHTML.trim()))
   }
 
-  if (hasClass(tabbableCell.value, 'month')) {
-    return utils.setMonth(pageDate, tabbableCellId.value)
+  if (hasClass(tabbableCell.value as HTMLElement, 'month')) {
+    return utils.setMonth(pageDate, Number(tabbableCellId.value))
   }
 
   const fullYear = utils.getFullYear(pageDate) - 1
-  return utils.setFullYear(pageDate, fullYear + tabbableCellId.value)
+  return utils.setFullYear(pageDate, fullYear + Number(tabbableCellId.value))
 })
 const computedInitialView = computed(() => {
-  return props.initialView || props.minimumView
+  return (props.initialView as View) || (props.minimumView as View)
 })
 const computedOpenDate = computed(() => {
-  return utils.getOpenDate(props.openDate, props.modelValue, props.minimumView)
+  return utils.getOpenDate(
+    props.openDate,
+    props.modelValue,
+    props.minimumView as View,
+  )
 })
 const datepickerId = computed(() => {
   return `vdp-${Math.random().toString(36).slice(-10)}`
@@ -461,14 +479,18 @@ const isOpen = computed(() => {
 const isMinimumView = computed(() => {
   return view.value === props.minimumView
 })
-const nextView = computed(() => {
-  const views = ['day', 'month', 'year']
-  const isCurrentView = (thisView) => thisView === view.value
+interface NextView {
+  up: View | 'decade' | undefined
+  down: View | undefined
+}
+const nextView: ComputedRef<NextView> = computed(() => {
+  const views: View[] = ['day', 'month', 'year']
+  const isCurrentView = (thisView: View) => thisView === view.value
   const viewIndex = views.findIndex(isCurrentView)
-  const nextViewDown = (index) => {
+  const nextViewDown = (index: number) => {
     return index <= 0 ? undefined : views[index - 1]
   }
-  const nextViewUp = (index) => {
+  const nextViewUp = (index: number) => {
     if (index < 0) {
       return undefined
     }
@@ -491,14 +513,15 @@ const isUpDisabled = computed(() => {
 const pageDate = computed(() => {
   return new Date(pageTimestamp.value)
 })
+type PickerNames = 'PickerDay' | 'PickerMonth' | 'PickerYear'
 const pickerName = computed(() => {
-  const viewName = view.value || computedInitialView.value
-  return `Picker${ucFirst(viewName)}`
+  const viewName = (view.value as View) || (computedInitialView.value as View)
+  return `Picker${ucFirst(viewName)}` as PickerNames
 })
 const translation = computed(() => {
   return props.language
 })
-const isRtl = computed(() => {
+const isRtl: ComputedRef<boolean> = computed(() => {
   return translation.value.rtl
 })
 const pickerClasses = computed(() => {
@@ -569,7 +592,7 @@ watch(isActive, (hasJustBecomeActive, isNoLongerActive) => {
   }
 })
 
-watch(latestValidTypedDate, (date) => {
+watch(latestValidTypedDate as Ref<Date>, (date: Date) => {
   setPageDate(date)
 })
 
@@ -591,13 +614,13 @@ watch(
   { immediate: true },
 )
 
-watch(computedOpenDate, () => {
-  ctx.setPageDate()
+watch(computedOpenDate, (newDate) => {
+  ctx.setPageDate(newDate)
 })
 
 watch(view, (newView, oldView) => {
   if (oldView === '') {
-    setPageDate(utils.adjustDateToView(computedOpenDate.value))
+    setPageDate(utils.adjustDateToView(computedOpenDate.value, newView as View))
   }
   handleViewChange(newView, oldView)
 })
@@ -619,7 +642,7 @@ onBeforeUnmount(() => {
  * @param   {Date} date The date to convert
  * @returns {Date}
  */
-function getCellDate(date) {
+function getCellDate(date: Date) {
   switch (view.value) {
     case 'month':
       return new Date(utils.setDate(date, 1))
@@ -634,7 +657,7 @@ function getCellDate(date) {
  * Returns true, unless tabbing should be focus-trapped
  * @return {Boolean}
  */
-function allowNormalTabbing(event) {
+function allowNormalTabbing(event: KeyboardEvent) {
   if (!isOpen.value) {
     return true
   }
@@ -673,7 +696,7 @@ function focusInlineTabbableCell() {
 
   resetTabbableCell.value = true
   setTabbableCell()
-  tabbableCell.value.focus()
+  tabbableCell.value?.focus()
   resetTabbableCell.value = false
 }
 /* c8 ignore stop */
@@ -682,7 +705,7 @@ function focusInlineTabbableCell() {
  * Returns the currently focused cell element, if there is one...
  */
 function getActiveCell() {
-  const activeElement = getActiveElement()
+  const activeElement = getActiveElement() as HTMLElement
   const isActiveElementACell = hasClass(activeElement, 'cell')
   const isOnSameView = hasClass(activeElement, view.value)
 
@@ -697,7 +720,7 @@ function getActiveCell() {
  * Returns the currently focused element, using shadowRoot for web-components...
  */
 function getActiveElement() {
-  return document.activeElement.shadowRoot
+  return document.activeElement?.shadowRoot
     ? document.activeElement.shadowRoot.activeElement
     : document.activeElement
 }
@@ -707,14 +730,14 @@ function getActiveElement() {
  * @param {Date} date The date for which we need the cellId
  * @returns {Number|null}
  */
-function getCellId(date) {
+function getCellId(date: Date) {
   /* c8 ignore next 3 (N.B. Cypress needs this null check) */
   if (!date) {
     return null
   }
 
   const cellDate = getCellDate(date)
-  const { cells } = pickerRef.value
+  const cells: Cell[] = pickerRef.value!.cells
 
   for (let i = 0; i < cells.length; i += 1) {
     if (cells[i].timestamp === cellDate.valueOf()) {
@@ -731,8 +754,8 @@ function getCellId(date) {
  * @returns {HTMLElement|Vue} A Vue element
  */
 // eslint-disable-next-line complexity
-function getElementByRef(refAttr) {
-  switch (refAttr) {
+function getElementByRef(elementToFocus: ElementToFocus) {
+  switch (elementToFocus) {
     case 'tabbableCell':
       return tabbableCell.value
     case 'input':
@@ -743,7 +766,7 @@ function getElementByRef(refAttr) {
       return pickerRef.value.pickerCellsRef.openDateRef
     default:
       if (props.showHeader) {
-        return pickerRef.value?.pickerHeaderRef[refAttr]
+        return pickerRef.value?.pickerHeaderRef[elementToFocus]
       }
       /* c8 ignore next */
       return null
@@ -757,20 +780,20 @@ function getElementByRef(refAttr) {
 function getElementsFromCalendarFooter() {
   const footerSlotIndex = hasSlot('beforeCalendarHeader') ? 2 : 1
 
-  return getFocusableElements(viewRef.value.children[footerSlotIndex])
+  return getFocusableElements(viewRef.value!.children[footerSlotIndex])
 }
 
 /**
  * Returns an array of all HTML elements which should be focus-trapped in the specified slot
  * @returns {Array}   An array of HTML elements
  */
-function getElementsFromSlot(slotName) {
+function getElementsFromSlot(slotName: CalendarSlot) {
   if (!hasSlot(slotName)) {
     return []
   }
 
   if (slotName === 'beforeCalendarHeader') {
-    return getFocusableElements(viewRef.value.children[0])
+    return getFocusableElements(viewRef.value!.children[0])
   }
 
   if (slotName === 'calendarFooter') {
@@ -778,7 +801,7 @@ function getElementsFromSlot(slotName) {
   }
 
   const isBeforeHeader = slotName.indexOf('beforeCalendarHeader') > -1
-  const pickerElement = pickerRef.value.$el
+  const pickerElement = pickerRef.value!.$el
   const index = isBeforeHeader ? 0 : pickerElement.children.length - 1
 
   return getFocusableElements(pickerElement.children[index])
@@ -789,10 +812,10 @@ function getElementsFromSlot(slotName) {
  * @returns {Array}   An array of HTMLButtonElements
  */
 function getElementsFromHeader() {
-  if (!pickerRef.value.pickerHeaderRef) {
+  if (!pickerRef.value!.pickerHeaderRef) {
     return []
   }
-  const header = pickerRef.value.pickerHeaderRef.$el
+  const header = pickerRef.value!.pickerHeaderRef.$el
   const navNodeList = header.querySelectorAll('button:enabled')
 
   return [...Array.prototype.slice.call(navNodeList)]
@@ -803,7 +826,7 @@ function getElementsFromHeader() {
  * @param   {Element} fragment The HTML fragment to search
  * @returns {Array}
  */
-function getFocusableElements(fragment) {
+function getFocusableElements(fragment: HTMLElement) {
   const navNodeList = fragment.querySelectorAll(
     'button:enabled:not([tabindex="-1"]), [href]:not([tabindex="-1"]), input:not([tabindex="-1"]):not([type=hidden]), select:enabled:not([tabindex="-1"]), textarea:enabled:not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])',
   )
@@ -817,7 +840,7 @@ function getFocusableElements(fragment) {
  */
 /* c8 ignore start */
 function getFirstInlineFocusableElement() {
-  const popupElements = getFocusableElements(popupRef.value.$el)
+  const popupElements = getFocusableElements(popupRef.value!.$el)
 
   return popupElements[0]
 }
@@ -828,7 +851,7 @@ function getFirstInlineFocusableElement() {
  * @returns {HTMLElement}
  */
 function getLastInlineFocusableElement() {
-  const popupElements = getFocusableElements(popupRef.value.$el)
+  const popupElements = getFocusableElements(popupRef.value!.$el)
 
   return popupElements[popupElements.length - 1]
 }
@@ -842,7 +865,7 @@ function getInputField() {
     return null
   }
 
-  return dateInputRef.value.inputRef
+  return dateInputRef.value!.inputRef
 }
 
 /**
@@ -853,7 +876,7 @@ function getTypedCell() {
     return null
   }
 
-  const cellId = getCellId(latestValidTypedDate.value)
+  const cellId = getCellId(latestValidTypedDate.value!)
 
   return cellId ? pickerRef.value.pickerCellsRef.$el.children[cellId] : null
 }
@@ -882,7 +905,7 @@ function handleFocusOut() {
  * @param  {String} slotName The name of the slot
  * @return {Boolean}
  */
-function hasSlot(slotName) {
+function hasSlot(slotName: CalendarSlot) {
   return !!slots[slotName]
 }
 
@@ -891,7 +914,7 @@ function hasSlot(slotName) {
  * @return {Boolean}
  */
 /* c8 ignore start */
-function isTabbingAwayFromInlineDatepicker(event) {
+function isTabbingAwayFromInlineDatepicker(event: KeyboardEvent) {
   if (!props.inline) {
     return false
   }
@@ -918,7 +941,7 @@ function isTabbingAwayFromInlineDatepicker(event) {
  * @return {Boolean}
  */
 /* c8 ignore start */
-function isTabbingAwayFromFirstNavElement(event) {
+function isTabbingAwayFromFirstNavElement(event: KeyboardEvent) {
   if (!event.shiftKey) {
     return false
   }
@@ -936,7 +959,7 @@ function isTabbingAwayFromFirstNavElement(event) {
  * @return {Boolean}
  */
 /* c8 ignore start */
-function isTabbingAwayFromLastNavElement(event) {
+function isTabbingAwayFromLastNavElement(event: KeyboardEvent) {
   if (event.shiftKey) {
     return false
   }
@@ -951,13 +974,13 @@ function isTabbingAwayFromLastNavElement(event) {
 /**
  * Resets the focus to the open date
  */
-function resetFocusToOpenDate(focusedDateTimestampNew) {
+function resetFocusToOpenDate(focusedDateTimestampNew: number) {
   focus.refs = ['openDate']
   setTransitionAndFocusDelay(focusedDateTimestampNew, computedOpenDate.value)
 
   if (!isMinimumView.value) {
     isRevertingToOpenDate.value = true
-    view.value = props.minimumView
+    view.value = props.minimumView as View
   }
 
   setPageDate(computedOpenDate.value)
@@ -1003,7 +1026,10 @@ function setInlineTabbableCell() {
  * @param {Date|Number} startDate     The date from which to measure
  * @param {Date|Number} endDate       Is this before or after the startDate? And is it on the same page?
  */
-function setTransitionAndFocusDelay(startDate, endDate) {
+function setTransitionAndFocusDelay(
+  startDate: Date | number,
+  endDate: Date | number,
+) {
   const startPageDate = utils.setDate(new Date(startDate), 1)
   const endPageDate = utils.setDate(new Date(endDate), 1)
   const isInTheFuture = startPageDate < endPageDate
@@ -1014,15 +1040,15 @@ function setTransitionAndFocusDelay(startDate, endDate) {
     focus.delay = 0
   }
 
-  setTransitionName(endDate - startDate)
+  setTransitionName(endPageDate - startPageDate)
 }
 
 /**
  * Set the focus
- * @param {Array} refs An array of `refs` to focus (in order of preference)
+ * @param {Array} elementsToFocus An array of `elementsToFocus` to focus (in order of preference)
  */
-function setFocus(refs) {
-  focus.refs = refs
+function setFocus(elementsToFocus: ElementToFocus[]) {
+  focus.refs = elementsToFocus
   applyFocus()
 }
 
@@ -1070,7 +1096,7 @@ function setNavElementsFocusedIndex() {
  */
 // eslint-disable-next-line complexity
 function setTabbableCell() {
-  const pickerCells = pickerRef.value.pickerCellsRef.$el
+  const pickerCells = pickerRef.value?.pickerCellsRef.$el
 
   tabbableCell.value =
     getActiveCell() ||
@@ -1085,7 +1111,7 @@ function setTabbableCell() {
  * Sets the direction of the slide transition
  * @param {Number} plusOrMinus Positive for the future; negative for the past
  */
-function setTransitionName(plusOrMinus) {
+function setTransitionName(plusOrMinus: number) {
   const isInTheFuture = plusOrMinus > 0
 
   if (isRtl.value) {
@@ -1170,7 +1196,7 @@ function tabForwards() {
  * @param event
  */
 /* c8 ignore start */
-function tabThroughNavigation(event) {
+function tabThroughNavigation(event: KeyboardEvent) {
   if (allowNormalTabbing(event)) {
     return
   }
@@ -1203,7 +1229,7 @@ function tabToCorrectInlineCell() {
 
   // If `show-header` is false and the inline datepicker has been tabbed to (forwards)
   nextTick(() => {
-    const isFirstCell = activeElement.getAttribute('data-id') === '0'
+    const isFirstCell = activeElement?.getAttribute('data-id') === '0'
 
     if (isFirstCell) {
       focusInlineTabbableCell()
@@ -1216,7 +1242,7 @@ function tabToCorrectInlineCell() {
  * Update which cell in the picker should be focus-trapped
  */
 function updateTabbableCell() {
-  const activeElement = getActiveElement()
+  const activeElement = getActiveElement() as HTMLElement
   const isActiveElementACell = hasClass(activeElement, 'cell')
   const needToUpdate = !tabbableCell.value || isActiveElementACell
 
@@ -1230,8 +1256,8 @@ function updateTabbableCell() {
  * @param {String} thisView
  * @return {Boolean}
  */
-function allowedToShowView(thisView) {
-  const views = ['day', 'month', 'year']
+function allowedToShowView(thisView: View | 'decade' | undefined) {
+  const views: View[] = ['day', 'month', 'year']
   const minimumViewIndex = views.indexOf(props.minimumView)
   const maximumViewIndex = views.indexOf(props.maximumView)
   const viewIndex = views.indexOf(thisView)
@@ -1288,7 +1314,7 @@ function close() {
  * @param   {Date} date The date to check
  * @returns {Boolean}
  */
-function dateHasChanged(date) {
+function dateHasChanged(date: Date | null) {
   return !utils.compareDates(date, selectedDate.value)
 }
 
@@ -1338,26 +1364,26 @@ function handleClickOutside() {
 /**
  * Set the new pageDate, focus the relevant element and emit a `changed-<view>` event
  */
-function handlePageChange({ focusRefs, pageDate: newPageDate }) {
+function handlePageChange({ focusRefs, pageDate: newPageDate }: PageChange) {
   setPageDate(newPageDate)
   focus.refs = focusRefs
   focus.delay = slideDuration.value
   reviewFocus()
-  emit(`changed${ucFirst(nextView.value.up)}`, newPageDate)
+  emit(`changed${ucFirst(nextView.value.up as View)}`, newPageDate)
 }
 
 /**
  * Set the date, or go to the next view down
  */
 // eslint-disable-next-line max-statements,complexity
-function handleSelect(cell) {
-  if (allowedToShowView(nextView.value.down)) {
+function handleSelect(cell: CellDay) {
+  if (allowedToShowView(nextView.value.down as View)) {
     showNextViewDown(cell)
     return
   }
 
   dateInputRef.value.typedDate = ''
-  const date = new Date(cell.timestamp)
+  const date = new Date(cell?.timestamp)
 
   if (isInline.value && !dateHasChanged(date)) {
     selectedDate.value = null
@@ -1382,8 +1408,8 @@ function handleSelect(cell) {
  * Updates the page (if necessary) after a 'typedDate' event and sets `tabbableCell` & `latestValidTypedDate`
  * @param {Date=} date
  */
-function handleTypedDate(date) {
-  const originalTypedDate = new Date(latestValidTypedDate.value)
+function handleTypedDate(date: Date) {
+  const originalTypedDate = new Date(latestValidTypedDate.value!)
   const originalPageDate = new Date(pageDate.value)
 
   latestValidTypedDate.value = date || computedOpenDate.value
@@ -1406,7 +1432,7 @@ function handleTypedDate(date) {
  * @param {String} newView
  * @param {String} oldView
  */
-function handleViewChange(newView, oldView) {
+function handleViewChange(newView: View, oldView: View) {
   const isClosing = newView === ''
   const isOpeningInline = oldView === '' && isInline.value
 
@@ -1428,7 +1454,7 @@ function handleViewChange(newView, oldView) {
  * @param   {String}      className
  * @returns {Boolean}
  */
-function hasClass(element, className) {
+function hasClass(element: HTMLElement, className: string) {
   return element && element.className.split(' ').includes(className)
 }
 
@@ -1437,7 +1463,7 @@ function hasClass(element, className) {
  * @param   {Date}    originalPageDate
  * @returns {Boolean}
  */
-function isPageChange(originalPageDate) {
+function isPageChange(originalPageDate: Date) {
   if (!isOpen.value) {
     return false
   }
@@ -1465,10 +1491,13 @@ function init() {
  * @param {Date} date
  * @returns {Boolean}
  */
-function isDateDisabled(date) {
+function isDateDisabled(date: Date) {
   if (!props.disabledDates) return false
 
-  return new DisabledDate(utils, props.disabledDates).isDateDisabled(date)
+  return new DisabledDate(
+    utils,
+    props.disabledDates as DisabledConfig,
+  ).isDateDisabled(date)
 }
 
 /**
@@ -1480,7 +1509,7 @@ function isResetFocus() {
     return false
   }
 
-  const activeElement = getActiveElement()
+  const activeElement = getActiveElement() as HTMLElement
   const isOpenCellFocused =
     hasClass(activeElement, 'cell') && !hasClass(activeElement, 'open')
 
@@ -1520,7 +1549,7 @@ function resetOrClose() {
  * Select the date
  * @param {Date|null} date
  */
-function selectDate(date) {
+function selectDate(date: Date | null) {
   if (dateHasChanged(date)) {
     emit('changed', date)
   }
@@ -1533,7 +1562,7 @@ function selectDate(date) {
  * Select the date from a 'selectTypedDate' event
  * @param {Date=} date
  */
-function selectTypedDate(date) {
+function selectTypedDate(date: Date) {
   selectDate(date)
   reviewFocus()
 
@@ -1573,7 +1602,7 @@ function setInitialView() {
  * Sets the date that the calendar should open on
  * @param {Date=} date The date to set for the page
  */
-function setPageDate(date) {
+function setPageDate(date: Date | null) {
   const validDate = utils.parseAsDate(date) || computedOpenDate.value
   let dateTemp = utils.getNewDateObject(validDate)
   dateTemp = new Date(utils.setDate(dateTemp, 1))
@@ -1600,7 +1629,7 @@ function setSlideDuration() {
  * Set the datepicker modelValue (and, if typeable, update `latestValidTypedDate`)
  * @param {Date|String|Number|null} date
  */
-function setValue(date) {
+function setValue(date: Date | null) {
   selectedDate.value = date || null
   setPageDate(date)
 
@@ -1613,7 +1642,7 @@ function setValue(date) {
  * Set the picker view
  * @param {String} view
  */
-function setView(newView) {
+function setView(newView: View) {
   if (allowedToShowView(newView)) {
     view.value = newView
   }
@@ -1624,15 +1653,15 @@ function setView(newView) {
  * @param {String} newView The view being changed to
  * @param {String} oldView The previous view
  */
-function setViewChangeFocusRefs(newView, oldView) {
+function setViewChangeFocusRefs(newView: View, oldView: View) {
   if (oldView === '') {
     focus.refs = []
     return
   }
 
-  const views = ['day', 'month', 'year']
-  const isNewView = (thisView) => thisView === newView
-  const isOldView = (thisView) => thisView === oldView
+  const views: View[] = ['day', 'month', 'year']
+  const isNewView = (thisView: View) => thisView === newView
+  const isOldView = (thisView: View) => thisView === oldView
   const newViewIndex = views.findIndex(isNewView)
   const oldViewIndex = views.findIndex(isOldView)
   const isViewChangeUp = newViewIndex - oldViewIndex > 0
@@ -1640,23 +1669,25 @@ function setViewChangeFocusRefs(newView, oldView) {
   focus.refs = isViewChangeUp ? ['up', 'tabbableCell'] : ['tabbableCell', 'up']
 }
 
+type ChangedView = 'changedDay' | 'changedMonth' | 'changedYear'
 /**
  * Set the view to the next view down e.g. from `month` to `day`
  * @param {Object} cell The currently focused cell
  */
-function showNextViewDown(cell) {
+function showNextViewDown(cell: Cell) {
   setPageDate(new Date(cell.timestamp))
-  emit(`changed${ucFirst(view.value)}`, cell)
-  setView(nextView.value.down)
+  const viewName = ucFirst(view.value as View)
+  emit(`changed${viewName}` as ChangedView, cell)
+  setView(nextView.value.down as View)
 }
 
 /**
  * Capitalizes the first letter
- * @param {String} str The string to capitalize
+ * @param {String} view The string to capitalize
  * @returns {String}
  */
-function ucFirst(str) {
-  return str[0].toUpperCase() + str.substring(1)
+function ucFirst(view: View) {
+  return (view[0].toUpperCase() + view.substring(1)) as 'Day' | 'Month' | 'Year'
 }
 </script>
 

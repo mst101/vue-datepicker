@@ -1,6 +1,6 @@
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 
-export default function usePageYear(pageDate, getFullYear) {
+export default function usePageYear(pageDate: Ref<Date>, getFullYear: (date: Date) => number) {
   /**
    * Returns the current page's full year as an integer.
    * @return {Number}

@@ -1,7 +1,7 @@
-import { createApp } from 'vue'
+import { createApp, type Component } from 'vue'
 
 export function withSetup(hook, ...args) {
-  let result
+  let result: Component
 
   const app = createApp({
     setup() {

@@ -4,9 +4,16 @@ import { format, parse } from 'date-fns'
 import DateInput from '~/components/DateInput.vue'
 import DatePicker from '~/components/DatePicker.vue'
 import { en } from '~/locale'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+
+function mountComponent<T>(component: T) {
+  return mount(component)
+}
+type WrapperType<T> = ReturnType<typeof mountComponent<T>>
 
 describe('DateInput shallowMounted', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DateInput>
+
 
   beforeEach(() => {
     wrapper = shallowMount(DateInput, {
@@ -94,7 +101,7 @@ describe('DateInput shallowMounted', () => {
     await input.trigger('keyup')
 
     expect(wrapper.emitted('typedDate')).toBeDefined()
-    expect(wrapper.emitted('typedDate')[0][0]).toStrictEqual(
+    expect(wrapper.emitted('typedDate')![0][0]).toStrictEqual(
       new Date(dateString),
     )
   })
@@ -109,10 +116,10 @@ describe('DateInput shallowMounted', () => {
 
   it('parses a typed date using a function passed in via a prop', async () => {
     await wrapper.setProps({
-      format: (date) => {
+      format: (date: Date) => {
         return format(date, 'dd/mm/yyyy')
       },
-      parser: (date) => {
+      parser: (date: string) => {
         return parse(date, 'yyyy/mm/dd', new Date())
       },
     })
@@ -140,7 +147,7 @@ describe('DateInput shallowMounted', () => {
 })
 
 describe('Datepicker mounted', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DatePicker>
 
   beforeEach(() => {
     wrapper = mount(DatePicker, {
@@ -175,7 +182,7 @@ describe('Datepicker mounted', () => {
     await input.trigger('keydown.enter')
 
     expect(wrapper.emitted('selected')).toBeDefined()
-    expect(wrapper.emitted('selected')[0][0]).toBeInstanceOf(Date)
+    expect(wrapper.emitted('selected')![0][0]).toBeInstanceOf(Date)
   })
 
   it('does not emit `selected` when an invalid date is typed and the `enter` key is pressed', async () => {
@@ -259,7 +266,7 @@ describe('Datepicker mounted', () => {
 })
 
 describe('Datepicker mounted with a default value', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DatePicker>
 
   beforeEach(() => {
     wrapper = mount(DatePicker, {
@@ -282,7 +289,7 @@ describe('Datepicker mounted with a default value', () => {
 })
 
 describe('Datepicker mounted with showCalendarOnFocus', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DatePicker>
 
   beforeEach(() => {
     wrapper = mount(DatePicker, {
@@ -324,7 +331,7 @@ describe('Datepicker mounted with showCalendarOnFocus', () => {
 })
 
 describe('DatePicker mounted and attached to body', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DatePicker>
 
   beforeEach(() => {
     vi.useFakeTimers()

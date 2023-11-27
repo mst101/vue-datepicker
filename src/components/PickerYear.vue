@@ -39,7 +39,7 @@
           @arrow="handleArrow($event)"
           @select="select($event)"
         >
-          {{ cell.year }}
+          {{ (cell as CellYear).year }}
         </PickerCells>
       </Transition>
     </div>
@@ -50,7 +50,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, toRefs } from 'vue'
 import useDateUtils from '../composables/useDateUtils'
 import useDisabledDates from '../composables/useDisabledDates'
@@ -58,11 +58,16 @@ import useNavigation from '../composables/useNavigation'
 import usePageYear from '../composables/usePageYear'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
+import type { CellYear, DisabledConfig, ElementToFocus } from '@/types'
 
 const props = defineProps({
   bootstrapStyling: {
     type: Boolean,
     default: false,
+  },
+  computedOpenDate: {
+    type: Date,
+    default: null,
   },
   disabledDates: {
     type: Object,
@@ -83,10 +88,6 @@ const props = defineProps({
   isMinimumView: {
     type: Boolean,
     default: true,
-  },
-  openDate: {
-    type: [String, Date, Number],
-    default: null,
   },
   pageDate: {
     type: Date,
@@ -136,30 +137,39 @@ const emit = defineEmits({
   pageChange: (config) => {
     return typeof config === 'object'
   },
-  select: (cell) => {
+  select: (cell: CellYear) => {
     return typeof cell === 'object'
   },
-  setSkipReviewFocus: (value) => {
+  setSkipReviewFocus: (value: boolean) => {
     return typeof value === 'boolean'
   },
-  setTransitionName: (incrementBy) => {
+  setTransitionName: (incrementBy: -1 | 1) => {
     return incrementBy === -1 || incrementBy === 1
   },
-  setFocus: (refArray) => {
-    return refArray.every((refAttr) => {
-      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(refAttr)
+  setFocus: (refArray: ElementToFocus[]) => {
+    return refArray.every((elementToFocus) => {
+      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(
+        elementToFocus,
+      )
     })
   },
 })
 
-const { disabledDates, pageDate, slideDuration, isTypeable, useUtc, view, yearRange } =
-  toRefs(props)
+const {
+  disabledDates,
+  pageDate,
+  slideDuration,
+  isTypeable,
+  useUtc,
+  view,
+  yearRange,
+} = toRefs(props)
 
 const utils = useDateUtils(useUtc)
-const pickerCellsRef = ref(null)
-const pickerHeaderRef = ref(null)
+const pickerCellsRef = ref<HTMLDivElement | null>(null)
+const pickerHeaderRef = ref<HTMLElement | null>(null)
 const { isPreviousDisabled, isNextDisabled, isDisabledYear } = useDisabledDates(
-  props.disabledDates,
+  props.disabledDates as DisabledConfig,
   {
     pageDate,
     useUtc,
@@ -180,7 +190,7 @@ const pageYear = usePageYear(pageDate, utils.getFullYear)
  * @return {Array}
  */
 const cells = computed(() => {
-  const years = []
+  const years: CellYear[] = []
   const dObj = firstYearCellDate()
 
   for (let i = 0; i < props.yearRange; i += 1) {
@@ -199,7 +209,6 @@ const cells = computed(() => {
   const cellsInGrid = Math.ceil(props.yearRange / 3) * 3
   for (let i = years.length; i < cellsInGrid; i += 1) {
     years.push({
-      id: i,
       isDisabled: true,
     })
   }
@@ -268,10 +277,10 @@ function firstYearCellDate() {
  * @param {Date} date
  * @return {Boolean}
  */
-function isOpenYear(date) {
-  if (!props.openDate) return false
+function isOpenYear(date: Date) {
+  if (!props.computedOpenDate) return false
 
-  const openDateYear = utils.getFullYear(props.openDate)
+  const openDateYear = utils.getFullYear(props.computedOpenDate)
   const thisDateYear = utils.getFullYear(date)
 
   return openDateYear === thisDateYear
@@ -282,7 +291,7 @@ function isOpenYear(date) {
  * @param {Date} date
  * @return {Boolean}
  */
-function isSelectedYear(date) {
+function isSelectedYear(date: Date) {
   if (!props.selectedDate) return false
 
   const year = utils.getFullYear(date)
@@ -295,7 +304,7 @@ function isSelectedYear(date) {
  * @param {Date} date
  * @return {Boolean}
  */
-function isTodayYear(date) {
+function isTodayYear(date: Date) {
   const todayYear = utils.getFullYear(utils.getNewDateObject())
 
   return utils.getFullYear(date) === todayYear

@@ -52,7 +52,8 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { ElementToFocus } from '@/types';
 import { ref, computed } from 'vue'
 
 const props = defineProps({
@@ -62,15 +63,15 @@ const props = defineProps({
   },
   isNextDisabled: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   isPreviousDisabled: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   isRtl: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   isUpDisabled: {
     type: Boolean,
@@ -88,8 +89,8 @@ const emit = defineEmits({
     return typeof page === 'object'
   },
   setFocus: (refArray) => {
-    return refArray.every((refAttr) => {
-      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(refAttr)
+    return refArray.every((elementToFocus: ElementToFocus) => {
+      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(elementToFocus)
     })
   },
   setView: (view) => {
@@ -97,9 +98,9 @@ const emit = defineEmits({
   },
 })
 
-const prev = ref(null)
-const up = ref(null)
-const next = ref(null)
+const prev = ref<HTMLButtonElement | null>(null)
+const up = ref<HTMLButtonElement | null>(null)
+const next = ref<HTMLButtonElement | null>(null)
 
 // computed
 const leftButton = computed(() => {

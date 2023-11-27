@@ -1,11 +1,35 @@
 /* eslint-disable max-lines-per-function, max-statements */
 
-import { nextTick } from 'vue'
+import { nextTick, ref, type Ref } from 'vue'
 import useDateUtils from './useDateUtils'
 import useDisabledDates from './useDisabledDates'
+import PickerCells from '../components/PickerCells.vue'
+import type { Cell, CellDay, ChangePage, DisabledConfig, View } from '@/types'
 
-export default function useNavigation(cells, pickerCellsRef, opts = {}) {
-  const { isTypeable, pageDate, slideDuration, useUtc, view = 'day', yearRange = 10 } = opts
+interface NavOptions {
+  emit: any
+  disabledDates: DisabledConfig
+  isTypeable: Ref<boolean>
+  pageDate: Ref<Date>
+  slideDuration: Ref<number>
+  useUtc: Ref<boolean>
+  view: Ref<View>
+  yearRange?: Ref<number>
+}
+
+export default function useNavigation(
+  cells: Ref<Cell[]>,
+  pickerCellsRef: Ref<typeof PickerCells>,
+  opts: NavOptions,
+) {
+  const {
+    isTypeable,
+    pageDate,
+    slideDuration,
+    useUtc = ref(false),
+    view = ref('day'),
+    yearRange = ref(10),
+  } = opts
 
   const { disabledDates, emit } = opts
   const utils = useDateUtils(useUtc)
@@ -33,7 +57,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * Determines which transition to use (for edge dates) and emits a 'select' event
    * @param {Object} cell
    */
-  function select(cell) {
+  function select(cell: CellDay) {
     if (cell.isPreviousMonth) {
       emit('setTransitionName', -1)
     }
@@ -50,7 +74,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * @param  {Number} delta The number of cells that the focus should move
    * @return {HTMLButtonElement}
    */
-  function getFirstOrLastElement(delta) {
+  function getFirstOrLastElement(delta: number) {
     const isNext = delta > 0
     const elements = pickerCellsRef.value.$el.children
 
@@ -62,9 +86,10 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * @param {Number} incrementBy
    * @param {[String]} focusRefs
    */
-  function changePage({ incrementBy, focusRefs }) {
+  function changePage({ incrementBy, focusRefs }: ChangePage) {
     const pageDateNew = new Date(pageDate.value)
-    const units = view.value === 'year' ? incrementBy * yearRange.value : incrementBy
+    const units =
+      view.value === 'year' ? incrementBy * yearRange.value : incrementBy
 
     emit('setTransitionName', incrementBy)
 
@@ -77,12 +102,18 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
     emit('pageChange', { focusRefs, pageDate: pageDateNew })
   }
 
+  interface FocusOptions {
+    currentElement: HTMLButtonElement
+    delta: number
+    stepsRemaining: number
+  }
+
   /**
    * Sets the focus on the correct cell following a page change
    * @param {Object} options
    */
   // eslint-disable-next-line max-statements
-  function setFocusOnNewPage({ delta, stepsRemaining }) {
+  function setFocusOnNewPage({ delta, stepsRemaining }: FocusOptions) {
     const currentElement = getFirstOrLastElement(delta)
     const options = {
       currentElement,
@@ -117,7 +148,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * Used when an arrow key press would cause the focus to land on a disabled date
    * @param {Object} options
    */
-  function addMoreSteps(options) {
+  function addMoreSteps(options: FocusOptions) {
     if (options.stepsRemaining <= 0 && Math.abs(options.delta) > 1) {
       return Math.abs(options.delta)
     }
@@ -129,7 +160,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * @param  {HTMLButtonElement} element The element in question
    * @return {Boolean}
    */
-  function isMutedOrDisabled(element) {
+  function isMutedOrDisabled(element: HTMLButtonElement) {
     const isMuted = element.classList.value.split(' ').includes('muted')
     const isDisabled = element.disabled
 
@@ -141,7 +172,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * @param  {HTMLButtonElement} currentElement  The element currently being iterated on
    * @param  {Number}            delta           The number of cells that the focus should move
    */
-  function firstOrLastPossibleDate({ currentElement, delta }) {
+  function firstOrLastPossibleDate({ currentElement, delta }: FocusOptions) {
     if (delta > 0) {
       return getElementSibling(currentElement, -1)
     }
@@ -155,15 +186,19 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * @param  {Number}            delta   Used to determine direction of travel
    * @return {Boolean}
    */
-  function isDatePossible(element, delta) {
-    const cellId = element.getAttribute('data-id')
-    const cellDate = new Date(cells.value[cellId].timestamp)
+  function isDatePossible(element: HTMLButtonElement, delta: number) {
+    const cellId = Number(element.getAttribute('data-id'))
+    const cellDate = new Date(cells.value[cellId]?.timestamp)
 
-    if (delta > 0) {
-      return cellDate > utils.adjustDateToView(latestPossibleDate.value, view.value)
+    if (delta > 0 && latestPossibleDate.value && view.value) {
+      return (
+        cellDate > utils.adjustDateToView(latestPossibleDate.value, view.value)
+      )
     }
 
-    return cellDate < utils.adjustDateToView(earliestPossibleDate.value, view.value)
+    return (
+      cellDate < utils.adjustDateToView(earliestPossibleDate.value, view.value)
+    )
   }
 
   /**
@@ -172,7 +207,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * @param  {Number}            delta           The number of cells that the focus should move
    * @return {Boolean}
    */
-  function isBeyondPossibleDate({ currentElement, delta }) {
+  function isBeyondPossibleDate({ currentElement, delta }: FocusOptions) {
     if (delta > 0 && latestPossibleDate.value) {
       return isDatePossible(currentElement, delta)
     }
@@ -188,7 +223,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * Changes the page and focuses the cell that is being 'arrowed' to
    * @param {Object} options
    */
-  function changePageAndSetFocus(options) {
+  function changePageAndSetFocus(options: FocusOptions) {
     const { delta } = options
     const isPageDisabled =
       (delta > 0 && isNextDisabled.value) ||
@@ -215,7 +250,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * Sets the focus on the next focusable cell when an arrow key is pressed
    * @param {Object} options
    */
-  function setFocusToAvailableCell(options) {
+  function setFocusToAvailableCell(options: FocusOptions) {
     const element = getElement(options)
 
     if (element) {
@@ -229,12 +264,12 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * @param  {Number}            delta          The number of cells that the focus should move
    * @return {HTMLButtonElement}
    */
-  function getElementSibling(currentElement, delta) {
+  function getElementSibling(currentElement: HTMLButtonElement, delta: number) {
     const isNext = delta > 0
 
     return isNext
-      ? currentElement.nextElementSibling
-      : currentElement.previousElementSibling
+      ? (currentElement.nextElementSibling as HTMLButtonElement)
+      : (currentElement.previousElementSibling as HTMLButtonElement)
   }
 
   /**
@@ -245,7 +280,7 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * @return {HTMLButtonElement | void}
    */
   // eslint-disable-next-line complexity,max-statements
-  function getElement({ currentElement, delta, stepsRemaining }) {
+  function getElement({ currentElement, delta, stepsRemaining }: FocusOptions) {
     const element = getElementSibling(currentElement, delta)
     const options = {
       currentElement: element,
@@ -278,10 +313,10 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
    * Moves the focused cell up/down/left/right
    * @param {Object}
    */
-  function handleArrow({ delta }) {
-    const activeElement = document.activeElement.shadowRoot
-      ? document.activeElement.shadowRoot.activeElement
-      : document.activeElement
+  function handleArrow({ delta }: { delta: number }) {
+    const activeElement = document.activeElement?.shadowRoot
+      ? (document.activeElement.shadowRoot.activeElement as HTMLButtonElement)
+      : (document.activeElement as HTMLButtonElement)
     const stepsRemaining = Math.abs(delta)
     const options = {
       currentElement: activeElement,

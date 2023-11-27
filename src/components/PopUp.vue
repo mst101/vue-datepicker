@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
 import { h, useSlots } from 'vue'
-import { getPopupElementSize, getRelativePosition } from '~/utils/dom'
+import { getPopupElementSize, getRelativePosition } from '../utils/dom'
+import type { FixedPosition } from '@/types'
 
 export default {
   name: 'PopUp',
@@ -61,11 +62,11 @@ export default {
       const { width, height } = getPopupElementSize(popup)
       const { left, top } = getRelativePosition({
         el: popup,
-        elRelative: this.$parent.$el,
+        elRelative: this.$parent?.$el,
         targetWidth: width,
         targetHeight: height,
         appendToBody: this.appendToBody,
-        fixedPosition: this.fixedPosition,
+        fixedPosition: this.fixedPosition as FixedPosition,
         rtl: this.rtl,
       })
 
@@ -74,7 +75,14 @@ export default {
     },
   },
   render() {
-    return h('div', useSlots().default()[0].children.default())
+    // const slots = useSlots()
+    // if (slots === undefined || !slots.default || !slots!.default()[0].children!.default) {
+    //   return null
+    // }
+    // const test = slots!.default()
+    // const test2 = slots!.default()[0].children!.default()
+    // console.log(test, test2)
+    return h('div', useSlots().default!()[0].children!.default())
   },
 }
 </script>

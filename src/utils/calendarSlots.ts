@@ -1,3 +1,5 @@
+import type { CalendarSlot } from '../types'
+
 export default [
   'beforeCalendarHeaderDay',
   'calendarFooterDay',
@@ -7,4 +9,4 @@ export default [
   'calendarFooterYear',
   'nextIntervalBtn',
   'prevIntervalBtn',
-]
+] as CalendarSlot[]

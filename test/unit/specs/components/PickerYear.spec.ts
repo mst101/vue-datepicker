@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import PickerYear from '~/components/PickerYear.vue'
 import { en } from '~/locale'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 describe('PickerYear mounted', () => {
   let wrapper

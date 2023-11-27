@@ -20,7 +20,7 @@
     <!-- Input -->
     <input
       :id="id"
-      :ref="assignInputRef"
+      :ref="(assignInputRef as unknown as VNodeRef)"
       autocomplete="off"
       :autofocus="autofocus"
       :class="computedInputClass"
@@ -34,7 +34,7 @@
       :readonly="!typeable"
       :required="required"
       :tabindex="tabindex"
-      :type="inline ? 'hidden' : null"
+      :type="inline ? 'hidden' : undefined"
       :value="formattedValue"
       @blur="handleInputBlur"
       @click="handleInputClick"
@@ -66,9 +66,11 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, toRefs, nextTick, watch } from 'vue'
+<script setup lang="ts">
+import { ref, computed, toRefs, nextTick, watch, type VNodeRef } from 'vue'
 import useDateUtils from '../composables/useDateUtils'
+import type { ElementToFocus } from '@/types';
+import type Language from '@/locale/Language';
 
 const props = defineProps({
   autofocus: {
@@ -189,7 +191,7 @@ const emit = defineEmits({
     return date === null || date instanceof Date
   },
   setFocus: (refArray) => {
-    return refArray.every((refAttr) => {
+    return refArray.every((elementToFocus: ElementToFocus) => {
       return [
         'calendarButton',
         'input',
@@ -197,7 +199,7 @@ const emit = defineEmits({
         'up',
         'next',
         'tabbableCell',
-      ].includes(refAttr)
+      ].includes(elementToFocus)
     })
   },
   tab: null,
@@ -210,7 +212,7 @@ const { useUtc } = toRefs(props)
 
 // data
 const calendarButtonRef = ref(null)
-const inputRef = ref(null)
+const inputRef = ref<HTMLInputElement | null>(null)
 const isInputFocused = ref(false)
 const shouldToggleOnFocus = ref(false)
 const shouldToggleOnClick = ref(true)
@@ -274,7 +276,7 @@ watch(
 )
 
 // methods
-function assignInputRef(el) {
+function assignInputRef(el: HTMLInputElement) {
   inputRef.value = el
 }
 
@@ -282,7 +284,7 @@ function assignInputRef(el) {
  * Emits a `clear-date` event
  */
 function clearDate() {
-  inputRef.value.value = ''
+  inputRef.value!.value = ''
   emit('clearDate')
 }
 
@@ -291,14 +293,14 @@ function clearDate() {
  * @param {Date} date The date to be formatted
  * @returns {String}
  */
-function formatDate(date) {
+function formatDate(date: Date) {
   if (!date) {
     return ''
   }
 
   return typeof props.format === 'function'
     ? props.format(new Date(date))
-    : utils.formatDate(new Date(date), props.format, props.translation)
+    : utils.formatDate(new Date(date), props.format, props.translation as Language)
 }
 
 /**
@@ -356,7 +358,7 @@ function handleInputClick() {
   if (props.showCalendarOnButtonClick) return
 
   if (shouldToggleOnClick.value) {
-    toggle()
+    toggle('input')
   }
 }
 
@@ -400,12 +402,12 @@ function handleKeydownDown() {
 /**
  * Selects a typed date and closes the calendar
  */
-function handleKeydownEnter(event) {
+function handleKeydownEnter(event: KeyboardEvent) {
   if (!props.typeable) {
     return
   }
 
-  if (!event.target.value) {
+  if (!(event.target as HTMLInputElement).value) {
     emit('selectTypedDate', null)
     return
   }
@@ -429,7 +431,7 @@ function handleKeydownEscape() {
 /**
  * Prevents scrolling when not typeable
  */
-function handleKeydownSpace(event) {
+function handleKeydownSpace(event: KeyboardEvent) {
   if (!props.typeable) {
     event.preventDefault()
   }
@@ -439,7 +441,7 @@ function handleKeydownSpace(event) {
  * Parses a typed date and emits `typed-date` event, if valid
  * @param  {object}  event Used to exclude certain keystrokes
  */
-function handleKeyup(event) {
+function handleKeyup(event: KeyboardEvent) {
   if (
     !props.typeable ||
     [
@@ -456,7 +458,7 @@ function handleKeyup(event) {
     return
   }
 
-  typedDate.value = inputRef.value.value
+  typedDate.value = (inputRef.value as HTMLInputElement).value
 
   if (!typedDate.value) {
     emit('typedDate', null)
@@ -473,17 +475,17 @@ function handleKeyup(event) {
 /**
  * Toggles the calendar unless a typed date has been entered or `show-calendar-on-button-click` is true
  */
-function handleKeyupSpace(event) {
+function handleKeyupSpace(event: KeyboardEvent) {
   if (props.typeable) {
     if (inputRef.value?.value === '') {
-      toggle()
+      toggle('input')
     }
     return
   }
 
   event.preventDefault()
   if (!props.showCalendarOnButtonClick) {
-    toggle()
+    toggle('input')
   }
 }
 
@@ -493,9 +495,9 @@ function handleKeyupSpace(event) {
 function parseInput() {
   return new Date(
     utils.parseDate(
-      inputRef.value.value.trim(),
+      (inputRef.value as HTMLInputElement).value.trim(),
       props.format,
-      props.translation,
+      props.translation as Language,
       props.parser,
     ),
   )
@@ -503,13 +505,14 @@ function parseInput() {
 
 /**
  * Opens or closes the calendar
+ * @param  {object}  elementToFocus The element to focus after toggle is complete
  */
-function toggle(calendarButton) {
+function toggle(elementToFocus: 'calendarButton' | 'input') {
   if (props.isOpen) {
-    emit('setFocus', [calendarButton || 'input'])
+    emit('setFocus', [elementToFocus])
   }
 
-  emit(props.isOpen ? 'close' : 'open')
+  props.isOpen ? emit('close') : emit('open')
 }
 
 defineExpose({

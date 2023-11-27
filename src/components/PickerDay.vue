@@ -56,7 +56,7 @@
               name="dayCellContent"
               :cell="cell"
             >
-              {{ dayCellContent(cell) }}
+              {{ dayCellContent(cell as CellDay) }}
             </slot>
           </PickerCells>
         </Transition>
@@ -69,8 +69,8 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, toRefs } from 'vue'
+<script setup lang="ts">
+import { ref, computed, toRefs, type Ref } from 'vue'
 import useDateUtils from '../composables/useDateUtils'
 import useDisabledDates from '../composables/useDisabledDates'
 import useHighlighted from '../composables/useHighlighted'
@@ -78,117 +78,169 @@ import useNavigation from '../composables/useNavigation'
 import usePageYear from '../composables/usePageYear'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
+import type {
+  CellDay,
+  DateUtils,
+  DayOfWeek,
+  DisabledConfig,
+  ElementToFocus,
+  TransitionName,
+  View,
+} from '@/types'
+import type Language from '@/locale/Language'
 
-const props = defineProps({
-  bootstrapStyling: {
-    type: Boolean,
-    default: false,
-  },
-  disabledDates: {
-    type: Object,
-    default: null,
-  },
-  isRtl: {
-    type: Boolean,
-    default: false,
-  },
-  isTypeable: {
-    type: Boolean,
-    default: false,
-  },
-  isUpDisabled: {
-    type: Boolean,
-    default: false,
-  },
-  isMinimumView: {
-    type: Boolean,
-    default: true,
-  },
-  openDate: {
-    type: [String, Date, Number],
-    default: null,
-  },
-  pageDate: {
-    type: Date,
-    default: null,
-  },
-  selectedDate: {
-    type: Date,
-    default: null,
-  },
-  showHeader: {
-    type: Boolean,
-    default: true,
-  },
-  slideDuration: {
-    type: Number,
-    default: 250,
-  },
-  tabbableCellId: {
-    type: Number,
-    default: null,
-  },
-  transitionName: {
-    type: String,
-    default: '',
-  },
-  translation: {
-    type: Object,
-    default() {
-      return {}
-    },
-  },
-  useUtc: {
-    type: Boolean,
-    default: false,
-  },
-  view: {
-    type: String,
-    default: 'day',
-  },
-  dayCellContent: {
-    type: Function,
-    default: (day) => day.date,
-  },
-  firstDayOfWeek: {
-    type: String,
-    default: 'sun',
-  },
-  highlighted: {
-    type: Object,
-    default() {
-      return {}
-    },
-  },
-  showFullMonthName: {
-    type: Boolean,
-    default: false,
-  },
-  showEdgeDates: {
-    type: Boolean,
-    default: true,
-  },
+// const props = defineProps({
+//   bootstrapStyling: {
+//     type: Boolean,
+//     default: false,
+//   },
+//   computedOpenDate: {
+//     type: Date,
+//     default: null,
+//   },
+//   disabledDates: {
+//     type: Object,
+//     default: null,
+//   },
+//   isRtl: {
+//     type: Boolean,
+//     default: false,
+//   },
+//   isTypeable: {
+//     type: Boolean,
+//     default: false,
+//   },
+//   isUpDisabled: {
+//     type: Boolean,
+//     default: false,
+//   },
+//   isMinimumView: {
+//     type: Boolean,
+//     default: true,
+//   },
+//   pageDate: {
+//     type: Date,
+//     default: null,
+//   },
+//   selectedDate: {
+//     type: Date,
+//     default: null,
+//   },
+//   showHeader: {
+//     type: Boolean,
+//     default: true,
+//   },
+//   slideDuration: {
+//     type: Number,
+//     default: 250,
+//   },
+//   tabbableCellId: {
+//     type: Number,
+//     default: null,
+//   },
+//   transitionName: {
+//     type: String,
+//     default: '',
+//   },
+//   translation: {
+//     type: Object,
+//     default() {
+//       return {}
+//     },
+//   },
+//   useUtc: {
+//     type: Boolean,
+//     default: false,
+//   },
+//   view: {
+//     type: String,
+//     default: 'day',
+//   },
+//   dayCellContent: {
+//     type: Function,
+//     default: (day: CellDay) => day.date,
+//   },
+//   firstDayOfWeek: {
+//     type: String,
+//     default: 'sun',
+//   },
+//   highlighted: {
+//     type: Object,
+//     default() {
+//       return {}
+//     },
+//   },
+//   showFullMonthName: {
+//     type: Boolean,
+//     default: false,
+//   },
+//   showEdgeDates: {
+//     type: Boolean,
+//     default: true,
+//   },
+// })
+
+interface Props {
+  bootstrapStyling?: boolean
+  computedOpenDate?: Date
+  disabledDates?: DisabledConfig
+  isRtl?: boolean
+  isTypeable?: boolean
+  isUpDisabled?: boolean
+  isMinimumView?: boolean
+  pageDate: Date
+  selectedDate?: Date
+  showHeader?: boolean
+  slideDuration?: number
+  tabbableCellId?: number
+  transitionName?: TransitionName
+  translation: Language
+  useUtc?: boolean
+  view?: View
+  dayCellContent?: (day: CellDay) => string | number
+  firstDayOfWeek?: DayOfWeek
+  highlighted?: DisabledConfig
+  showFullMonthName?: boolean
+  showEdgeDates?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  bootstrapStyling: false,
+  isRtl: false,
+  isTypeable: false,
+  isUpDisabled: false,
+  isMinimumView: false,
+  showHeader: true,
+  slideDuration: 250,
+  useUtc: false,
+  view: 'day',
+  dayCellContent: (day: CellDay) => day.date,
+  firstDayOfWeek: 'sun',
+  showFullMonthName: false,
+  showEdgeDates: true,
 })
 
 const emit = defineEmits({
   pageChange: (config) => {
     return typeof config === 'object'
   },
-  select: (cell) => {
+  select: (cell: CellDay) => {
     return typeof cell === 'object'
   },
-  setSkipReviewFocus: (value) => {
+  setSkipReviewFocus: (value: boolean) => {
     return typeof value === 'boolean'
   },
-  setTransitionName: (incrementBy) => {
+  setTransitionName: (incrementBy: -1 | 1) => {
     return incrementBy === -1 || incrementBy === 1
   },
-  setFocus: (refArray) => {
-    return refArray.every((refAttr) => {
-      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(refAttr)
+  setFocus: (refArray: ElementToFocus[]) => {
+    return refArray.every((elementToFocus) => {
+      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(
+        elementToFocus,
+      )
     })
   },
-  setView: (view) => {
+  setView: (view: View) => {
     return view === 'month'
   },
 })
@@ -203,11 +255,11 @@ const {
   view,
 } = toRefs(props)
 
-const utils = useDateUtils(useUtc)
-const pickerCellsRef = ref(null)
-const pickerHeaderRef = ref(null)
+const utils: DateUtils = useDateUtils(useUtc)
+const pickerCellsRef = ref<typeof PickerCells>()
+const pickerHeaderRef = ref<HTMLElement>()
 const { isPreviousDisabled, isNextDisabled, isDisabledDate } = useDisabledDates(
-  disabledDates,
+  disabledDates as unknown as DisabledConfig,
   {
     pageDate,
     useUtc,
@@ -215,7 +267,7 @@ const { isPreviousDisabled, isNextDisabled, isDisabledDate } = useDisabledDates(
   },
 )
 const { isHighlightedDate, isHighlightEnd, isHighlightStart } = useHighlighted(
-  highlighted,
+  highlighted as unknown as DisabledConfig,
   {
     disabledDates,
     utils,
@@ -297,7 +349,7 @@ const daysFromNextMonth = computed(() => {
  * @return {Array}
  */
 const cells = computed(() => {
-  const days = []
+  const days: CellDay[] = []
   const daysInCalendar =
     daysFromPrevMonth.value + daysInMonth.value + daysFromNextMonth.value
   const dObj = firstDayCellDate()
@@ -357,7 +409,7 @@ function firstDayCellDate() {
  * @param {Date} dObj to check if selected
  * @return {Boolean}
  */
-function isSelectedDate(dObj) {
+function isSelectedDate(dObj: Date) {
   if (!props.selectedDate) return false
 
   return utils.compareDates(props.selectedDate, dObj)
@@ -369,7 +421,7 @@ function isSelectedDate(dObj) {
  * @return {Object}
  */
 // eslint-disable-next-line complexity
-function makeDay(dObj) {
+function makeDay(dObj: Date): CellDay {
   const dayOfWeek = utils.getDay(dObj)
   const isNextMonth = dObj >= firstOfNextMonth.value
   const isPreviousMonth = dObj < props.pageDate
@@ -385,7 +437,7 @@ function makeDay(dObj) {
     isHighlighted: isHighlightedDate(dObj),
     isHighlightStart: isHighlightStart(dObj),
     isHighlightEnd: isHighlightEnd(dObj),
-    isOpenDate: utils.compareDates(dObj, props.openDate),
+    isOpenDate: utils.compareDates(dObj, props.computedOpenDate),
     isToday: utils.compareDates(dObj, utils.getNewDateObject()),
     isWeekend: isSaturday || isSunday,
     isSaturday,

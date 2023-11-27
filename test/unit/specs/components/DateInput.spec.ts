@@ -2,6 +2,12 @@ import { shallowMount } from '@vue/test-utils'
 import { format } from 'date-fns'
 import DateInput from '~/components/DateInput.vue'
 import { en } from '~/locale'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+
+function shallowMountComponent<T>(component: T) {
+  return shallowMount(component)
+}
+type WrapperType<T> = ReturnType<typeof shallowMountComponent<T>>
 
 describe('DateInput unmounted', () => {
   it('checks props default', () => {
@@ -11,7 +17,7 @@ describe('DateInput unmounted', () => {
 })
 
 describe('DateInput shallowMounted', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DateInput>
 
   beforeEach(() => {
     wrapper = shallowMount(DateInput)
@@ -95,7 +101,7 @@ describe('DateInput shallowMounted', () => {
 })
 
 describe('DateInput shallowMounted with selectedDate', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DateInput>
 
   beforeEach(() => {
     wrapper = shallowMount(DateInput, {
@@ -118,7 +124,7 @@ describe('DateInput shallowMounted with selectedDate', () => {
 
   it('delegates date formatting', async () => {
     await wrapper.setProps({
-      format: (date) => {
+      format: (date: Date) => {
         return format(new Date(date), 'dd.MM.yyyy')
       },
     })
@@ -156,7 +162,7 @@ describe('DateInput shallowMounted with selectedDate', () => {
 })
 
 describe('DateInput shallowMounted with clearButton', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DateInput>
 
   beforeEach(() => {
     wrapper = shallowMount(DateInput, {
@@ -185,7 +191,7 @@ describe('DateInput shallowMounted with clearButton', () => {
 })
 
 describe('DateInput shallowMounted with showCalendarOnFocus', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DateInput>
 
   beforeEach(() => {
     wrapper = shallowMount(DateInput, {
@@ -250,7 +256,7 @@ describe('DateInput shallowMounted with showCalendarOnFocus', () => {
 })
 
 describe('DateInput shallowMounted with bootstrap styling', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DateInput>
 
   beforeEach(() => {
     wrapper = shallowMount(DateInput, {

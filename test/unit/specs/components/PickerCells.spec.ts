@@ -1,5 +1,6 @@
 import { shallowMount, mount } from '@vue/test-utils'
 import PickerCells from '~/components/PickerCells.vue'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 describe('PickerCells shallowMounted', () => {
   let wrapper

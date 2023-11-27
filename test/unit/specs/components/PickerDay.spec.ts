@@ -1,9 +1,16 @@
 import { mount } from '@vue/test-utils'
 import PickerDay from '~/components/PickerDay.vue'
-import { en, mn } from '~/locale'
+import en from '~/locale/translations/en'
+import mn from '~/locale/translations/mn'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+
+function mountComponent<T>(component: T) {
+  return mount(component)
+}
+type WrapperType<T> = ReturnType<typeof mountComponent<T>>
 
 describe('PickerDay mounted', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof PickerDay>
 
   beforeEach(() => {
     wrapper = mount(PickerDay, {
@@ -164,7 +171,7 @@ describe('PickerDay mounted', () => {
 })
 
 describe('PickerDay mounted with Monday as first day of week', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof PickerDay>
 
   beforeEach(() => {
     wrapper = mount(PickerDay, {
@@ -210,7 +217,7 @@ describe('PickerDay mounted with Monday as first day of week', () => {
 })
 
 describe('PickerDay mounted with Saturday as first day of week', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof PickerDay>
 
   beforeEach(() => {
     wrapper = mount(PickerDay, {

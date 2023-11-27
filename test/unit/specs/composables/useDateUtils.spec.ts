@@ -1,5 +1,6 @@
-import { en } from '~/locale'
+import en from '~/locale/translations/en'
 import useDateUtils from '~/composables/useDateUtils'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 const dateUtils = useDateUtils(false)
 

@@ -6,7 +6,7 @@ import babel from '@rollup/plugin-babel'
 import resolve from '@rollup/plugin-node-resolve'
 
 const babelConfig = {
-  extensions: ['.js'],
+  extensions: ['.js', '.ts'],
   babelHelpers: 'bundled',
   babelrc: true,
 }
@@ -46,7 +46,7 @@ async function buildLanguages() {
 
 async function buildUmd() {
   const bundle = await rollup({
-    input: './src/locale/index.js',
+    input: './src/locale',
     plugins: [
       resolve(),
       babel({
@@ -57,7 +57,7 @@ async function buildUmd() {
     ],
   })
   await bundle.write({
-    file: './dist/locale/index.js',
+    file: './dist/locale',
     format: 'umd',
     name: 'languages',
   })
@@ -65,7 +65,7 @@ async function buildUmd() {
 
 async function buildCjs() {
   const bundle = await rollup({
-    input: './src/locale/index.js',
+    input: './src/locale',
     plugins: [resolve(), babel(babelConfig)],
   })
   await bundle.write({
@@ -77,7 +77,7 @@ async function buildCjs() {
 
 async function buildEsm() {
   const bundle = await rollup({
-    input: './src/locale/index.js',
+    input: './src/locale',
     plugins: [
       resolve(),
       babel({

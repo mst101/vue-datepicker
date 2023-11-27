@@ -1,8 +1,10 @@
 import Language from '~/locale/Language'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 describe('Language class', () => {
   const days = ['m', 't', 'w', 't', 'f', 's', 's']
   const months = ['j', 'f', 'm', 'a', 'm', 'j', 'j', 'a', 's', 'o', 'n', 'd']
+
   it('throws an error when language is not a string', () => {
     expect(() => new Language(1, [], [], [])).toThrow(TypeError)
   })

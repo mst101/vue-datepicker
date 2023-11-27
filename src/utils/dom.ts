@@ -1,9 +1,12 @@
 /* eslint no-param-reassign: 0 */
+
+import type { FixedPosition } from "@/types"
+
 /**
  * get the hidden element width, height
  * @param {HTMLElement} element dom
  */
-export function getPopupElementSize(element) {
+export function getPopupElementSize(element: HTMLElement) {
   const originalDisplay = element.style.display
   const originalVisibility = element.style.visibility
   element.style.display = 'block'
@@ -26,6 +29,16 @@ export function getPopupElementSize(element) {
   }
 }
 
+interface PositionOptions {
+  el: HTMLElement
+  elRelative: HTMLElement
+  targetWidth: number
+  targetHeight: number
+  appendToBody: boolean
+  fixedPosition: FixedPosition
+  rtl: boolean
+}
+
 /**
  * get the popup position
  * @param {Element} el element
@@ -45,7 +58,7 @@ export function getRelativePosition({
   appendToBody,
   fixedPosition,
   rtl,
-}) {
+}: PositionOptions) {
   let left = 0
   let top = 0
   let offsetX = 0

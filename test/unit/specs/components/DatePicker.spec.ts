@@ -3,6 +3,12 @@ import { vi } from 'vitest'
 import { he } from '~/locale'
 import DateInput from '~/components/DateInput.vue'
 import DatePicker from '~/components/DatePicker.vue'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+
+function mountComponent<T>(component: T) {
+  return mount(component)
+}
+type WrapperType<T> = ReturnType<typeof mountComponent<T>>
 
 describe('Datepicker unmounted', () => {
   it('props have the correct default values', () => {
@@ -15,7 +21,7 @@ describe('Datepicker unmounted', () => {
 })
 
 describe('Datepicker shallowMounted', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DatePicker>
 
   beforeEach(() => {
     wrapper = shallowMount(DatePicker)
@@ -179,7 +185,7 @@ describe('Datepicker shallowMounted', () => {
 })
 
 describe('Datepicker mounted', () => {
-  let wrapper
+  let wrapper: WrapperType<typeof DatePicker>
 
   beforeEach(() => {
     wrapper = mount(DatePicker)

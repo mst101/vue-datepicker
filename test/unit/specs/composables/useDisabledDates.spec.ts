@@ -1,5 +1,7 @@
 import useDisabledDates from '~/composables/useDisabledDates'
 import { withSetup } from '../../withSetup'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import type { DisabledConfig } from '@/types'
 
 describe('useDisabledDates', () => {
   let app
@@ -18,7 +20,7 @@ describe('useDisabledDates', () => {
   })
 
   it('disables dates to a given date', () => {
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       to: new Date(2021, 9, 13),
     }
 
@@ -31,7 +33,7 @@ describe('useDisabledDates', () => {
   })
 
   it('disables dates from a given date', () => {
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       from: new Date(2021, 9, 13),
     }
 
@@ -44,7 +46,7 @@ describe('useDisabledDates', () => {
   })
 
   it('disables an array of individual dates', () => {
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       dates: [new Date(2016, 9, 4), new Date(2016, 9, 6)],
     }
 
@@ -60,7 +62,7 @@ describe('useDisabledDates', () => {
   })
 
   it('disables an array of date ranges', () => {
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       ranges: [
         {
           from: new Date(2016, 9, 4),
@@ -80,7 +82,7 @@ describe('useDisabledDates', () => {
   })
 
   it('disables an array of days of the week', async () => {
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       days: [6, 0],
     }
 
@@ -93,7 +95,7 @@ describe('useDisabledDates', () => {
   })
 
   it('disables an array of days of the month', async () => {
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       daysOfMonth: [29, 30, 31],
     }
 
@@ -108,7 +110,7 @@ describe('useDisabledDates', () => {
   })
 
   it('disables dates via a customPredictor function', async () => {
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       customPredictor(date) {
         return date.getDate() % 4 === 0
       },
@@ -126,7 +128,7 @@ describe('useDisabledDates', () => {
 
   it('knows if a month is disabled', () => {
     const view = 'month'
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       to: new Date(2021, 6, 15),
       from: new Date(2021, 10, 15),
     }
@@ -145,7 +147,7 @@ describe('useDisabledDates', () => {
 
   it('knows if a year is disabled', () => {
     const view = 'year'
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       to: new Date(2021, 6, 15),
       from: new Date(2023, 6, 15),
     }
@@ -195,7 +197,7 @@ describe('useDisabledDates', () => {
 
   it('disables the previous button correctly on a `day` view', () => {
     const view = 'day'
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       to: new Date(2016, 9, 15),
     }
 
@@ -217,7 +219,7 @@ describe('useDisabledDates', () => {
 
   it('disables the previous button correctly on a `month` view', () => {
     const view = 'month'
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       to: new Date(2016, 9, 15),
     }
 
@@ -239,7 +241,7 @@ describe('useDisabledDates', () => {
 
   it('disables the previous button correctly on a `year` view', () => {
     const view = 'year'
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       to: new Date(2016, 9, 15),
     }
 
@@ -261,7 +263,7 @@ describe('useDisabledDates', () => {
 
   it('disables the next button correctly on a `day` view', () => {
     const view = 'day'
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       from: new Date(2016, 9, 15),
     }
 
@@ -283,7 +285,7 @@ describe('useDisabledDates', () => {
 
   it('disables the next button correctly on a `month` view', () => {
     const view = 'month'
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       from: new Date(2016, 9, 15),
     }
 
@@ -305,7 +307,7 @@ describe('useDisabledDates', () => {
 
   it('disables the next button correctly on a `year` view', () => {
     const view = 'year'
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       from: new Date(2016, 9, 15),
     }
 

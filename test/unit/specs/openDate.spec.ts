@@ -1,5 +1,6 @@
 import { shallowMount } from '@vue/test-utils'
 import DatePicker from '~/components/DatePicker.vue'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 describe('Datepicker shallowMounted', () => {
   let wrapper

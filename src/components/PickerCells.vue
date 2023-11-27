@@ -4,9 +4,9 @@
     data-test-picker-cells
   >
     <button
-      v-for="(cell, id) in cells"
+      v-for="(cell, id) in (cells as CellDay[])"
       :key="cell.timestamp"
-      :ref="(el) => assignOpenDateRef(el, cell)"
+      :ref="(el) => assignOpenDateRef(el as HTMLButtonElement, cell)"
       :class="cellClasses(cell)"
       :data-id="id"
       :data-test-tabbable-cell="isTabbableCell(cell, id)"
@@ -25,7 +25,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { Cell, CellDay } from '@/types';
 import { ref, computed } from 'vue'
 
 const props = defineProps({
@@ -51,7 +52,7 @@ const props = defineProps({
   },
   view: {
     type: String,
-    validator: (val) => ['day', 'month', 'year'].includes(val),
+    validator: (val: string) => ['day', 'month', 'year'].includes(val),
     required: true,
   },
 })
@@ -65,7 +66,7 @@ const emit = defineEmits({
   },
 })
 
-const openDateRef = ref(null)
+const openDateRef = ref<HTMLButtonElement | null>(null)
 
 // computed
 /**
@@ -77,7 +78,7 @@ const columns = computed(() => {
 })
 
 // methods
-function assignOpenDateRef(el, cell) {
+function assignOpenDateRef(el: HTMLButtonElement, cell: Cell) {
   if (!el) return
 
   if (cell.isOpenDate) {
@@ -90,7 +91,7 @@ function assignOpenDateRef(el, cell) {
  * @return {Array}
  */
 // eslint-disable-next-line complexity
-function cellClasses(cell) {
+function cellClasses(cell: CellDay) {
   return [
     'cell',
     props.view,
@@ -118,11 +119,11 @@ function cellClasses(cell) {
 /**
  * Emits an `arrow` event
  */
-function handleArrow(cellId, delta) {
+function handleArrow(cellId: number, delta: number) {
   emit('arrow', { cellId, delta })
 }
 
-function isTabbableCell(cell, id) {
+function isTabbableCell(cell: Cell, id: number) {
   if (!props.tabbableCellId) {
     return cell.isOpenDate || null
   }

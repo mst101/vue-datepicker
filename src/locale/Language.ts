@@ -1,13 +1,26 @@
 export default class Language {
-  // eslint-disable-next-line max-params
+  private _language: string = ''
+
+  private _months: string[] = []
+
+  private _monthsAbbr: string[] = []
+
+  private _days: string[] = []
+
+  public rtl: boolean
+
+  public ymd: boolean
+
+  public yearSuffix: string
+
   constructor(
-    language,
-    months,
-    monthsAbbr,
-    days,
-    rtl = false,
-    ymd = false,
-    yearSuffix = '',
+    language: string,
+    months: string[],
+    monthsAbbr: string[],
+    days: string[],
+    rtl: boolean = false,
+    ymd: boolean = false,
+    yearSuffix: string = '',
   ) {
     this.language = language
     this.months = months
@@ -18,26 +31,21 @@ export default class Language {
     this.yearSuffix = yearSuffix
   }
 
-  /* eslint-disable no-underscore-dangle */
-  get language() {
-    return this._language
-  }
-
-  set language(language) {
+  set language(language: string) {
     if (typeof language !== 'string') {
       throw new TypeError('Language must be a string')
     }
     this._language = language
   }
 
-  get months() {
+  get months(): string[] {
     return this._months
   }
 
-  set months(months) {
+  set months(months: string[]) {
     if (months.length !== 12) {
       throw new RangeError(
-        `There must be 12 months for ${this.language} language`,
+        `There must be 12 months for ${this._language} language`,
       )
     }
     this._months = months
@@ -47,10 +55,10 @@ export default class Language {
     return this._monthsAbbr
   }
 
-  set monthsAbbr(monthsAbbr) {
+  set monthsAbbr(monthsAbbr: string[]) {
     if (monthsAbbr.length !== 12) {
       throw new RangeError(
-        `There must be 12 abbreviated months for ${this.language} language`,
+        `There must be 12 abbreviated months for ${this._language} language`,
       )
     }
     this._monthsAbbr = monthsAbbr
@@ -60,26 +68,28 @@ export default class Language {
     return this._days
   }
 
-  set days(days) {
+  set days(days: string[]) {
     if (days.length !== 7) {
-      throw new RangeError(`There must be 7 days for ${this.language} language`)
+      throw new RangeError(
+        `There must be 7 days for ${this._language} language`,
+      )
     }
     this._days = days
   }
 
-  getDaysStartingOn(firstDayOfWeek) {
+  getDaysStartingOn(firstDayOfWeek: number) {
     const firstDays = this._days.slice(firstDayOfWeek)
     const lastDays = this._days.slice(0, firstDayOfWeek)
 
     return firstDays.concat(lastDays)
   }
 
-  getMonthByAbbrName(name) {
+  getMonthByAbbrName(name: string) {
     const monthValue = this._monthsAbbr.findIndex((month) => month === name) + 1
     return monthValue < 10 ? `0${monthValue}` : `${monthValue}`
   }
 
-  getMonthByName(name) {
+  getMonthByName(name: string) {
     const monthValue = this._months.findIndex((month) => month === name) + 1
     return monthValue < 10 ? `0${monthValue}` : `${monthValue}`
   }

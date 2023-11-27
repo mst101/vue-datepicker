@@ -41,7 +41,7 @@
           @arrow="handleArrow($event)"
           @select="select($event)"
         >
-          {{ cell.month }}
+          {{ (cell as CellMonth).month }}
         </PickerCells>
       </Transition>
     </div>
@@ -52,7 +52,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, toRefs } from 'vue'
 import useDateUtils from '../composables/useDateUtils'
 import useDisabledDates from '../composables/useDisabledDates'
@@ -60,11 +60,16 @@ import useNavigation from '../composables/useNavigation'
 import usePageYear from '../composables/usePageYear'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
+import type { CellMonth, DisabledConfig, ElementToFocus, View } from '@/types'
 
 const props = defineProps({
   bootstrapStyling: {
     type: Boolean,
     default: false,
+  },
+  computedOpenDate: {
+    type: Date,
+    default: null,
   },
   disabledDates: {
     type: Object,
@@ -85,10 +90,6 @@ const props = defineProps({
   isMinimumView: {
     type: Boolean,
     default: true,
-  },
-  openDate: {
-    type: [String, Date, Number],
-    default: null,
   },
   pageDate: {
     type: Date,
@@ -134,32 +135,33 @@ const emit = defineEmits({
   pageChange: (config) => {
     return typeof config === 'object'
   },
-  select: (cell) => {
+  select: (cell: CellMonth) => {
     return typeof cell === 'object'
   },
-  setSkipReviewFocus: (value) => {
+  setSkipReviewFocus: (value: boolean) => {
     return typeof value === 'boolean'
   },
-  setTransitionName: (incrementBy) => {
+  setTransitionName: (incrementBy: -1 | 1) => {
     return incrementBy === -1 || incrementBy === 1
   },
-  setFocus: (refArray) => {
-    return refArray.every((refAttr) => {
-      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(refAttr)
+  setFocus: (refArray: ElementToFocus[]) => {
+    return refArray.every((elementToFocus) => {
+      return ['input', 'prev', 'up', 'next', 'tabbableCell'].includes(elementToFocus)
     })
   },
-  setView: (view) => {
+  setView: (view: View) => {
     return view === 'year'
   },
 })
 
-const { disabledDates, pageDate, slideDuration, isTypeable, useUtc, view } = toRefs(props)
+const { disabledDates, pageDate, slideDuration, isTypeable, useUtc, view } =
+  toRefs(props)
 
 const utils = useDateUtils(useUtc)
-const pickerCellsRef = ref(null)
-const pickerHeaderRef = ref(null)
+const pickerCellsRef = ref<HTMLDivElement | null>(null)
+const pickerHeaderRef = ref<HTMLElement | null>(null)
 const { isPreviousDisabled, isNextDisabled, isDisabledMonth } =
-  useDisabledDates(disabledDates, {
+  useDisabledDates(disabledDates as unknown as DisabledConfig, {
     pageDate,
     useUtc,
     view,
@@ -177,7 +179,7 @@ const pageYear = usePageYear(pageDate, utils.getFullYear)
  * @return {Array}
  */
 const cells = computed(() => {
-  const months = []
+  const months: CellMonth[] = []
   const dObj = firstMonthCellDate()
 
   for (let i = 0; i < 12; i += 1) {
@@ -234,11 +236,11 @@ function firstMonthCellDate() {
  * @param {Date} date
  * @return {Boolean}
  */
-function isOpenMonth(date) {
-  if (!props.openDate) return false
+function isOpenMonth(date: Date) {
+  if (!props.computedOpenDate) return false
 
-  const openDateMonth = utils.getMonth(props.openDate)
-  const openDateYear = utils.getFullYear(props.openDate)
+  const openDateMonth = utils.getMonth(props.computedOpenDate)
+  const openDateYear = utils.getFullYear(props.computedOpenDate)
   const thisDateMonth = utils.getMonth(date)
   const thisDateYear = utils.getFullYear(date)
 
@@ -250,7 +252,7 @@ function isOpenMonth(date) {
  * @param {Date} date
  * @return {Boolean}
  */
-function isSelectedMonth(date) {
+function isSelectedMonth(date: Date) {
   if (!props.selectedDate) return false
 
   const month = utils.getMonth(date)
@@ -268,7 +270,7 @@ function isSelectedMonth(date) {
  * @param {Date} date
  * @return {Boolean}
  */
-function isTodayMonth(date) {
+function isTodayMonth(date: Date) {
   const todayMonth = new Date(utils.setDate(utils.getNewDateObject(), 1))
 
   return utils.compareDates(date, todayMonth)

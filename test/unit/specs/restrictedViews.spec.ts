@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import DatePicker from '~/components/DatePicker.vue'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 describe('Datepicker mounted with restricted views', () => {
   let wrapper

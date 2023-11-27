@@ -9,11 +9,13 @@
     </div>
     <div class="example">
       <h3>Default datepicker...</h3>
-      <DatePicker placeholder="Select Date" />
+      <DatePicker
+        placeholder="Select Date"
+      />
       <code>&lt;DatePicker /&gt;</code>
     </div>
 
-    <div class="example">
+    <!-- <div class="example">
       <h3>Custom first-day-of-week datepicker</h3>
       <DatePicker
         placeholder="Select date"
@@ -456,7 +458,7 @@ highlighted: {
           </option>
         </select>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

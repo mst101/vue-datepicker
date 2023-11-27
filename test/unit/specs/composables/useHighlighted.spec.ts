@@ -1,11 +1,14 @@
 import useHighlighted from '~/composables/useHighlighted'
 import useDateUtils from '~/composables/useDateUtils'
+import makeCellUtils from '~/utils/cellUtils'
 import { withSetup } from '../../withSetup'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import type { DisabledConfig } from '@/types'
 
 describe('useHighlighted', () => {
   let app
   let results
-  const utils = useDateUtils(false)
+  const utils = makeCellUtils(useDateUtils(false))
 
   afterEach(() => {
     app.unmount()
@@ -20,7 +23,7 @@ describe('useHighlighted', () => {
   })
 
   it('highlights dates to a given date', () => {
-    const highlighted = {
+    const highlighted: DisabledConfig = {
       to: new Date(2021, 9, 13),
     }
 
@@ -33,7 +36,7 @@ describe('useHighlighted', () => {
   })
 
   it('highlights dates from a given date', () => {
-    const highlighted = {
+    const highlighted: DisabledConfig = {
       from: new Date(2021, 9, 13),
     }
 
@@ -46,7 +49,7 @@ describe('useHighlighted', () => {
   })
 
   it('highlights an array of individual dates', () => {
-    const highlighted = {
+    const highlighted: DisabledConfig = {
       dates: [new Date(2016, 9, 4), new Date(2016, 9, 6)],
     }
 
@@ -62,7 +65,7 @@ describe('useHighlighted', () => {
   })
 
   it('highlights an array of date ranges', () => {
-    const highlighted = {
+    const highlighted: DisabledConfig = {
       ranges: [
         {
           from: new Date(2016, 9, 4),
@@ -82,7 +85,7 @@ describe('useHighlighted', () => {
   })
 
   it('highlights an array of days of the week', async () => {
-    const highlighted = {
+    const highlighted: DisabledConfig = {
       days: [6, 0],
     }
 
@@ -95,7 +98,7 @@ describe('useHighlighted', () => {
   })
 
   it('highlights an array of days of the month', async () => {
-    const highlighted = {
+    const highlighted: DisabledConfig = {
       daysOfMonth: [29, 30, 31],
     }
 
@@ -110,8 +113,8 @@ describe('useHighlighted', () => {
   })
 
   it('highlights dates via a customPredictor function', async () => {
-    const highlighted = {
-      customPredictor(date) {
+    const highlighted: DisabledConfig = {
+      customPredictor(date: Date) {
         return date.getDate() % 4 === 0
       },
     }
@@ -130,10 +133,10 @@ describe('useHighlighted', () => {
     const disabledDate = new Date(2016, 11, 5)
     const highlightToDate = new Date(2016, 11, 8)
 
-    const disabledDates = {
+    const disabledDates: DisabledConfig = {
       dates: [disabledDate],
     }
-    let highlighted = {
+    let highlighted: DisabledConfig = {
       to: highlightToDate,
     }
 
@@ -166,7 +169,7 @@ describe('useHighlighted', () => {
 
     expect(isHighlightStart(new Date(2016, 11, 4))).toBe(false)
 
-    const highlighted = {
+    const highlighted: DisabledConfig = {
       ranges: [
         {
           from: new Date(2016, 11, 4),
@@ -175,10 +178,10 @@ describe('useHighlighted', () => {
       ],
     }
 
-      ;[app, results] = withSetup(useHighlighted, highlighted, {
-        utils,
-      })
-      isHighlightStart = results.isHighlightStart
+    ;[app, results] = withSetup(useHighlighted, highlighted, {
+      utils,
+    })
+    isHighlightStart = results.isHighlightStart
 
     expect(isHighlightStart(new Date(2016, 11, 3))).toBe(false)
     expect(isHighlightStart(new Date(2016, 11, 4))).toBe(true)
@@ -191,7 +194,7 @@ describe('useHighlighted', () => {
 
     expect(isHighlightEnd(new Date(2016, 11, 8))).toBe(false)
 
-    const highlighted = {
+    const highlighted: DisabledConfig = {
       ranges: [
         {
           from: new Date(2016, 11, 4),
