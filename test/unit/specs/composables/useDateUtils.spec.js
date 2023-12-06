@@ -1,7 +1,7 @@
-import makeDateUtils from '~/utils/DateUtils'
 import { en } from '~/locale'
+import useDateUtils from '~/composables/useDateUtils'
 
-const dateUtils = makeDateUtils(false)
+const dateUtils = useDateUtils(false)
 
 describe('dateUtils', () => {
   it('detects an invalid date object', () => {
@@ -248,7 +248,7 @@ const getAmbiguousDate = () => {
 }
 
 describe('UTC functions', () => {
-  const utcUtils = makeDateUtils(true)
+  const utcUtils = useDateUtils(true)
 
   it('getFullYear', () => {
     const date = getAmbiguousDate()
@@ -305,7 +305,7 @@ describe('UTC functions', () => {
   })
 
   it('getTime', () => {
-    expect(dateUtils.getTime()).toEqual('T00:00:00')
-    expect(utcUtils.getTime()).toEqual('T00:00:00Z')
+    expect(dateUtils.getTime()).toBe('T00:00:00')
+    expect(utcUtils.getTime()).toBe('T00:00:00Z')
   })
 })

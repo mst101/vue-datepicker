@@ -1,7 +1,9 @@
+/* eslint-disable max-lines-per-function, max-statements */
 import en from '~/locale/translations/en'
+import convertToRef from '../utils/convertToRef'
 
 /**
- * Attempts to return a parseable date in the format 'yyyy-MM-dd'
+ * Attempts to return a parsable date in the format 'yyyy-MM-dd'
  * @param {String} dateStr
  * @param {String} formatStr
  * @param {Object} translation
@@ -9,15 +11,15 @@ import en from '~/locale/translations/en'
  * @param {String} time
  * @return String
  */
-// eslint-disable-next-line complexity,max-statements
-const getParsableDate = ({
+// eslint-disable-next-line complexity
+export const getParsableDate = ({
   dateStr,
   formatStr,
   translation,
   currentYear,
   time,
 }) => {
-  const splitter = formatStr.match(/-|\/|\s|\./) || ['-']
+  const splitter = formatStr.match(/-|\/|\s|\./)
   const df = formatStr.split(splitter[0])
   const ds = dateStr.split(splitter[0])
   const ymd = [currentYear.toString(), '01', '01']
@@ -63,94 +65,91 @@ function parseDateWithLibrary(dateStr, format, parser) {
   return parser(dateStr)
 }
 
-const utils = {
-  /**
-   * @type {Boolean}
-   */
-  useUtc: false,
+export default (useUtcOrig) => {
+  const useUtc = convertToRef(useUtcOrig)
 
   /**
    * Returns the full year, using UTC or not
    * @param {Date} date
    */
-  getFullYear(date) {
-    return this.useUtc ? date.getUTCFullYear() : date.getFullYear()
-  },
+  function getFullYear(date) {
+    return useUtc.value ? date.getUTCFullYear() : date.getFullYear()
+  }
 
   /**
    * Returns the month, using UTC or not
    * @param {Date} date
    */
-  getMonth(date) {
-    return this.useUtc ? date.getUTCMonth() : date.getMonth()
-  },
+  function getMonth(date) {
+    return useUtc.value ? date.getUTCMonth() : date.getMonth()
+  }
 
   /**
    * Returns the number of days in the month, using UTC or not
    * @param {Date} date
    */
-  getDaysInMonth(date) {
+  function getDaysInMonth(date) {
     return this.daysInMonth(this.getFullYear(date), this.getMonth(date))
-  },
+  }
 
   /**
    * Returns the date, using UTC or not
    * @param {Date} date
    */
-  getDate(date) {
-    return this.useUtc ? date.getUTCDate() : date.getDate()
-  },
+  function getDate(date) {
+    return useUtc.value ? date.getUTCDate() : date.getDate()
+  }
 
   /**
    * Returns the day, using UTC or not
    * @param {Date} date
    */
-  getDay(date) {
-    return this.useUtc ? date.getUTCDay() : date.getDay()
-  },
+  function getDay(date) {
+    return useUtc.value ? date.getUTCDay() : date.getDay()
+  }
 
   /**
    * Returns the hours, using UTC or not
    * @param {Date} date
    */
-  getHours(date) {
-    return this.useUtc ? date.getUTCHours() : date.getHours()
-  },
+  function getHours(date) {
+    return useUtc.value ? date.getUTCHours() : date.getHours()
+  }
 
   /**
    * Returns the minutes, using UTC or not
    * @param {Date} date
    */
-  getMinutes(date) {
-    return this.useUtc ? date.getUTCMinutes() : date.getMinutes()
-  },
+  function getMinutes(date) {
+    return useUtc.value ? date.getUTCMinutes() : date.getMinutes()
+  }
 
   /**
    * Sets the full year, using UTC or not
    * @param {Date} date
    * @param {String, Number} value
    */
-  setFullYear(date, value) {
-    return this.useUtc ? date.setUTCFullYear(value) : date.setFullYear(value)
-  },
+  function setFullYear(date, value) {
+    return useUtc.value ? date.setUTCFullYear(value) : date.setFullYear(value)
+  }
 
   /**
    * Sets the month, using UTC or not
    * @param {Date} date
    * @param {String, Number} value
    */
-  setMonth(date, value) {
-    return this.useUtc ? date.setUTCMonth(value) : date.setMonth(value)
-  },
+  function setMonth(date, value) {
+    return useUtc.value ? date.setUTCMonth(value) : date.setMonth(value)
+  }
 
   /**
    * Sets the date, using UTC or not
    * @param {Date} date
    * @param {String, Number} value
    */
-  setDate(date, value) {
-    return this.useUtc ? date.setUTCDate(value) : date.setDate(value)
-  },
+  function setDate(date, value) {
+    return useUtc.value ? date.setUTCDate(value) : date.setDate(value)
+  }
 
   /**
    * Check if date1 is equivalent to date2, without comparing the time
@@ -159,7 +158,7 @@ const utils = {
    * @param {Date|null} date2
    */
   // eslint-disable-next-line complexity
-  compareDates(date1, date2) {
+  function compareDates(date1, date2) {
     if (date1 === null && date2 === null) {
       return true
     }
@@ -177,19 +176,19 @@ const utils = {
     this.resetDateTime(d1)
     this.resetDateTime(d2)
     return d1.valueOf() === d2.valueOf()
-  },
+  }
 
   /**
    * Validates a date object
    * @param {Date} date - an object instantiated with the new Date constructor
    * @return {Boolean}
    */
-  isValidDate(date) {
+  function isValidDate(date) {
     if (Object.prototype.toString.call(date) !== '[object Date]') {
       return false
     }
     return !Number.isNaN(date.valueOf())
-  },
+  }
 
   /**
    * Return abbreviated week day name
@@ -197,26 +196,26 @@ const utils = {
    * @param {Array} days
    * @return {String}
    */
-  getDayNameAbbr(date, days) {
+  function getDayNameAbbr(date, days) {
     if (typeof date !== 'object') {
       throw TypeError('Invalid Type')
     }
     return days[this.getDay(date)]
-  },
+  }
 
   /**
    * Return day number from abbreviated week day name
    * @param {String} abbr
    * @return {Number}
    */
-  getDayFromAbbr(abbr) {
+  function getDayFromAbbr(abbr) {
     for (let i = 0; i < en.days.length; i += 1) {
       if (abbr.toLowerCase() === en.days[i].toLowerCase()) {
         return i
       }
     }
     throw TypeError('Invalid week day')
-  },
+  }
 
   /**
    * Return name of the month
@@ -224,7 +223,7 @@ const utils = {
    * @param {Array} months
    * @return {String}
    */
-  getMonthName(month, months) {
+  function getMonthName(month, months) {
     if (!months) {
       throw Error('missing 2nd parameter Months array')
     }
@@ -235,7 +234,7 @@ const utils = {
       return months[month]
     }
     throw TypeError('Invalid type')
-  },
+  }
 
   /**
    * Return an abbreviated version of the month
@@ -243,7 +242,7 @@ const utils = {
    * @param {Array} monthsAbbr
    * @return {String}
    */
-  getMonthNameAbbr(month, monthsAbbr) {
+  function getMonthNameAbbr(month, monthsAbbr) {
     if (!monthsAbbr) {
       throw Error('missing 2nd parameter Months array')
     }
@@ -254,7 +253,7 @@ const utils = {
       return monthsAbbr[month]
     }
     throw TypeError('Invalid type')
-  },
+  }
 
   /**
    * Alternative get total number of days in month
@@ -263,7 +262,7 @@ const utils = {
    * @return {Number}
    */
   // eslint-disable-next-line complexity
-  daysInMonth(year, month) {
+  function daysInMonth(year, month) {
     if (/8|3|5|10/.test(month.toString())) {
       return 30
     }
@@ -271,7 +270,7 @@ const utils = {
       return (!(year % 4) && year % 100) || !(year % 400) ? 29 : 28
     }
     return 31
-  },
+  }
 
   /**
    * Get nth suffix for date
@@ -279,7 +278,7 @@ const utils = {
    * @return {String}
    */
   // eslint-disable-next-line complexity
-  getNthSuffix(day) {
+  function getNthSuffix(day) {
     switch (day) {
       case 1:
       case 21:
@@ -294,7 +293,7 @@ const utils = {
       default:
         return 'th'
     }
-  },
+  }
 
   /**
    * Formats date object
@@ -303,7 +302,7 @@ const utils = {
    * @param {Object} translation
    * @return {String}
    */
-  formatDate(date, formatStr, translation = en) {
+  function formatDate(date, formatStr, translation = en) {
     const year = this.getFullYear(date)
     const month = this.getMonth(date) + 1
     const day = this.getDate(date)
@@ -324,7 +323,7 @@ const utils = {
     const REGEX_FORMAT = /y{4}|y{2}|M{1,4}|d{1,2}|o|E/g
 
     return formatStr.replace(REGEX_FORMAT, (match) => matches[match])
-  },
+  }
 
   /**
    * Parses a date from a string, or returns the original string
@@ -335,7 +334,7 @@ const utils = {
    * @return {Date | String}
    */
   // eslint-disable-next-line max-params
-  parseDate(dateStr, format, translation = en, parser = null) {
+  function parseDate(dateStr, format, translation = en, parser = null) {
     if (!(dateStr && format)) {
       return dateStr
     }
@@ -344,51 +343,50 @@ const utils = {
       return parseDateWithLibrary(dateStr, format, parser)
     }
 
-    const parseableDate = getParsableDate({
+    const parsableDate = getParsableDate({
       dateStr,
       formatStr: format,
       translation,
       currentYear: this.getFullYear(new Date()),
       time: this.getTime(),
     })
-    const parsedDate = Date.parse(parseableDate)
+    const parsedDate = Date.parse(parsableDate)
 
     if (Number.isNaN(parsedDate)) {
       return dateStr
     }
 
     return new Date(parsedDate)
-  },
+  }
 
   /**
    * Parses a string/number to a date, or returns null
    * @param   {Date|String|Number|undefined} date
    * @returns {Date|null}
    */
-  parseAsDate(date) {
+  function parseAsDate(date) {
     if (typeof date === 'string' || typeof date === 'number') {
       const parsed = new Date(date)
       return this.isValidDate(parsed) ? parsed : null
     }
     return this.isValidDate(date) ? date : null
-  },
+  }
 
-  getTime() {
+  function getTime() {
     const time = 'T00:00:00'
-
-    return this.useUtc ? `${time}Z` : time
-  },
+    return useUtc.value ? `${time}Z` : time
+  }
 
   /**
    * Remove hours/minutes/seconds/milliseconds from a date object
    * @param {Date} date
    * @return {Date}
    */
-  resetDateTime(date) {
+  function resetDateTime(date) {
     return new Date(
-      this.useUtc ? date.setUTCHours(0, 0, 0, 0) : date.setHours(0, 0, 0, 0),
+      useUtc.value ? date.setUTCHours(0, 0, 0, 0) : date.setHours(0, 0, 0, 0),
     )
-  },
+  }
 
   /**
    * Return a new date object with hours/minutes/seconds/milliseconds removed.
@@ -396,11 +394,11 @@ const utils = {
    * @param {Date=} date
    * @return {Date}
    */
-  getNewDateObject(date) {
+  function getNewDateObject(date) {
     return date
       ? this.resetDateTime(new Date(date))
       : this.resetDateTime(new Date())
-  },
+  }
 
   /**
    * Returns the `open date` at a given view
@@ -408,13 +406,13 @@ const utils = {
    * @param {View} view   Either `day`, `month`, or `year`
    * @return {Date|null}
    */
-  getOpenDate(openDate, selectedDate, view) {
+  function getOpenDate(openDate, selectedDate, view) {
     const parsedOpenDate = this.parseAsDate(openDate)
     const openDateOrToday = this.getNewDateObject(parsedOpenDate)
     const newOpenDate = selectedDate || openDateOrToday
 
     return this.adjustDateToView(newOpenDate, view)
-  },
+  }
 
   /**
    * Converts a date according to a given view
@@ -424,7 +422,7 @@ const utils = {
    * @param  {String} view           The view for which to adjust the date
    * @return {Date}
    */
-  adjustDateToView(dateToConvert, view) {
+  function adjustDateToView(dateToConvert, view) {
     const date = this.getNewDateObject(dateToConvert)
 
     if (view === 'year') {
@@ -438,10 +436,34 @@ const utils = {
     }
 
     return date
-  },
-}
+  }
 
-export default (useUtc) => ({
-  ...utils,
-  useUtc,
-})
+  return {
+    getFullYear,
+    getMonth,
+    getDaysInMonth,
+    getDate,
+    getDay,
+    getHours,
+    getMinutes,
+    setFullYear,
+    setMonth,
+    setDate,
+    compareDates,
+    isValidDate,
+    getDayNameAbbr,
+    getDayFromAbbr,
+    getMonthName,
+    getMonthNameAbbr,
+    daysInMonth,
+    getNthSuffix,
+    formatDate,
+    parseDate,
+    parseAsDate,
+    getTime,
+    resetDateTime,
+    getNewDateObject,
+    getOpenDate,
+    adjustDateToView,
+  }
+}

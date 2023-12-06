@@ -1,11 +1,11 @@
 import useHighlighted from '~/composables/useHighlighted'
-import makeDateUtils from '~/utils/DateUtils'
+import useDateUtils from '~/composables/useDateUtils'
 import { withSetup } from '../../withSetup'
 
 describe('useHighlighted', () => {
   let app
   let results
-  const utils = makeDateUtils(false)
+  const utils = useDateUtils(false)
 
   afterEach(() => {
     app.unmount()

@@ -67,8 +67,8 @@
 </template>
 
 <script setup>
-import makeDateUtils from '~/utils/DateUtils'
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, toRefs, nextTick, watch } from 'vue'
+import useDateUtils from '../composables/useDateUtils'
 
 const props = defineProps({
   autofocus: {
@@ -206,6 +206,8 @@ const emit = defineEmits({
   },
 })
 
+const { useUtc } = toRefs(props)
+
 // data
 const calendarButtonRef = ref(null)
 const inputRef = ref(null)
@@ -213,7 +215,7 @@ const isInputFocused = ref(false)
 const shouldToggleOnFocus = ref(false)
 const shouldToggleOnClick = ref(true)
 const typedDate = ref('')
-const utils = makeDateUtils(props.useUtc)
+const utils = useDateUtils(useUtc)
 
 // computed
 const computedInputClass = computed(() => {

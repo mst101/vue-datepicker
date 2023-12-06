@@ -50,7 +50,7 @@ export default function useDisabledDates(disabledDatesOrig, options = {}) {
    * @return {Number}
    */
   const pageYear = computed(() => {
-    return utils.getFullYear(pageDate)
+    return utils.getFullYear(pageDate.value)
   })
 
   /**
@@ -62,15 +62,15 @@ export default function useDisabledDates(disabledDatesOrig, options = {}) {
       return false
     }
 
-    if (view === 'day') {
+    if (view.value === 'day') {
       const firstOfNextMonth = computed(() => {
-        const d = new Date(pageDate)
+        const d = new Date(pageDate.value)
         return new Date(utils.setMonth(d, utils.getMonth(d) + 1))
       })
       return latestPossibleDate.value < firstOfNextMonth.value
     }
 
-    if (view === 'month') {
+    if (view.value === 'month') {
       return latestPossibleDate.value <= new Date(pageYear.value, 11, 31)
     }
 
@@ -79,7 +79,7 @@ export default function useDisabledDates(disabledDatesOrig, options = {}) {
      * @return {Number}
      */
     const pageDecadeStart = computed(() => {
-      return Math.floor(pageYear.value / yearRange) * yearRange
+      return Math.floor(pageYear.value / yearRange.value) * yearRange.value
     })
 
     /**
@@ -87,7 +87,7 @@ export default function useDisabledDates(disabledDatesOrig, options = {}) {
      * @return {Number}
      */
     const pageDecadeEnd = computed(() => {
-      return pageDecadeStart.value + yearRange - 1
+      return pageDecadeStart.value + yearRange.value - 1
     })
 
     const firstDayOfNextDecade = new Date(pageDecadeEnd.value + 1, 0, 1)
@@ -103,21 +103,21 @@ export default function useDisabledDates(disabledDatesOrig, options = {}) {
       return false
     }
 
-    if (view === 'day') {
+    if (view.value === 'day') {
       const lastOfPreviousMonth = computed(() => {
-        const d = new Date(pageDate)
+        const d = new Date(pageDate.value)
         return new Date(utils.setDate(d, 0))
       })
 
       return earliestPossibleDate.value > lastOfPreviousMonth.value
     }
 
-    if (view === 'month') {
+    if (view.value === 'month') {
       return earliestPossibleDate.value >= new Date(pageYear.value, 0, 1)
     }
 
     const pageDecadeStart = computed(() => {
-      return Math.floor(pageYear.value / yearRange) * yearRange
+      return Math.floor(pageYear.value / yearRange.value) * yearRange.value
     })
 
     return (

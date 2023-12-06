@@ -157,17 +157,18 @@ import {
   onMounted,
   onBeforeUnmount,
   nextTick,
+  toRefs,
   useSlots,
 } from 'vue'
 import en from '~/locale/translations/en'
 import calendarSlots from '~/utils/calendarSlots'
 import DateInput from '~/components/DateInput.vue'
 import DisabledDate from '~/utils/DisabledDate'
-import makeDateUtils from '~/utils/DateUtils'
 import PopUp from '~/components/PopUp.vue'
 import PickerDay from '~/components/PickerDay.vue'
 import PickerMonth from '~/components/PickerMonth.vue'
 import PickerYear from '~/components/PickerYear.vue'
+import useDateUtils from '../composables/useDateUtils'
 
 const pickerComponents = {
   PickerDay,
@@ -369,8 +370,10 @@ const emit = defineEmits({
   },
 })
 
+const { useUtc } = toRefs(props)
+
 // data
-const utils = makeDateUtils(props.useUtc)
+const utils = useDateUtils(useUtc)
 const initialOpenDate = utils.getOpenDate(
   props.openDate,
   props.selectedDate,

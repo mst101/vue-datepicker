@@ -135,10 +135,12 @@ describe('useDisabledDates', () => {
 
     const { isDisabledMonth } = results
 
+    expect(isDisabledMonth(new Date(2020, 0, 1))).toBe(true)
     expect(isDisabledMonth(new Date(2021, 5, 1))).toBe(true)
     expect(isDisabledMonth(new Date(2021, 6, 1))).toBe(false)
     expect(isDisabledMonth(new Date(2021, 10, 1))).toBe(false)
     expect(isDisabledMonth(new Date(2021, 11, 1))).toBe(true)
+    expect(isDisabledMonth(new Date(2022, 11, 1))).toBe(true)
   })
 
   it('knows if a year is disabled', () => {

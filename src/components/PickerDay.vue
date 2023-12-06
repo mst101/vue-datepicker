@@ -71,10 +71,11 @@
 
 <script setup>
 import { ref, computed, toRefs } from 'vue'
-import makeDateUtils from '~/utils/DateUtils'
+import useDateUtils from '../composables/useDateUtils'
 import useDisabledDates from '../composables/useDisabledDates'
 import useHighlighted from '../composables/useHighlighted'
 import useNavigation from '../composables/useNavigation'
+import usePageYear from '../composables/usePageYear'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
 
@@ -197,11 +198,12 @@ const {
   highlighted,
   pageDate,
   slideDuration,
+  isTypeable,
   useUtc,
   view,
 } = toRefs(props)
 
-const utils = makeDateUtils(useUtc.value)
+const utils = useDateUtils(useUtc)
 const pickerCellsRef = ref(null)
 const pickerHeaderRef = ref(null)
 const { isPreviousDisabled, isNextDisabled, isDisabledDate } = useDisabledDates(
@@ -225,9 +227,8 @@ const { isHighlightedDate, isHighlightEnd, isHighlightStart } = useHighlighted(
  * Returns the current page's full year as an integer.
  * @return {Number}
  */
-const pageYear = computed(() => {
-  return utils.getFullYear(props.pageDate)
-})
+const pageYear = usePageYear(pageDate, utils.getFullYear)
+
 /**
  * Returns the current page's month as an integer.
  * @return {Number}
@@ -327,39 +328,19 @@ const pageTitleDay = computed(() => {
 })
 
 // methods
-const { handleArrow, changePage } = useNavigation(cells, pickerCellsRef, {
-  emit,
-  disabledDates,
-  pageDate,
-  slideDuration,
-  useUtc,
-  view,
-})
-
-/**
- * Focuses the input field, if typeable
- */
-function focusInput() {
-  if (props.isTypeable) {
-    emit('setFocus', ['input'])
-  }
-}
-
-/**
- * Determines which transition to use (for edge dates) and emits a 'select' event
- * @param {Object} cell
- */
-function select(cell) {
-  if (cell.isPreviousMonth) {
-    emit('setTransitionName', -1)
-  }
-
-  if (cell.isNextMonth) {
-    emit('setTransitionName', 1)
-  }
-
-  emit('select', cell)
-}
+const { changePage, focusInput, handleArrow, select } = useNavigation(
+  cells,
+  pickerCellsRef,
+  {
+    emit,
+    disabledDates,
+    pageDate,
+    slideDuration,
+    isTypeable,
+    useUtc,
+    view,
+  },
+)
 
 /**
  * Set up a new date object to the first day of the current 'page'

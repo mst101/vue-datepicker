@@ -1,14 +1,14 @@
 /* eslint-disable max-lines-per-function, max-statements */
 
 import { nextTick } from 'vue'
-import makeDateUtils from '~/utils/DateUtils'
+import useDateUtils from './useDateUtils'
 import useDisabledDates from './useDisabledDates'
 
 export default function useNavigation(cells, pickerCellsRef, opts = {}) {
-  const { pageDate, slideDuration, useUtc, view = 'day', yearRange = 10 } = opts
+  const { isTypeable, pageDate, slideDuration, useUtc, view = 'day', yearRange = 10 } = opts
 
   const { disabledDates, emit } = opts
-  const utils = makeDateUtils(useUtc)
+  const utils = useDateUtils(useUtc)
   const {
     earliestPossibleDate,
     latestPossibleDate,
@@ -19,6 +19,31 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
     useUtc,
     view,
   })
+
+  /**
+   * Focuses the input field, if typeable
+   */
+  function focusInput() {
+    if (isTypeable.value) {
+      emit('setFocus', ['input'])
+    }
+  }
+
+  /**
+   * Determines which transition to use (for edge dates) and emits a 'select' event
+   * @param {Object} cell
+   */
+  function select(cell) {
+    if (cell.isPreviousMonth) {
+      emit('setTransitionName', -1)
+    }
+
+    if (cell.isNextMonth) {
+      emit('setTransitionName', 1)
+    }
+
+    emit('select', cell)
+  }
 
   /**
    * Returns the first or last cell, depending on the direction of the search
@@ -269,6 +294,8 @@ export default function useNavigation(cells, pickerCellsRef, opts = {}) {
 
   return {
     changePage,
+    focusInput,
     handleArrow,
+    select,
   }
 }

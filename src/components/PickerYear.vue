@@ -52,9 +52,10 @@
 
 <script setup>
 import { ref, computed, toRefs } from 'vue'
-import makeDateUtils from '~/utils/DateUtils'
+import useDateUtils from '../composables/useDateUtils'
 import useDisabledDates from '../composables/useDisabledDates'
 import useNavigation from '../composables/useNavigation'
+import usePageYear from '../composables/usePageYear'
 import PickerCells from './PickerCells.vue'
 import PickerHeader from './PickerHeader.vue'
 
@@ -151,10 +152,10 @@ const emit = defineEmits({
   },
 })
 
-const { disabledDates, pageDate, slideDuration, useUtc, view, yearRange } =
+const { disabledDates, pageDate, slideDuration, isTypeable, useUtc, view, yearRange } =
   toRefs(props)
 
-const utils = makeDateUtils(useUtc.value)
+const utils = useDateUtils(useUtc)
 const pickerCellsRef = ref(null)
 const pickerHeaderRef = ref(null)
 const { isPreviousDisabled, isNextDisabled, isDisabledYear } = useDisabledDates(
@@ -172,9 +173,7 @@ const { isPreviousDisabled, isNextDisabled, isDisabledYear } = useDisabledDates(
  * Returns the current page's full year as an integer.
  * @return {Number}
  */
-const pageYear = computed(() => {
-  return utils.getFullYear(props.pageDate)
-})
+const pageYear = usePageYear(pageDate, utils.getFullYear)
 
 /**
  * Sets an array with all years to show this decade (or yearRange)
@@ -213,7 +212,7 @@ const cells = computed(() => {
  * @return {Number}
  */
 const pageDecadeStart = computed(() => {
-  return Math.floor(pageYear.value / props.yearRange) * props.yearRange
+  return Math.floor(pageYear.value / yearRange.value) * yearRange.value
 })
 
 /**
@@ -234,40 +233,20 @@ const pageTitleYear = computed(() => {
 })
 
 // methods
-const { handleArrow, changePage } = useNavigation(cells, pickerCellsRef, {
-  emit,
-  disabledDates,
-  pageDate,
-  slideDuration,
-  useUtc,
-  view,
-  yearRange,
-})
-
-/**
- * Focuses the input field, if typeable
- */
-function focusInput() {
-  if (props.isTypeable) {
-    emit('setFocus', ['input'])
-  }
-}
-
-/**
- * Determines which transition to use (for edge dates) and emits a 'select' event
- * @param {Object} cell
- */
-function select(cell) {
-  if (cell.isPreviousMonth) {
-    emit('setTransitionName', -1)
-  }
-
-  if (cell.isNextMonth) {
-    emit('setTransitionName', 1)
-  }
-
-  emit('select', cell)
-}
+const { changePage, focusInput, handleArrow, select } = useNavigation(
+  cells,
+  pickerCellsRef,
+  {
+    emit,
+    disabledDates,
+    pageDate,
+    slideDuration,
+    isTypeable,
+    useUtc,
+    view,
+    yearRange,
+  },
+)
 
 /**
  * Set up a new date object to the first year of the current 'page'
@@ -276,7 +255,8 @@ function select(cell) {
 function firstYearCellDate() {
   const pageDateNew = new Date(props.pageDate)
   const firstYear =
-    Math.floor(utils.getFullYear(pageDateNew) / props.yearRange) * props.yearRange
+    Math.floor(utils.getFullYear(pageDateNew) / props.yearRange) *
+    props.yearRange
 
   const date = new Date(utils.setFullYear(pageDateNew, firstYear))
 
