@@ -6,7 +6,7 @@
 
     <PickerHeader
       v-if="showHeader"
-      ref="pickerHeader"
+      ref="pickerHeaderRef"
       :bootstrap-styling="bootstrapStyling"
       :is-next-disabled="isNextDisabled"
       :is-previous-disabled="isPreviousDisabled"
@@ -40,7 +40,7 @@
       <div class="cells-wrapper">
         <Transition :name="transitionName">
           <PickerCells
-            ref="pickerCells"
+            ref="pickerCellsRef"
             :key="pageTitleDay"
             v-slot="{ cell }"
             :bootstrap-styling="bootstrapStyling"
@@ -70,6 +70,7 @@
 </template>
 
 <script>
+// import { ref, onMounted } from 'vue'
 import makeDateUtils from '~/utils/DateUtils'
 import DisabledDate from '~/utils/DisabledDate'
 import HighlightedDate from '~/utils/HighlightedDate'
@@ -191,6 +192,17 @@ export default {
       return view === 'month'
     },
   },
+  // setup() {
+  //   const pickerHeaderRef = ref(null)
+
+  //   onMounted(() => {
+  //     console.log(pickerHeaderRef.value.$el)
+  //   })
+
+  //   return {
+  //     pickerHeaderRef
+  //   }
+  // },
   data() {
     return {
       utils: makeDateUtils(this.useUtc),
@@ -485,7 +497,7 @@ export default {
      */
     getFirstOrLastElement(delta) {
       const isNext = delta > 0
-      const elements = this.$refs.pickerCells.$el.children
+      const elements = this.$refs.pickerCellsRef.$el.children
 
       return isNext ? elements[0] : elements[elements.length - 1]
     },

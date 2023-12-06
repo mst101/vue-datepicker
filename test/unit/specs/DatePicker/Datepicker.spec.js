@@ -1,22 +1,12 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { addDays } from 'date-fns'
 import { vi } from 'vitest'
 import { he } from '~/locale'
 import DateInput from '~/components/DateInput.vue'
 import DatePicker from '~/components/DatePicker.vue'
 
 describe('Datepicker unmounted', () => {
-  it('has a mounted hook', () => {
-    expect(typeof DatePicker.mounted).toEqual('function')
-  })
-
-  it('sets the correct default data', () => {
-    expect(typeof DatePicker.data).toEqual('function')
-    const defaultData = DatePicker.data()
+  it('props have the correct default values', () => {
     const defaultProps = DatePicker.props
-    expect(defaultData.selectedDate).toEqual(null)
-    expect(defaultData.view).toEqual('')
-    expect(defaultData.calendarHeight).toEqual(0)
 
     expect(typeof defaultProps.fixedPosition.validator).toEqual('function')
     expect(defaultProps.fixedPosition.validator('bottom')).toBeTruthy()
@@ -33,6 +23,12 @@ describe('Datepicker shallowMounted', () => {
 
   afterEach(() => {
     wrapper.unmount()
+  })
+
+  it('has the correct default values', () => {
+    expect(wrapper.vm.selectedDate).toEqual(null)
+    expect(wrapper.vm.view).toEqual('')
+    expect(wrapper.vm.isInline).toEqual(false)
   })
 
   it('sets the date from method', () => {
@@ -131,7 +127,7 @@ describe('Datepicker shallowMounted', () => {
   })
 
   it('watches modelValue', async () => {
-    const spy = vi.spyOn(wrapper.vm, 'setValue')
+    const spy = vi.spyOn(wrapper.vm.ctx, 'setValue')
 
     await wrapper.setProps({
       modelValue: new Date(2018, 3, 26),
@@ -141,7 +137,7 @@ describe('Datepicker shallowMounted', () => {
   })
 
   it('watches openDate', async () => {
-    const spy = vi.spyOn(wrapper.vm, 'setPageDate')
+    const spy = vi.spyOn(wrapper.vm.ctx, 'setPageDate')
 
     await wrapper.setProps({
       openDate: new Date(2018, 3, 26),
@@ -156,7 +152,7 @@ describe('Datepicker shallowMounted', () => {
     await wrapper.setProps({
       modelValue: someDate,
       disabledDates: {
-        to: addDays(someDate, 1),
+        to: someDate,
       },
     })
 
@@ -174,9 +170,11 @@ describe('Datepicker shallowMounted', () => {
 
     await wrapper.setProps({
       disabledDates: {
-        to: addDays(someDate, 1),
+        to: someDate,
       },
     })
+
+    expect(wrapper.vm.selectedDate).toBeNull()
   })
 })
 
@@ -229,7 +227,7 @@ describe('Datepicker mounted', () => {
     await wrapper.vm.open()
 
     expect(wrapper.vm.computedInitialView).toEqual('day')
-    expect(wrapper.vm.picker).toEqual('PickerDay')
+    expect(wrapper.vm.pickerName).toEqual('PickerDay')
   })
 
   it('opens in `month` view', async () => {
@@ -239,7 +237,7 @@ describe('Datepicker mounted', () => {
     await wrapper.vm.open()
 
     expect(wrapper.vm.computedInitialView).toEqual('month')
-    expect(wrapper.vm.picker).toEqual('PickerMonth')
+    expect(wrapper.vm.pickerName).toEqual('PickerMonth')
   })
 
   it('opens in `year` view', async () => {
@@ -249,7 +247,7 @@ describe('Datepicker mounted', () => {
     await wrapper.vm.open()
 
     expect(wrapper.vm.computedInitialView).toEqual('year')
-    expect(wrapper.vm.picker).toEqual('PickerYear')
+    expect(wrapper.vm.pickerName).toEqual('PickerYear')
   })
 
   it('does not open if the calendar is disabled', async () => {
@@ -320,17 +318,17 @@ describe('Datepicker mounted', () => {
 
   it('derives `picker` from the current `view`', () => {
     wrapper.vm.setView('day')
-    expect(wrapper.vm.picker).toBe('PickerDay')
+    expect(wrapper.vm.pickerName).toBe('PickerDay')
 
     wrapper.vm.setView('month')
-    expect(wrapper.vm.picker).toBe('PickerMonth')
+    expect(wrapper.vm.pickerName).toBe('PickerMonth')
 
     wrapper.vm.setView('year')
-    expect(wrapper.vm.picker).toBe('PickerYear')
+    expect(wrapper.vm.pickerName).toBe('PickerYear')
   })
 
   it('watches initialView when open', async () => {
-    const spy = vi.spyOn(wrapper.vm, 'setInitialView')
+    const spy = vi.spyOn(wrapper.vm.ctx, 'setInitialView')
 
     await wrapper.vm.open()
     await wrapper.setProps({
@@ -522,6 +520,9 @@ describe('Datepicker mounted with slots', () => {
       'One tabbable element in the <div tabindex="0">calendarFooter</div> slot'
 
     wrapper = mount(DatePicker, {
+      props: {
+        typeable: true,
+      },
       slots: {
         beforeCalendarHeader,
         beforeCalendarHeaderDay,
@@ -544,17 +545,17 @@ describe('Datepicker mounted with slots', () => {
 
     await wrapper.vm.open()
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.navElements.length).toEqual(8)
+    expect(wrapper.vm.navElements.length).toEqual(9)
 
     let upButton = wrapper.find('button.vdp-datepicker__up')
     await upButton.trigger('click')
 
-    expect(wrapper.vm.navElements.length).toEqual(10)
+    expect(wrapper.vm.navElements.length).toEqual(11)
 
     upButton = wrapper.find('button.vdp-datepicker__up')
     await upButton.trigger('click')
 
-    expect(wrapper.vm.navElements.length).toEqual(7)
+    expect(wrapper.vm.navElements.length).toEqual(8)
   })
 })
 

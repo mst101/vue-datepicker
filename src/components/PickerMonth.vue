@@ -6,7 +6,7 @@
 
     <PickerHeader
       v-if="showHeader"
-      ref="pickerHeader"
+      ref="pickerHeaderRef"
       :bootstrap-styling="bootstrapStyling"
       :is-next-disabled="isNextDisabled"
       :is-previous-disabled="isPreviousDisabled"
@@ -30,7 +30,7 @@
     <div class="cells-wrapper">
       <Transition :name="transitionName">
         <PickerCells
-          ref="pickerCells"
+          ref="pickerCellsRef"
           :key="pageTitleMonth"
           v-slot="{ cell }"
           :bootstrap-styling="bootstrapStyling"
@@ -369,7 +369,7 @@ export default {
      */
     getFirstOrLastElement(delta) {
       const isNext = delta > 0
-      const elements = this.$refs.pickerCells.$el.children
+      const elements = this.$refs.pickerCellsRef.$el.children
 
       return isNext ? elements[0] : elements[elements.length - 1]
     },

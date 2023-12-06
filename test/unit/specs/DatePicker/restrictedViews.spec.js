@@ -60,11 +60,11 @@ describe('Datepicker mounted with restricted views', () => {
     expect(wrapper.vm.allowedToShowView('year')).toEqual(false)
     expect(wrapper.vm.allowedToShowView('day')).toEqual(true)
     expect(wrapper.vm.allowedToShowView('month')).toEqual(true)
-    expect(wrapper.vm.picker).toBe('PickerDay')
+    expect(wrapper.vm.pickerName).toBe('PickerDay')
 
     let upButton = wrapper.find('.vdp-datepicker__up')
     await upButton.trigger('click')
-    expect(wrapper.vm.picker).toBe('PickerMonth')
+    expect(wrapper.vm.pickerName).toBe('PickerMonth')
 
     upButton = wrapper.find('.vdp-datepicker__up')
     expect(upButton.element.disabled).toBe(true)
@@ -77,7 +77,7 @@ describe('Datepicker mounted with restricted views', () => {
     expect(wrapper.vm.allowedToShowView('day')).toEqual(false)
     expect(wrapper.vm.allowedToShowView('year')).toEqual(false)
     expect(wrapper.vm.allowedToShowView('month')).toEqual(true)
-    expect(wrapper.vm.picker).toBe('PickerMonth')
+    expect(wrapper.vm.pickerName).toBe('PickerMonth')
 
     await wrapper.setProps({
       minimumView: 'day',

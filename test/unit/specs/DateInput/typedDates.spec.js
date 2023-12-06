@@ -26,8 +26,7 @@ describe('DateInput shallowMounted', () => {
 
     input.setValue(dateString)
     await input.trigger('keyup')
-
-    expect(input.element.value).toEqual(dateString)
+    expect(input.element.value).toBe(dateString)
   })
 
   it('allows international custom date format dd.MM.yyyy', async () => {
@@ -254,7 +253,7 @@ describe('Datepicker mounted', () => {
     await input.trigger('keydown.space')
     await input.trigger('keyup.space')
 
-    expect(wrapper.vm.isOpen).toBeTruthy()
+    expect(wrapper.vm.isOpen).toBe(true)
   })
 })
 
@@ -277,7 +276,7 @@ describe('Datepicker mounted with a default value', () => {
   it('displays a date passed in as a default value', async () => {
     const input = wrapper.find('input')
 
-    expect(input.element.value).toEqual('01 Jan 2000')
+    expect(input.element.value).toBe('01 Jan 2000')
   })
 })
 
