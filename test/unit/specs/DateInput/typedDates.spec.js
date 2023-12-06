@@ -359,4 +359,57 @@ describe('DatePicker mounted and attached to body', () => {
 
     expect(document.activeElement).toBe(input.element)
   })
+
+  it('sets the correct `tabbableCell` on a `day` view', async () => {
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+    await input.setValue('12 january 2020')
+    await input.trigger('keyup')
+    await input.trigger('keydown.down')
+    await input.trigger('focusout')
+
+    const prevButton = wrapper.find('button.prev')
+    await prevButton.trigger('keydown.down')
+
+    const tabbableCell = wrapper.find('button[data-id="14"]')
+
+    expect(document.activeElement).toBe(tabbableCell.element)
+  })
+
+  it('sets the correct `tabbableCell` on a `month` view', async () => {
+    await wrapper.setProps({ initialView: 'month' })
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+    await input.setValue('12 february 2020')
+    await input.trigger('keyup')
+    await input.trigger('keydown.down')
+    await input.trigger('focusout')
+
+    const prevButton = wrapper.find('button.prev')
+    await prevButton.trigger('keydown.down')
+
+    const tabbableCell = wrapper.find('button[data-id="1"]')
+
+    expect(document.activeElement).toBe(tabbableCell.element)
+  })
+
+  it('sets the correct `tabbableCell` on a `year` view', async () => {
+    await wrapper.setProps({ initialView: 'year' })
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+    await input.setValue('12 february 2023')
+    await input.trigger('keyup')
+    await input.trigger('keydown.down')
+    await input.trigger('focusout')
+
+    const prevButton = wrapper.find('button.prev')
+    await prevButton.trigger('keydown.down')
+
+    const tabbableCell = wrapper.find('button[data-id="3"]')
+
+    expect(document.activeElement).toBe(tabbableCell.element)
+  })
 })

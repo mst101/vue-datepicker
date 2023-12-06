@@ -1130,6 +1130,127 @@ describe('Datepicker mounted and attached to body with openDate', () => {
     const prevButton = wrapper.find('button.prev')
     expect(document.activeElement).toBe(prevButton.element)
   })
+
+  it('closes when escape is pressed and the focus is on the `openDate`', async () => {
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    const openDate = wrapper.find('button.open')
+    await openDate.element.focus()
+
+    expect(wrapper.vm.isOpen).toBe(true)
+    expect(document.activeElement).toBe(openDate.element)
+
+    await openDate.trigger('keydown.esc')
+    vi.advanceTimersByTime(250)
+
+    expect(wrapper.vm.isOpen).toBe(false)
+    expect(document.activeElement).toBe(input.element)
+  })
+
+  it('reverts focus to `openDate` when escape is pressed and calendar is open on a `day` view', async () => {
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    const openDate = wrapper.find('button.open')
+    const cellToRightOfOpenDate = wrapper.find('button[data-id="4"]')
+
+    await openDate.trigger('keydown.right')
+
+    expect(document.activeElement).toBe(cellToRightOfOpenDate.element)
+
+    await cellToRightOfOpenDate.trigger('keydown.esc')
+    vi.advanceTimersByTime(250)
+
+    expect(document.activeElement).toBe(openDate.element)
+  })
+
+  it('reverts focus to `openDate` when escape is pressed and calendar is open on a `month` view', async () => {
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    let upButton = wrapper.find('button.vdp-datepicker__up')
+    await upButton.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    upButton = wrapper.find('button.vdp-datepicker__up')
+    expect(document.activeElement).toBe(upButton.element)
+
+    await upButton.trigger('keydown.esc')
+    vi.advanceTimersByTime(250)
+
+    const openDate = wrapper.find('button.open')
+    expect(document.activeElement).toBe(openDate.element)
+  })
+
+  it('reverts focus to `openDate` when escape is pressed and calendar is open on a `year` view', async () => {
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    let upButton = wrapper.find('button.vdp-datepicker__up')
+    await upButton.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    upButton = wrapper.find('button.vdp-datepicker__up')
+    await upButton.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    const firstYearCell = wrapper.find('button.cell')
+    expect(document.activeElement).toBe(firstYearCell.element)
+
+    await firstYearCell.trigger('keydown.esc')
+    vi.advanceTimersByTime(250)
+
+    const openDate = wrapper.find('button.open')
+    expect(document.activeElement).toBe(openDate.element)
+  })
+
+  it('reverts focus to `openDate` when escape is pressed and calendar is open on different page', async () => {
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    let openDate = wrapper.find('button.open')
+    await openDate.trigger('keydown.left')
+    vi.advanceTimersByTime(250)
+
+    const cellToLeftOfOpenDate = wrapper.find('button[data-id="30"]')
+    expect(document.activeElement).toBe(cellToLeftOfOpenDate.element)
+
+    await cellToLeftOfOpenDate.trigger('keydown.esc')
+    vi.advanceTimersByTime(250)
+
+    openDate = wrapper.find('button.open')
+    expect(document.activeElement).toBe(openDate.element)
+  })
+
+  it('focuses the tabbableCell when decreasing a view', async () => {
+    await wrapper.setProps({
+      initialView: 'year',
+      modelValue: new Date(2020, 5, 1),
+    })
+
+    const input = wrapper.find('input')
+    await input.trigger('focusin')
+    await input.trigger('click')
+
+    const firstCell = wrapper.find('button.cell')
+
+    await firstCell.element.focus()
+    await firstCell.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    expect(document.activeElement.innerHTML).toBe('June')
+  })
 })
 
 describe('Datepicker mounted using UTC', () => {
@@ -1182,6 +1303,12 @@ describe('Datepicker mounted inline', () => {
     expect(wrapper.vm.isInline).toEqual(true)
   })
 
+  it('closes calendar when `inline` prop is changed to false', async () => {
+    expect(wrapper.vm.isOpen).toEqual(true)
+    await wrapper.setProps({ inline: false })
+    expect(wrapper.vm.isOpen).toEqual(false)
+  })
+
   it('does not close the calendar when date is selected', () => {
     const timestamp = new Date().setHours(0, 0, 0, 0)
     wrapper.vm.handleSelect({ timestamp })
@@ -1222,6 +1349,58 @@ describe('Datepicker mounted inline and attached to body', () => {
     await anotherDate.trigger('click')
 
     expect(document.activeElement).toBe(anotherDate.element)
+  })
+
+  it('selects and deselects a date', async () => {
+    expect(wrapper.vm.selectedDate).toBeNull()
+
+    const openDate = wrapper.find('button.open')
+    await openDate.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    expect(wrapper.vm.selectedDate).not.toBeNull()
+
+    await openDate.trigger('click')
+    vi.advanceTimersByTime(250)
+
+    expect(wrapper.vm.selectedDate).toBeNull()
+  })
+
+  it('reverts focus to `openDate` after clearing a selected date', async () => {
+    await wrapper.setProps({
+      openDate: new Date(2020, 0, 1),
+    })
+    vi.advanceTimersByTime(250)
+
+    const openDate = wrapper.find('button.open')
+    const anotherDate = wrapper.find('button[data-id="17"]')
+
+    await anotherDate.element.focus()
+    expect(document.activeElement).toBe(anotherDate.element)
+
+    await anotherDate.trigger('keydown.esc')
+    vi.advanceTimersByTime(250)
+
+    expect(document.activeElement).toBe(openDate.element)
+  })
+
+  it('reverts focus to `openDate` after deleting a selected date', async () => {
+    await wrapper.setProps({
+      openDate: new Date(2020, 0, 10),
+      modelValue: new Date(2020, 0, 15),
+    })
+    vi.advanceTimersByTime(250)
+
+    const openDate = wrapper.find('button.open')
+    const selectedDate = wrapper.find('button[data-id="17"]')
+
+    await selectedDate.element.focus()
+    expect(document.activeElement).toBe(selectedDate.element)
+
+    await selectedDate.trigger('keydown.delete')
+    vi.advanceTimersByTime(250)
+
+    expect(document.activeElement).toBe(openDate.element)
   })
 })
 
