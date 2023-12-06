@@ -723,24 +723,23 @@ function getCellId(date) {
  * @param {string} ref        The `ref` name of the wanted element
  * @returns {HTMLElement|Vue} A Vue element
  */
-// eslint-disable-next-line complexity,max-statements
+// eslint-disable-next-line complexity
 function getElementByRef(refAttr) {
-  if (refAttr === 'tabbableCell') {
-    return tabbableCell.value
+  switch (refAttr) {
+    case 'tabbableCell':
+      return tabbableCell.value
+    case 'input':
+      return dateInputRef.value?.inputRef
+    case 'calendarButton':
+      return dateInputRef.value && dateInputRef.value.calendarButtonRef
+    case 'openDate':
+      return pickerRef.value.pickerCellsRef.openDateRef
+    default:
+      if (props.showHeader) {
+        return pickerRef.value?.pickerHeaderRef[refAttr]
+      }
+      return null
   }
-  if (refAttr === 'input') {
-    return dateInputRef.value?.inputRef
-  }
-  if (refAttr === 'calendarButton') {
-    return dateInputRef.value && dateInputRef.value.calendarButtonRef
-  }
-  if (refAttr === 'openDate') {
-    return pickerRef.value.pickerCellsRef.openDateRef
-  }
-  if (props.showHeader) {
-    return pickerRef.value?.pickerHeaderRef[refAttr]
-  }
-  return null
 }
 
 /**
