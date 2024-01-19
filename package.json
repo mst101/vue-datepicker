@@ -120,7 +120,7 @@
     "sass": "1.69.3",
     "semver": "7.5.4",
     "vee-validate": "4.11.8",
-    "vite": "4.4.12",
+    "vite": "4.5.2",
     "vitest": "0.34.6",
     "vue": "3.3.4",
     "vuepress": "2.0.0-beta.61",
